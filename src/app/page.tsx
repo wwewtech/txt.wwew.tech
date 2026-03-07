@@ -85,12 +85,30 @@ type ContextGroup = {
   label: string;
   path: string;
   kind: "file" | "folder" | "archive";
+  createdAt: string;
   fileCount: number;
   folderCount: number;
   tokenEstimate: number;
   size: number;
   items: ParsedItem[];
 };
+
+type EditDialogState =
+  | {
+      mode: "context-group";
+      value: string;
+      group: ContextGroup;
+    }
+  | {
+      mode: "context-item";
+      value: string;
+      item: ParsedItem;
+    }
+  | {
+      mode: "history-rename";
+      value: string;
+      historyId: string;
+    };
 
 type SortMode = "latest" | "name" | "tokens" | "size";
 type ViewMode = "cards" | "compact";
@@ -136,6 +154,23 @@ export function CollapsibleMarkdownPre({ children }: { children: React.ReactNode
     setCollapsed(lineCount > 8);
   }, [lineCount, textContent]);
 
+  const isRu = typeof document !== "undefined" && document.documentElement.lang.toLowerCase().startsWith("ru");
+  const preT = isRu
+    ? {
+        toggle: "Переключить блок кода",
+        expand: "Развернуть",
+        collapse: "Свернуть",
+        hidden: "Код скрыт",
+        lines: "строк",
+      }
+    : {
+        toggle: "Toggle code block",
+        expand: "Expand",
+        collapse: "Collapse",
+        hidden: "Code hidden",
+        lines: "lines",
+      };
+
   return (
     <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/40">
       <div className="flex items-center justify-between border-b border-border/50 px-3 py-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">
@@ -144,14 +179,14 @@ export function CollapsibleMarkdownPre({ children }: { children: React.ReactNode
           type="button"
           onClick={() => setCollapsed((value) => !value)}
           className="inline-flex items-center gap-1 rounded px-1 py-0.5 normal-case hover:bg-background/70"
-          aria-label="Toggle code block"
+          aria-label={preT.toggle}
         >
-          <span>{collapsed ? "Expand" : "Collapse"}</span>
+          <span>{collapsed ? preT.expand : preT.collapse}</span>
           <ChevronDown className={cn("h-3 w-3 transition-transform", collapsed && "-rotate-90")} />
         </button>
       </div>
       {collapsed ? (
-        <div className="px-3 py-2 text-[11px] text-muted-foreground">Code hidden • {lineCount} lines</div>
+        <div className="px-3 py-2 text-[11px] text-muted-foreground">{preT.hidden} • {lineCount} {preT.lines}</div>
       ) : (
         <pre className="overflow-x-auto p-3 text-xs leading-5">{children}</pre>
       )}
@@ -222,6 +257,7 @@ export default function Home() {
   const [activeMode, setActiveMode] = React.useState<"chat" | "stream" | "realtime">("chat");
   const [chatMessages, setChatMessages] = React.useState<ChatMessage[]>([]);
   const [autoSaveEnabled, setAutoSaveEnabled] = React.useState(true);
+  const [editDialog, setEditDialog] = React.useState<EditDialogState | null>(null);
 
   React.useEffect(() => {
     setMounted(true);
@@ -332,13 +368,21 @@ export default function Home() {
   const totalTokens = contextTokens + userChatTokens + draftPromptTokens;
 
   const promptSuggestions = React.useMemo(
-    () => [
-      "Сфокусируй ответ на архитектуре решения",
-      "Сделай краткое summary в 5 пунктах",
-      "Выдели риски и edge-cases",
-      "Добавь actionable next steps",
-    ],
-    []
+    () =>
+      language === "ru"
+        ? [
+            "Сфокусируй ответ на архитектуре решения",
+            "Сделай краткое summary в 5 пунктах",
+            "Выдели риски и edge-cases",
+            "Добавь actionable next steps",
+          ]
+        : [
+            "Focus on solution architecture",
+            "Create a concise 5-point summary",
+            "Highlight risks and edge-cases",
+            "Add actionable next steps",
+          ],
+    [language]
   );
 
   const pushActivity = React.useCallback((label: string) => {
@@ -388,6 +432,10 @@ export default function Home() {
   const contextGroups = React.useMemo<ContextGroup[]>(() => {
     const map = new Map<string, ContextGroup>();
     const order: string[] = [];
+    const toTimestamp = (value: string) => {
+      const parsed = Date.parse(value);
+      return Number.isFinite(parsed) ? parsed : 0;
+    };
 
     const addToGroup = (key: string, seed: Omit<ContextGroup, "items" | "tokenEstimate" | "size" | "fileCount" | "folderCount">, item: ParsedItem) => {
       if (!map.has(key)) {
@@ -408,6 +456,10 @@ export default function Home() {
       current.tokenEstimate += item.tokenEstimate;
       current.size += item.size;
       current.fileCount += item.kind === "archive" ? item.children?.length ?? 0 : 1;
+      const itemAddedAt = item.addedAt ?? item.children?.[0]?.addedAt ?? new Date(0).toISOString();
+      if (toTimestamp(itemAddedAt) >= toTimestamp(current.createdAt)) {
+        current.createdAt = itemAddedAt;
+      }
     };
 
     items.forEach((item) => {
@@ -424,6 +476,7 @@ export default function Home() {
           label: item.name,
           path: item.path,
           kind: "archive",
+          createdAt: item.addedAt ?? item.children?.[0]?.addedAt ?? new Date(0).toISOString(),
           fileCount: item.children?.length ?? 0,
           folderCount: folderSet.size,
           tokenEstimate: item.tokenEstimate,
@@ -444,6 +497,7 @@ export default function Home() {
             label: segments[0],
             path: segments[0],
             kind: "folder",
+            createdAt: item.addedAt ?? new Date(0).toISOString(),
           },
           item
         );
@@ -455,6 +509,7 @@ export default function Home() {
         label: item.name,
         path: item.path,
         kind: "file",
+        createdAt: item.addedAt ?? new Date(0).toISOString(),
         fileCount: 1,
         folderCount: 0,
         tokenEstimate: item.tokenEstimate,
@@ -479,6 +534,32 @@ export default function Home() {
 
     return order.map((key) => map.get(key)).filter((value): value is ContextGroup => Boolean(value));
   }, [items]);
+
+  const timelineEntries = React.useMemo(() => {
+    const toTimestamp = (value: string) => {
+      const parsed = Date.parse(value);
+      return Number.isFinite(parsed) ? parsed : 0;
+    };
+
+    const mapped = [
+      ...chatMessages.map((message) => ({
+        id: `message:${message.id}`,
+        type: "message" as const,
+        createdAt: message.createdAt,
+        message,
+      })),
+      ...contextGroups.map((group) => ({
+        id: `context:${group.id}`,
+        type: "context" as const,
+        createdAt: group.createdAt,
+        group,
+      })),
+    ];
+
+    return mapped
+      .map((entry, index) => ({ ...entry, index, timestamp: toTimestamp(entry.createdAt) }))
+      .sort((a, b) => (a.timestamp === b.timestamp ? a.index - b.index : a.timestamp - b.timestamp));
+  }, [chatMessages, contextGroups]);
 
   const hasContent = prompt.trim().length > 0 || items.length > 0 || chatMessages.length > 0;
 
@@ -511,23 +592,23 @@ export default function Home() {
 
   const i18n = {
     ru: {
-      settings: "Settings",
-      settingsSubtitle: "Tool cockpit",
+      settings: "Настройки",
+      settingsSubtitle: "Панель инструментов",
       openRight: "Открыть правую панель",
       closeRight: "Скрыть правую панель",
       quickPrompts: "Быстрые подсказки",
       filter: "Фильтр...",
       parser: "Парсер",
-      privacy: "Privacy",
-      output: "Output",
-      activity: "Activity",
-      pipeline: "Pipeline",
-      workspace: "Workspace",
-      addFilesPrompt: "Добавьте файлы и prompt",
+      privacy: "Приватность",
+      output: "Результат",
+      activity: "Активность",
+      pipeline: "Пайплайн",
+      workspace: "Рабочая область",
+      addFilesPrompt: "Добавьте файлы и промпт",
       nothingFound: "Ничего не найдено",
       noActions: "Действий пока нет",
-      includePrompt: "Включать prompt",
-      showSkipped: "Показывать skipped",
+      includePrompt: "Включать промпт",
+      showSkipped: "Показывать пропущенные",
       anonymous: "Анонимный чат",
       ignoredDirs: "Игнорировать папки",
       excludedExt: "Исключить расширения",
@@ -535,34 +616,41 @@ export default function Home() {
       draft: "Черновик",
       autosave: "Автосейв",
       chatLabel: "Чат",
-      visible: "visible",
-      selected: "selected",
-      skipped: "skipped",
-      buildSelected: "Собрать selected",
+      modeChat: "Чат",
+      modeStream: "Поток",
+      modeRealtime: "Реалтайм",
+      markdownOn: "Markdown ВКЛ",
+      raw: "Сырой",
+      visible: "видимые",
+      selected: "выбрано",
+      skipped: "пропущено",
+      buildSelected: "Собрать выбранное",
       remove: "Удалить",
       processing: "Обработка файлов...",
-      parserReady: "Ready",
-      parserProcessing: "Processing",
-      builderReady: "Context ready",
-      builderWaiting: "Waiting",
-      historyEntries: "entries",
-      sources: "Sources",
-      files: "Files",
-      size: "Size",
-      tokens: "Tokens",
+      parserReady: "Готов",
+      parserProcessing: "Обработка",
+      builderReady: "Контекст готов",
+      builderWaiting: "Ожидание",
+      historyEntries: "записей",
+      sources: "Источники",
+      files: "Файлы",
+      size: "Размер",
+      tokens: "Токены",
+      tokenSuffix: "токенов",
       theme: "Тема",
-      terms: "Terms",
+      terms: "Условия",
       newChat: "Новый чат",
       history: "История",
       noEntries: "Записей пока нет",
       actions: "Действия",
+      source: "Источник",
       makeCopy: "Сделать копию",
       share: "Поделиться",
       rename: "Переименовать",
-      copyPrompt: "Копировать prompt",
+      copyPrompt: "Копировать промпт",
       copyFinal: "Копировать итог",
       delete: "Удалить",
-      builderTitle: "LLM Context Builder",
+      builderTitle: "Сборщик LLM-контекста",
       promptPlaceholder: "Добавьте инструкцию для LLM...",
       uploadFiles: "Файлы",
       uploadFolder: "Папка",
@@ -572,11 +660,35 @@ export default function Home() {
       preview: "Превью",
       finalTxt: "Итоговый LLM-ready TXT",
       addFilesToSee: "Добавьте файлы, чтобы увидеть итоговый контекст.",
+      dropHint: "Перетащи файлы, архивы или папки сюда, чтобы построить единый LLM-ready контекст.",
+      localCockpit: "Локальный контекст-кокпит",
+      typingPlaceholder: "Введите сообщение…",
+      send: "Отправить",
+      you: "Вы",
+      contextEngine: "Контекст-движок",
+      fileCount: "файлов",
+      folderCount: "папок",
+      archiveParsed: "Архив распарсен",
+      folderStructure: "Структура папки",
+      singleFile: "Одиночный файл",
+      previewAction: "Предпросмотр",
+      download: "Скачать",
+      edit: "Изменить",
+      searchHint: "Поиск по имени или пути файла",
+      sortDefault: "По умолчанию",
+      sortName: "Имя",
+      sortTokens: "Токены",
+      sortSize: "Размер",
       close: "Закрыть",
       closeChat: "Закрыть чат",
       draftChat: "Новый чат (черновик)",
       down: "Вниз",
       noData: "Нет данных",
+      editContextTitle: "Изменить контекст",
+      renameChatTitle: "Новое название чата",
+      editPlaceholder: "Введите новый контекст...",
+      renamePlaceholder: "Введите название чата...",
+      cancel: "Отмена",
     },
     en: {
       settings: "Settings",
@@ -603,6 +715,11 @@ export default function Home() {
       draft: "Draft",
       autosave: "Autosave",
       chatLabel: "Chat",
+      modeChat: "Chat",
+      modeStream: "Stream",
+      modeRealtime: "Realtime",
+      markdownOn: "Markdown ON",
+      raw: "Raw",
       visible: "visible",
       selected: "selected",
       skipped: "skipped",
@@ -618,12 +735,14 @@ export default function Home() {
       files: "Files",
       size: "Size",
       tokens: "Tokens",
+      tokenSuffix: "tokens",
       theme: "Theme",
       terms: "Terms",
       newChat: "New chat",
       history: "History",
       noEntries: "No entries yet",
       actions: "Actions",
+      source: "Source",
       makeCopy: "Duplicate",
       share: "Share",
       rename: "Rename",
@@ -640,15 +759,40 @@ export default function Home() {
       preview: "Preview",
       finalTxt: "Final LLM-ready TXT",
       addFilesToSee: "Add files to see final context.",
+      dropHint: "Drop files, archives, or folders here to build a unified LLM-ready context.",
+      localCockpit: "Local Context Cockpit",
+      typingPlaceholder: "Type something…",
+      send: "Send",
+      you: "You",
+      contextEngine: "Context Engine",
+      fileCount: "files",
+      folderCount: "folders",
+      archiveParsed: "Archive parsed",
+      folderStructure: "Folder structure",
+      singleFile: "Single file",
+      previewAction: "Preview",
+      download: "Download",
+      edit: "Edit",
+      searchHint: "Search by file name or path",
+      sortDefault: "Default",
+      sortName: "Name",
+      sortTokens: "Tokens",
+      sortSize: "Size",
       close: "Close",
       closeChat: "Close chat",
       draftChat: "New chat (draft)",
       down: "Down",
       noData: "No data",
+      editContextTitle: "Edit context",
+      renameChatTitle: "New chat title",
+      editPlaceholder: "Enter updated context...",
+      renamePlaceholder: "Enter chat title...",
+      cancel: "Cancel",
     },
   } as const;
 
   const t = i18n[language];
+  const l = React.useCallback((ruText: string, enText: string) => (language === "ru" ? ruText : enText), [language]);
 
   const currentHistoryEntry = React.useMemo(
     () => (currentChatId ? history.find((entry) => entry.id === currentChatId) ?? null : null),
@@ -686,6 +830,21 @@ export default function Home() {
       const id = currentChatId ?? crypto.randomUUID();
       const existingEntry = currentChatId ? history.find((entry) => entry.id === currentChatId) ?? null : null;
       const firstUserMessage = chatMessages.find((message) => message.role === "user")?.content.trim();
+      const firstContextTitle = (() => {
+        const firstItem = items[0];
+        if (!firstItem) return "";
+        if (firstItem.kind === "archive") {
+          return firstItem.name.trim();
+        }
+
+        const normalizedPath = firstItem.path.replaceAll("\\", "/");
+        const segments = normalizedPath.split("/").filter(Boolean);
+        if (segments.length > 1) {
+          return segments[0] ?? firstItem.name;
+        }
+
+        return firstItem.name || segments.at(-1) || normalizedPath;
+      })();
       const entry: HistoryItem = {
         id,
         title: existingEntry?.title
@@ -693,6 +852,8 @@ export default function Home() {
             ? prompt.trim().slice(0, 70)
             : firstUserMessage
               ? firstUserMessage.slice(0, 70)
+              : firstContextTitle
+                ? firstContextTitle.slice(0, 70)
               : nextUntitledTitle),
         updatedAt: new Date().toISOString(),
         tokenEstimate: totalTokens,
@@ -746,13 +907,16 @@ export default function Home() {
       setIsParsing(true);
       setProcessing(true);
       try {
-        pushActivity(`Загрузка: ${incoming.length} шт.`);
+        pushActivity(l(`Загрузка: ${incoming.length} шт.`, `Upload: ${incoming.length} item(s)`));
         const parsed = await Promise.all(
           incoming.map((entry) => parseFileWithPath(entry.file, entry.path, settings))
         );
-        const clean = parsed.filter((item) => !item.error || item.error === "Skipped by filters");
+        const addedAt = new Date().toISOString();
+        const clean = parsed
+          .filter((item) => !item.error || item.error === "Skipped by filters")
+          .map((item) => ({ ...item, addedAt }));
         setItems((prev) => [...prev, ...clean]);
-        pushActivity(`Добавлено в workspace: ${clean.length}`);
+        pushActivity(l(`Добавлено в workspace: ${clean.length}`, `Added to workspace: ${clean.length}`));
       } finally {
         setIsParsing(false);
         setProcessing(false);
@@ -828,61 +992,13 @@ export default function Home() {
     setSelectedItemIds((prev) => prev.filter((id) => !idSet.has(id)));
     setFavoriteItemIds((prev) => prev.filter((id) => !idSet.has(id)));
     setActivePreview((prev) => (prev && idSet.has(prev.id) ? null : prev));
-    pushActivity(`Удален контекст: ${label}`);
-  }, [pushActivity]);
+    pushActivity(l(`Удален контекст: ${label}`, `Context removed: ${label}`));
+  }, [pushActivity, l]);
 
   const editContextItems = React.useCallback((group: ContextGroup) => {
     const current = group.items.map((entry) => entry.text).filter(Boolean).join("\n\n");
-    const next = window.prompt("Изменить контекст", current);
-    if (next === null) return;
-    const edited = next.trim();
-    if (!edited) return;
-
-    const ids = group.items.map((entry) => entry.id);
-    const idSet = new Set(ids);
-    const primaryId = ids[0] ?? crypto.randomUUID();
-    const replacement: ParsedItem = {
-      id: primaryId,
-      name: group.label,
-      path: group.path,
-      size: edited.length,
-      kind: "file",
-      text: edited,
-      tokenEstimate: estimateTokens(edited),
-      sourceType: "md",
-    };
-
-    setItems((prev) => {
-      const nextItems: ParsedItem[] = [];
-      let inserted = false;
-
-      prev.forEach((entry) => {
-        if (!idSet.has(entry.id)) {
-          nextItems.push(entry);
-          return;
-        }
-
-        if (!inserted) {
-          nextItems.push(replacement);
-          inserted = true;
-        }
-      });
-
-      if (!inserted) nextItems.push(replacement);
-      return nextItems;
-    });
-
-    setSelectedItemIds((prev) => {
-      const kept = prev.filter((id) => !idSet.has(id));
-      return kept.includes(primaryId) ? kept : [...kept, primaryId];
-    });
-    setFavoriteItemIds((prev) => {
-      const kept = prev.filter((id) => !idSet.has(id));
-      return kept.includes(primaryId) ? kept : [...kept, primaryId];
-    });
-    setActivePreview((prev) => (prev && idSet.has(prev.id) ? replacement : prev));
-    pushActivity(`Контекст изменен: ${group.label}`);
-  }, [pushActivity]);
+    setEditDialog({ mode: "context-group", value: current, group });
+  }, []);
 
   const toBase64Unicode = (input: string) => {
     const bytes = new TextEncoder().encode(input);
@@ -896,16 +1012,103 @@ export default function Home() {
   const renameHistoryItem = (id: string) => {
     const target = history.find((entry) => entry.id === id);
     if (!target) return;
-    const nextTitle = window.prompt("Новое название чата", target.title);
-    if (!nextTitle || !nextTitle.trim()) return;
+    setEditDialog({ mode: "history-rename", value: target.title, historyId: id });
+  };
+
+  const submitEditDialog = React.useCallback(() => {
+    if (!editDialog) return;
+    const edited = editDialog.value.trim();
+    if (!edited) return;
+
+    if (editDialog.mode === "context-group") {
+      const group = editDialog.group;
+      const ids = group.items.map((entry) => entry.id);
+      const idSet = new Set(ids);
+      const primaryId = ids[0] ?? crypto.randomUUID();
+      const replacement: ParsedItem = {
+        id: primaryId,
+        name: group.label,
+        path: group.path,
+        size: edited.length,
+        kind: "file",
+        text: edited,
+        tokenEstimate: estimateTokens(edited),
+        sourceType: "md",
+        addedAt: new Date().toISOString(),
+      };
+
+      setItems((prev) => {
+        const nextItems: ParsedItem[] = [];
+        let inserted = false;
+
+        prev.forEach((entry) => {
+          if (!idSet.has(entry.id)) {
+            nextItems.push(entry);
+            return;
+          }
+
+          if (!inserted) {
+            nextItems.push(replacement);
+            inserted = true;
+          }
+        });
+
+        if (!inserted) nextItems.push(replacement);
+        return nextItems;
+      });
+
+      setSelectedItemIds((prev) => {
+        const kept = prev.filter((id) => !idSet.has(id));
+        return kept.includes(primaryId) ? kept : [...kept, primaryId];
+      });
+      setFavoriteItemIds((prev) => {
+        const kept = prev.filter((id) => !idSet.has(id));
+        return kept.includes(primaryId) ? kept : [...kept, primaryId];
+      });
+      setActivePreview((prev) => (prev && idSet.has(prev.id) ? replacement : prev));
+      pushActivity(l(`Контекст изменен: ${group.label}`, `Context updated: ${group.label}`));
+      setEditDialog(null);
+      return;
+    }
+
+    if (editDialog.mode === "context-item") {
+      const item = editDialog.item;
+      setItems((prev) =>
+        prev.map((entry) =>
+          entry.id === item.id
+            ? {
+                ...entry,
+                text: edited,
+                size: edited.length,
+                tokenEstimate: estimateTokens(edited),
+              }
+            : entry
+        )
+      );
+      setActivePreview((prev) =>
+        prev?.id === item.id
+          ? {
+              ...prev,
+              text: edited,
+              size: edited.length,
+              tokenEstimate: estimateTokens(edited),
+            }
+          : prev
+      );
+          pushActivity(l(`Контекст изменен: ${item.name}`, `Context updated: ${item.name}`));
+      setEditDialog(null);
+      return;
+    }
+
     setHistory((prev) =>
       prev.map((entry) =>
-        entry.id === id
-          ? { ...entry, title: nextTitle.trim().slice(0, 80), updatedAt: new Date().toISOString() }
+        entry.id === editDialog.historyId
+          ? { ...entry, title: edited.slice(0, 80), updatedAt: new Date().toISOString() }
           : entry
       )
     );
-  };
+    setEditDialog(null);
+  }, [editDialog, pushActivity, l]);
 
   const duplicateHistoryItem = (id: string) => {
     const target = history.find((entry) => entry.id === id);
@@ -946,7 +1149,7 @@ export default function Home() {
     const encoded = toBase64Unicode(JSON.stringify(payload));
     const url = `${window.location.origin}${window.location.pathname}#shared=${encoded}`;
     const copied = await onCopy(url);
-    pushActivity(copied ? "Ссылка чата скопирована" : "Не удалось скопировать ссылку");
+    pushActivity(copied ? l("Ссылка чата скопирована", "Chat link copied") : l("Не удалось скопировать ссылку", "Failed to copy chat link"));
   };
 
   const exportTxt = () => {
@@ -957,7 +1160,7 @@ export default function Home() {
     link.download = `llm-context-${Date.now()}.txt`;
     link.click();
     URL.revokeObjectURL(url);
-    pushActivity("Экспортирован итоговый TXT");
+    pushActivity(l("Экспортирован итоговый TXT", "Final TXT exported"));
   };
 
   const toggleSelectItem = (id: string) => {
@@ -974,13 +1177,13 @@ export default function Home() {
 
   const selectAllVisible = () => {
     setSelectedItemIds(visibleItems.map((item) => item.id));
-    pushActivity(`Выбрано видимых: ${visibleItems.length}`);
+    pushActivity(l(`Выбрано видимых: ${visibleItems.length}`, `Selected visible: ${visibleItems.length}`));
   };
 
   const quickBuild = async () => {
     if (!items.length) return;
     const copied = await onCopy(finalText);
-    pushActivity(copied ? "Быстрая сборка: контекст скопирован" : "Быстрая сборка: не удалось скопировать");
+    pushActivity(copied ? l("Быстрая сборка: контекст скопирован", "Quick build: context copied") : l("Быстрая сборка: не удалось скопировать", "Quick build: copy failed"));
   };
 
   const sendPrompt = () => {
@@ -994,7 +1197,7 @@ export default function Home() {
         { id: crypto.randomUUID(), role: "user", content: trimmed, createdAt: now },
       ];
     });
-    pushActivity("Prompt отправлен в контекстную ленту");
+    pushActivity(l("Prompt отправлен в контекстную ленту", "Prompt sent to context timeline"));
     if (autoSaveEnabled) {
       saveToHistory(true);
     }
@@ -1016,7 +1219,7 @@ export default function Home() {
       saveToHistory();
     }
     resetCurrentSession();
-    pushActivity("Новый чат");
+    pushActivity(l("Новый чат", "New chat"));
   };
 
   return (
@@ -1040,7 +1243,7 @@ export default function Home() {
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="text-sm font-semibold tracking-tight">txt.wwew.tech</p>
-                  <p className="text-xs text-muted-foreground">Local Context Cockpit</p>
+                  <p className="text-xs text-muted-foreground">{t.localCockpit}</p>
                 </div>
                 <button
                   type="button"
@@ -1105,7 +1308,7 @@ export default function Home() {
                         className="min-w-0 flex-1 text-left"
                       >
                         <p className="truncate text-xs font-medium">{entry.title}</p>
-                        <p className="text-[11px] text-muted-foreground">~{entry.tokenEstimate} tokens</p>
+                        <p className="text-[11px] text-muted-foreground">~{entry.tokenEstimate} {t.tokenSuffix}</p>
                       </button>
 
                       <div className="flex items-center gap-1">
@@ -1274,7 +1477,7 @@ export default function Home() {
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold tracking-tight">{t.builderTitle}</span>
                     <span className="rounded-full border border-border/70 px-2 py-0.5 text-[11px] text-muted-foreground">
-                      ~{totalTokens} tokens
+                      ~{totalTokens} {t.tokenSuffix}
                     </span>
                   </div>
                   <p className="mt-1 truncate text-xs text-muted-foreground">
@@ -1291,15 +1494,15 @@ export default function Home() {
                     )}
                   >
                     <Code2 className="h-3.5 w-3.5" />
-                    {markdownEnabled ? "Markdown ON" : "Raw"}
+                    {markdownEnabled ? t.markdownOn : t.raw}
                   </button>
                   <DragSegmented
                     value={activeMode}
                     onValueChange={(value) => setActiveMode(value)}
                     options={[
-                      { value: "chat", label: "Chat", content: <span className="text-[11px]">Chat</span> },
-                      { value: "stream", label: "Stream", content: <span className="text-[11px]">Stream</span> },
-                      { value: "realtime", label: "Realtime", content: <span className="text-[11px]">Realtime</span> },
+                      { value: "chat", label: t.modeChat, content: <span className="text-[11px]">{t.modeChat}</span> },
+                      { value: "stream", label: t.modeStream, content: <span className="text-[11px]">{t.modeStream}</span> },
+                      { value: "realtime", label: t.modeRealtime, content: <span className="text-[11px]">{t.modeRealtime}</span> },
                     ]}
                     buttonClassName="h-7 px-2"
                   />
@@ -1315,35 +1518,39 @@ export default function Home() {
               <div className="flex h-full flex-col">
                 <div className="min-h-0 flex-1 overflow-y-auto p-4">
                   <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
-                    {chatMessages.length === 0 && contextGroups.length === 0 && (
+                    {timelineEntries.length === 0 && (
                       <div className="rounded-2xl border border-dashed border-border/70 bg-background/70 px-4 py-6 text-center text-sm text-muted-foreground">
-                        Перетащи файлы, архивы или папки сюда, чтобы построить единый LLM-ready контекст.
+                        {t.dropHint}
                       </div>
                     )}
 
-                    {chatMessages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={cn(
-                          "w-full rounded-2xl border px-4 py-3",
-                          message.role === "user"
-                            ? "ml-auto border-border/70 bg-background"
-                            : "mr-auto border-primary/20 bg-primary/5"
-                        )}
-                      >
-                        <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
-                          <span>{message.role === "user" ? "You" : "Context Engine"}</span>
-                          <span>{new Date(message.createdAt).toLocaleTimeString()}</span>
-                        </div>
-                        <div className="space-y-2 wrap-anywhere">{renderMessageBody(message.content)}</div>
-                      </div>
-                    ))}
+                    {timelineEntries.map((entry) => {
+                      if (entry.type === "message") {
+                        const message = entry.message;
+                        return (
+                          <div
+                            key={entry.id}
+                            className={cn(
+                              "w-full rounded-2xl border px-4 py-3",
+                              message.role === "user"
+                                ? "ml-auto border-border/70 bg-background"
+                                : "mr-auto border-primary/20 bg-primary/5"
+                            )}
+                          >
+                            <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
+                              <span>{message.role === "user" ? t.you : t.contextEngine}</span>
+                              <span>{new Date(message.createdAt).toLocaleTimeString()}</span>
+                            </div>
+                            <div className="space-y-2 wrap-anywhere">{renderMessageBody(message.content)}</div>
+                          </div>
+                        );
+                      }
 
-                    {contextGroups.map((group) => {
-                      const joinedText = group.items.map((entry) => entry.text).filter(Boolean).join("\n\n");
+                      const group = entry.group;
+                      const joinedText = group.items.map((item) => item.text).filter(Boolean).join("\n\n");
 
                       return (
-                        <div key={group.id} className="group rounded-2xl border border-border/70 bg-background/90 p-3">
+                        <div key={entry.id} className="group rounded-2xl border border-border/70 bg-background/90 p-3">
                           <div className="mb-2 flex items-start justify-between gap-2">
                             <div className="min-w-0">
                               <p className="truncate text-sm font-medium">{group.label}</p>
@@ -1351,23 +1558,23 @@ export default function Home() {
                             </div>
                             <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
                               {group.kind === "archive" ? <Archive className="h-3.5 w-3.5" /> : <Files className="h-3.5 w-3.5" />}
-                              <span>~{group.tokenEstimate} tokens</span>
+                              <span>~{group.tokenEstimate} {t.tokenSuffix}</span>
                             </div>
                           </div>
 
                           <div className="mb-2 flex flex-wrap gap-1.5 text-[11px] text-muted-foreground">
-                            <span className="rounded-md border border-border/60 px-2 py-1">файлов: {group.fileCount}</span>
-                            <span className="rounded-md border border-border/60 px-2 py-1">папок: {group.folderCount}</span>
+                            <span className="rounded-md border border-border/60 px-2 py-1">{t.fileCount}: {group.fileCount}</span>
+                            <span className="rounded-md border border-border/60 px-2 py-1">{t.folderCount}: {group.folderCount}</span>
                             <span className="rounded-md border border-border/60 px-2 py-1">{bytesToText(group.size)}</span>
                           </div>
 
                           <div className="flex items-center justify-between gap-2">
                             <p className="truncate text-xs text-muted-foreground">
                               {group.kind === "archive"
-                                ? `Архив распарсен: ${group.fileCount} файлов`
+                                ? `${t.archiveParsed}: ${group.fileCount} ${t.fileCount}`
                                 : group.kind === "folder"
-                                  ? `Структура папки: ${group.label}`
-                                  : "Одиночный файл"}
+                                  ? `${t.folderStructure}: ${group.label}`
+                                  : t.singleFile}
                             </p>
                             <div className="flex items-center gap-1 opacity-100 transition md:opacity-0 md:group-hover:opacity-100">
                               <button
@@ -1393,14 +1600,14 @@ export default function Home() {
                                 className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
                               >
                                 <Eye className="h-3.5 w-3.5" />
-                                Предпросмотр
+                                  {t.previewAction}
                               </button>
                               <button
                                 type="button"
                                 onClick={async () => {
                                   const txt = toTxtContext(joinedText);
                                   await onCopy(txt);
-                                  pushActivity(`Скопирован TXT: ${group.label}`);
+                                  pushActivity(l(`Скопирован TXT: ${group.label}`, `Copied TXT: ${group.label}`));
                                 }}
                                 className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
                               >
@@ -1410,7 +1617,7 @@ export default function Home() {
                                 type="button"
                                 onClick={async () => {
                                   await onCopy(joinedText);
-                                  pushActivity(`Скопирован MD: ${group.label}`);
+                                  pushActivity(l(`Скопирован MD: ${group.label}`, `Copied MD: ${group.label}`));
                                 }}
                                 className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
                               >
@@ -1421,12 +1628,12 @@ export default function Home() {
                                 type="button"
                                 onClick={() => {
                                   triggerDownload(`${group.label}.md`, joinedText, "text/markdown;charset=utf-8");
-                                  pushActivity(`Скачан MD: ${group.label}`);
+                                  pushActivity(l(`Скачан MD: ${group.label}`, `Downloaded MD: ${group.label}`));
                                 }}
                                 className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
                               >
                                 <ArrowDownToLine className="h-3.5 w-3.5" />
-                                Download
+                                  {t.download}
                               </button>
                               <button
                                 type="button"
@@ -1434,7 +1641,7 @@ export default function Home() {
                                 className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
                               >
                                 <Pencil className="h-3.5 w-3.5" />
-                                Edit
+                                  {t.edit}
                               </button>
                               <button
                                 type="button"
@@ -1444,7 +1651,7 @@ export default function Home() {
                                 className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
-                                Удалить
+                                  {t.delete}
                               </button>
                             </div>
                           </div>
@@ -1493,7 +1700,7 @@ export default function Home() {
                       ref={composerRef}
                       value={prompt}
                       onChange={(event) => setPrompt(event.target.value)}
-                      placeholder="Type something…"
+                      placeholder={t.typingPlaceholder}
                       onKeyDown={(event) => {
                         if (event.key === "Enter" && !event.shiftKey) {
                           event.preventDefault();
@@ -1517,7 +1724,7 @@ export default function Home() {
                         onClick={sendPrompt}
                         disabled={!prompt.trim()}
                         className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary disabled:opacity-40"
-                        title="Send"
+                        title={t.send}
                       >
                         <SendHorizontal className="h-4 w-4" />
                       </button>
@@ -1578,7 +1785,7 @@ export default function Home() {
                       type="button"
                       onClick={() => {
                         setPrompt((prev) => (prev ? `${prev}\n${item}` : item));
-                        pushActivity("Добавлена prompt-подсказка");
+                        pushActivity(l("Добавлена prompt-подсказка", "Prompt suggestion added"));
                       }}
                       className="rounded-full border border-border/70 px-2 py-1 text-[10px] hover:bg-muted"
                     >
@@ -1599,7 +1806,7 @@ export default function Home() {
                     type="button"
                     onClick={async () => {
                       await onCopy(finalText);
-                      pushActivity("Черновой контекст скопирован");
+                      pushActivity(l("Черновой контекст скопирован", "Draft context copied"));
                     }}
                     disabled={!items.length}
                     className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
@@ -1612,7 +1819,7 @@ export default function Home() {
               <div className="rounded-xl border border-border/70 bg-background p-2">
                 {items.length > 0 && (
                   <>
-                    <p className="mb-1 text-[10px] text-muted-foreground">Поиск по имени или пути файла</p>
+                    <p className="mb-1 text-[10px] text-muted-foreground">{t.searchHint}</p>
                     <div className="mb-2 grid grid-cols-[1fr_auto] gap-1.5">
                       <div className="relative">
                         <Search className="pointer-events-none absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" />
@@ -1628,10 +1835,10 @@ export default function Home() {
                         onChange={(e) => setSortMode(e.target.value as SortMode)}
                         className="h-8 min-w-24 rounded-md border border-border/70 bg-background px-2 text-[11px]"
                       >
-                        <option value="latest">Default</option>
-                        <option value="name">Name</option>
-                        <option value="tokens">Tokens</option>
-                        <option value="size">Size</option>
+                        <option value="latest">{t.sortDefault}</option>
+                        <option value="name">{t.sortName}</option>
+                        <option value="tokens">{t.sortTokens}</option>
+                        <option value="size">{t.sortSize}</option>
                       </select>
                     </div>
 
@@ -1681,7 +1888,7 @@ export default function Home() {
                             mounted ? new Date().toISOString() : undefined
                           );
                           await onCopy(text);
-                          pushActivity(`Собран selected: ${selectedItems.length}`);
+                          pushActivity(l(`Собран selected: ${selectedItems.length}`, `Built selected: ${selectedItems.length}`));
                         }}
                         disabled={!selectedItems.length}
                         className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
@@ -1693,7 +1900,7 @@ export default function Home() {
                         onClick={() => {
                           if (!selectedItems.length) return;
                           setItems((prev) => prev.filter((item) => !selectedItemIds.includes(item.id)));
-                          pushActivity(`Удалено selected: ${selectedItems.length}`);
+                          pushActivity(l(`Удалено selected: ${selectedItems.length}`, `Removed selected: ${selectedItems.length}`));
                           setSelectedItemIds([]);
                         }}
                         disabled={!selectedItems.length}
@@ -1750,7 +1957,7 @@ export default function Home() {
                               type="button"
                               onClick={async () => {
                                 await onCopy(toTxtContext(item.text));
-                                pushActivity(`Скопирован TXT: ${item.name}`);
+                                pushActivity(l(`Скопирован TXT: ${item.name}`, `Copied TXT: ${item.name}`));
                               }}
                               className="inline-flex h-5 items-center justify-center rounded px-1.5 text-[10px] hover:bg-muted"
                             >
@@ -1760,7 +1967,7 @@ export default function Home() {
                               type="button"
                               onClick={async () => {
                                 await onCopy(item.text);
-                                pushActivity(`Скопирован MD: ${item.name}`);
+                                pushActivity(l(`Скопирован MD: ${item.name}`, `Copied MD: ${item.name}`));
                               }}
                               className="inline-flex h-5 items-center justify-center rounded px-1.5 text-[10px] hover:bg-muted"
                             >
@@ -1770,46 +1977,18 @@ export default function Home() {
                               type="button"
                               onClick={() => {
                                 triggerDownload(`${item.name}.txt`, toTxtContext(item.text), "text/plain;charset=utf-8");
-                                pushActivity(`Скачан TXT: ${item.name}`);
+                                pushActivity(l(`Скачан TXT: ${item.name}`, `Downloaded TXT: ${item.name}`));
                               }}
                               className="inline-flex h-5 w-5 items-center justify-center rounded hover:bg-muted"
-                              title="Download TXT"
+                              title={`${t.download} TXT`}
                             >
                               <ArrowDownToLine className="h-3 w-3" />
                             </button>
                             <button
                               type="button"
-                              onClick={() => {
-                                const next = window.prompt("Изменить контекст", item.text);
-                                if (next === null) return;
-                                const edited = next.trim();
-                                if (!edited) return;
-                                setItems((prev) =>
-                                  prev.map((entry) =>
-                                    entry.id === item.id
-                                      ? {
-                                          ...entry,
-                                          text: edited,
-                                          size: edited.length,
-                                          tokenEstimate: estimateTokens(edited),
-                                        }
-                                      : entry
-                                  )
-                                );
-                                setActivePreview((prev) =>
-                                  prev?.id === item.id
-                                    ? {
-                                        ...prev,
-                                        text: edited,
-                                        size: edited.length,
-                                        tokenEstimate: estimateTokens(edited),
-                                      }
-                                    : prev
-                                );
-                                pushActivity(`Контекст изменен: ${item.name}`);
-                              }}
+                              onClick={() => setEditDialog({ mode: "context-item", value: item.text, item })}
                               className="inline-flex h-5 w-5 items-center justify-center rounded hover:bg-muted"
-                              title="Edit"
+                              title={t.edit}
                             >
                               <Pencil className="h-3 w-3" />
                             </button>
@@ -1929,7 +2108,7 @@ export default function Home() {
                 <div className="mb-1.5 flex items-center justify-between">
                   <p className="font-semibold">{t.activity}</p>
                   <a href="https://github.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
-                    Source <ExternalLink className="h-3 w-3" />
+                    {t.source} <ExternalLink className="h-3 w-3" />
                   </a>
                 </div>
                 <div className="space-y-1">
@@ -1960,7 +2139,7 @@ export default function Home() {
             <div className="flex items-center justify-between border-b border-border/70 px-4 py-3">
               <div>
                 <p className="text-sm font-semibold">{activePreview.name}</p>
-                <p className="text-xs text-muted-foreground">~{activePreview.tokenEstimate} tokens</p>
+                <p className="text-xs text-muted-foreground">~{activePreview.tokenEstimate} {t.tokenSuffix}</p>
               </div>
               <div className="flex items-center gap-1">
                 <button
@@ -2006,6 +2185,69 @@ export default function Home() {
               >
                 <FileText className="h-3.5 w-3.5" />
                 {t.down}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editDialog && (
+        <div
+          className="fixed inset-0 z-60 flex items-center justify-center bg-black/60 p-4"
+          onClick={() => setEditDialog(null)}
+        >
+          <div
+            className="w-full max-w-2xl rounded-2xl border border-border bg-background"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-border/70 px-4 py-3">
+              <p className="text-sm font-semibold">
+                {editDialog.mode === "history-rename" ? t.renameChatTitle : t.editContextTitle}
+              </p>
+              <button
+                type="button"
+                onClick={() => setEditDialog(null)}
+                className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs hover:bg-muted"
+              >
+                <X className="h-3.5 w-3.5" />
+                {t.close}
+              </button>
+            </div>
+            <div className="p-4">
+              {editDialog.mode === "history-rename" ? (
+                <input
+                  value={editDialog.value}
+                  onChange={(event) => setEditDialog((prev) => (prev ? { ...prev, value: event.target.value } : prev))}
+                  placeholder={t.renamePlaceholder}
+                  autoFocus
+                  className="h-10 w-full rounded-xl border border-border/70 bg-background px-3 text-sm outline-none focus:border-primary/40"
+                />
+              ) : (
+                <textarea
+                  value={editDialog.value}
+                  onChange={(event) => setEditDialog((prev) => (prev ? { ...prev, value: event.target.value } : prev))}
+                  placeholder={t.editPlaceholder}
+                  autoFocus
+                  rows={12}
+                  className="w-full rounded-xl border border-border/70 bg-background p-3 text-sm outline-none focus:border-primary/40"
+                />
+              )}
+            </div>
+            <div className="flex items-center justify-end gap-2 border-t border-border/70 px-4 py-3">
+              <button
+                type="button"
+                onClick={() => setEditDialog(null)}
+                className="inline-flex h-8 items-center rounded-lg border border-border/70 px-3 text-xs hover:bg-muted"
+              >
+                {t.cancel}
+              </button>
+              <button
+                type="button"
+                onClick={submitEditDialog}
+                disabled={!editDialog.value.trim()}
+                className="inline-flex h-8 items-center rounded-lg border border-border/70 px-3 text-xs hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {t.save}
               </button>
             </div>
           </div>

@@ -17,6 +17,7 @@ export type ParsedItem = {
   text: string;
   tokenEstimate: number;
   sourceType: string;
+  addedAt?: string;
   children?: ParsedItem[];
   error?: string;
 };

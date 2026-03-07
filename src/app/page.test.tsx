@@ -94,8 +94,8 @@ describe("Home central panel UI/UX", () => {
       expect(nodes.length).toBeGreaterThan(0);
     });
 
-    expect(screen.getByText(/~10 tokens/)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Предпросмотр" })).toBeInTheDocument();
+    expect((await screen.findAllByText(/~10 tokens/)).length).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: /Preview|Предпросмотр/i })).toBeInTheDocument();
   });
 
   it("sends prompt by Enter and keeps Shift+Enter as multiline", async () => {
@@ -129,8 +129,8 @@ describe("Home central panel UI/UX", () => {
 
     const projectNodes = await screen.findAllByText("project");
     expect(projectNodes.length).toBeGreaterThan(0);
-    expect(screen.getByText("файлов: 2")).toBeInTheDocument();
-    expect(screen.queryByText("файлов: 1")).not.toBeInTheDocument();
+    expect(screen.getAllByText(/файлов:\s*2|files:\s*2/i).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/файлов:\s*1|files:\s*1/i)).not.toBeInTheDocument();
   });
 
   it("opens preview modal and deletes context from modal action", async () => {
@@ -142,7 +142,7 @@ describe("Home central panel UI/UX", () => {
 
     fireEvent.change(fileInput, { target: { files: [file] } });
 
-    const preview = await screen.findByRole("button", { name: "Предпросмотр" });
+    const preview = await screen.findByRole("button", { name: /Preview|Предпросмотр/i });
     fireEvent.click(preview);
 
     const modalNodes = await screen.findAllByText("modal.txt");
@@ -174,7 +174,6 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("edits context from card action", async () => {
-    const promptSpy = vi.spyOn(window, "prompt").mockReturnValue("UPDATED CONTEXT");
     render(<Home />);
 
     const hiddenInputs = document.querySelectorAll('input[type="file"]');
@@ -184,10 +183,33 @@ describe("Home central panel UI/UX", () => {
     const nameNode = (await screen.findAllByText("edit-context.txt"))[0];
     const card = nameNode.closest(".group") as HTMLElement;
     fireEvent.click(within(card).getByRole("button", { name: "Edit" }));
-    fireEvent.click(within(card).getByRole("button", { name: "Предпросмотр" }));
+    fireEvent.change(await screen.findByPlaceholderText(/Введите новый контекст|Enter updated context/i), {
+      target: { value: "UPDATED CONTEXT" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^Save$|^Сохранить$/i }));
+    fireEvent.click(within(card).getByRole("button", { name: /Preview|Предпросмотр/i }));
 
     expect(await screen.findByText("UPDATED CONTEXT")).toBeInTheDocument();
-    promptSpy.mockRestore();
+  });
+
+  it("cancel in edit dialog keeps original context", async () => {
+    render(<Home />);
+
+    const hiddenInputs = document.querySelectorAll('input[type="file"]');
+    const fileInput = hiddenInputs[0] as HTMLInputElement;
+    fireEvent.change(fileInput, { target: { files: [new File(["initial"], "cancel-edit.txt", { type: "text/plain" })] } });
+
+    const nameNode = (await screen.findAllByText("cancel-edit.txt"))[0];
+    const card = nameNode.closest(".group") as HTMLElement;
+    fireEvent.click(within(card).getByRole("button", { name: "Edit" }));
+    fireEvent.change(await screen.findByPlaceholderText(/Введите новый контекст|Enter updated context/i), {
+      target: { value: "SHOULD NOT SAVE" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^Cancel$|^Отмена$/i }));
+    fireEvent.click(within(card).getByRole("button", { name: /Preview|Предпросмотр/i }));
+
+    expect(screen.queryByText("SHOULD NOT SAVE")).not.toBeInTheDocument();
+    expect(await screen.findByText("hello")).toBeInTheDocument();
   });
 
   it("starts new chat and resets workspace state", async () => {
@@ -244,6 +266,7 @@ describe("Home central panel UI/UX", () => {
 
   it("keeps chats isolated when switching from history", async () => {
     render(<Home />);
+    const timeline = document.querySelector(".mx-auto.flex.w-full.max-w-3xl.flex-col.gap-3") as HTMLElement;
 
     const fileInputs = document.querySelectorAll('input[type="file"]');
     const fileInput = fileInputs[0] as HTMLInputElement;
@@ -259,8 +282,8 @@ describe("Home central panel UI/UX", () => {
     const firstHistory = await screen.findByRole("button", { name: /first.txt/i });
     fireEvent.click(firstHistory);
 
-    expect(await screen.findAllByText("first.txt")).toBeTruthy();
-    expect(screen.queryByText("second.txt")).not.toBeInTheDocument();
+    expect(await within(timeline).findAllByText("first.txt")).toBeTruthy();
+    expect(within(timeline).queryByText("second.txt")).not.toBeInTheDocument();
   });
 
   it("deleting active chat from history resets center to draft", async () => {
@@ -304,7 +327,7 @@ describe("Home central panel UI/UX", () => {
     const fileInput = fileInputs[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["modal"], "preview.txt", { type: "text/plain" })] } });
 
-    fireEvent.click(await screen.findByRole("button", { name: "Предпросмотр" }));
+    fireEvent.click(await screen.findByRole("button", { name: /Preview|Предпросмотр/i }));
     expect(await screen.findByRole("button", { name: "Close" })).toBeInTheDocument();
 
     clickNewChat();
@@ -382,13 +405,13 @@ describe("Home central panel UI/UX", () => {
     fireEvent.click(await screen.findByRole("button", { name: /ctx.txt/i }));
 
     expect(await screen.findAllByText("ctx.txt")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Предпросмотр" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Preview|Предпросмотр/i })).toBeInTheDocument();
   });
 
   it("[extra 01] renders initial drop hint", () => {
     render(<Home />);
     expect(
-      screen.getByText(/Перетащи файлы, архивы или папки сюда|Add files to see final context/i)
+      screen.getByText(/Перетащи файлы, архивы или папки сюда|Drop files, archives, or folders here|Add files to see final context/i)
     ).toBeInTheDocument();
   });
 
@@ -452,6 +475,27 @@ describe("Home central panel UI/UX", () => {
     expect(await screen.findByText("ts")).toBeInTheDocument();
   });
 
+  it("[extra 06.1] keeps chronological order between context card and later prompt", async () => {
+    const user = userEvent.setup();
+    render(<Home />);
+
+    const timeline = document.querySelector(".mx-auto.flex.w-full.max-w-3xl.flex-col.gap-3") as HTMLElement;
+
+    const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
+    fireEvent.change(fileInput, {
+      target: { files: [new File(["x"], "timeline.txt", { type: "text/plain" })] },
+    });
+
+    const contextNode = await within(timeline).findByText("timeline.txt", { selector: "p.text-sm.font-medium" });
+
+    const composer = await screen.findByPlaceholderText("Type something…");
+    await user.type(composer, "сообщение после файла");
+    fireEvent.click(screen.getByTitle("Send"));
+
+    const messageNode = await within(timeline).findByText("сообщение после файла", { selector: "pre" });
+    expect(Boolean(contextNode.compareDocumentPosition(messageNode) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
+  });
+
   it("[extra 07] hides right sidebar", async () => {
     render(<Home />);
 
@@ -470,8 +514,8 @@ describe("Home central panel UI/UX", () => {
   it("[extra 09] quick prompt appends text to composer", async () => {
     render(<Home />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Сфокусируй ответ на архитектуре решения" }));
-    expect(await screen.findByDisplayValue("Сфокусируй ответ на архитектуре решения")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Сфокусируй ответ на архитектуре решения|Focus on solution architecture/i }));
+    expect(await screen.findByDisplayValue(/Сфокусируй ответ на архитектуре решения|Focus on solution architecture/i)).toBeInTheDocument();
   });
 
   it("[extra 11] selects all visible files", async () => {
@@ -542,7 +586,7 @@ describe("Home central panel UI/UX", () => {
     fireEvent.change(fileInput, { target: { files: [new File(["a"], "draft.txt", { type: "text/plain" })] } });
     await screen.findAllByText("draft.txt");
 
-    fireEvent.click(screen.getByLabelText(/Include prompt|Включать prompt/i));
+    fireEvent.click(screen.getByLabelText(/Include prompt|Включать prompt|Включать промпт/i));
     fireEvent.click(screen.getByRole("button", { name: /Draft|Черновик/ }));
 
     const copied = String(writeTextSpy.mock.calls.at(-1)?.[0] ?? "");
@@ -612,7 +656,6 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 19] rename action updates history title", async () => {
     const user = userEvent.setup();
-    const promptSpy = vi.spyOn(window, "prompt").mockReturnValue("Renamed chat");
     render(<Home />);
 
     const composer = await screen.findByPlaceholderText("Type something…");
@@ -624,9 +667,34 @@ describe("Home central panel UI/UX", () => {
     const container = historyItem.closest("[data-history-item]") as HTMLElement;
     fireEvent.click(within(container).getByRole("button", { name: "Actions" }));
     fireEvent.click(await screen.findByRole("button", { name: /Rename|Переименовать/ }));
+    fireEvent.change(await screen.findByPlaceholderText(/Введите название чата|Enter chat title/i), {
+      target: { value: "Renamed chat" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^Save$|^Сохранить$/i }));
 
     expect(await screen.findByRole("button", { name: /Renamed chat/i })).toBeInTheDocument();
-    promptSpy.mockRestore();
+  });
+
+  it("[extra 19.1] closing rename dialog keeps original title", async () => {
+    const user = userEvent.setup();
+    render(<Home />);
+
+    const composer = await screen.findByPlaceholderText("Type something…");
+    await user.type(composer, "keep old title");
+    fireEvent.click(screen.getByTitle("Send"));
+    clickNewChat();
+
+    const historyItem = await screen.findByRole("button", { name: /keep old title/i });
+    const container = historyItem.closest("[data-history-item]") as HTMLElement;
+    fireEvent.click(within(container).getByRole("button", { name: "Actions" }));
+    fireEvent.click(await screen.findByRole("button", { name: /Rename|Переименовать/ }));
+    fireEvent.change(await screen.findByPlaceholderText(/Введите название чата|Enter chat title/i), {
+      target: { value: "Should not rename" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^Close$|^Закрыть$/i }));
+
+    expect(await screen.findByRole("button", { name: /keep old title/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Should not rename/i })).not.toBeInTheDocument();
   });
 
   it("[extra 20] copy prompt action writes prompt text", async () => {
@@ -641,7 +709,7 @@ describe("Home central panel UI/UX", () => {
     const historyItem = await screen.findByRole("button", { name: /copy prompt content/i });
     const container = historyItem.closest("[data-history-item]") as HTMLElement;
     fireEvent.click(within(container).getByRole("button", { name: "Actions" }));
-    fireEvent.click(await screen.findByRole("button", { name: /Copy prompt|Копировать prompt/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /Copy prompt|Копировать prompt|Копировать промпт/ }));
 
     expect(String(writeTextSpy.mock.calls.at(-1)?.[0] ?? "")).toContain("copy prompt content");
   });
@@ -688,7 +756,7 @@ describe("Home central panel UI/UX", () => {
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "scroll.txt", { type: "text/plain" })] } });
-    fireEvent.click(await screen.findByRole("button", { name: "Предпросмотр" }));
+    fireEvent.click(await screen.findByRole("button", { name: /Preview|Предпросмотр/i }));
 
     const container = document.querySelector(".preview-scroll") as HTMLDivElement;
     Object.defineProperty(container, "scrollHeight", { value: 777, configurable: true });
@@ -729,7 +797,7 @@ describe("Home central panel UI/UX", () => {
       .getAllByRole("checkbox")
       .filter((input) => input.className.includes("h-3.5"));
     fireEvent.click(fileCheckboxes[0]);
-    fireEvent.click(screen.getByRole("button", { name: /Build selected|Собрать selected/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Build selected|Собрать selected|Собрать выбранное/ }));
 
     const copied = String(writeTextSpy.mock.calls.at(-1)?.[0] ?? "");
     expect(copied).toContain("sel-a.txt");
@@ -755,7 +823,7 @@ describe("Home central panel UI/UX", () => {
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "modal-close.txt", { type: "text/plain" })] } });
-    fireEvent.click(await screen.findByRole("button", { name: "Предпросмотр" }));
+    fireEvent.click(await screen.findByRole("button", { name: /Preview|Предпросмотр/i }));
 
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     await waitFor(() => {
@@ -790,6 +858,6 @@ describe("Home central panel UI/UX", () => {
     await user.type(composer, "activity prompt");
     fireEvent.click(screen.getByTitle("Send"));
 
-    expect(await screen.findByText(/Prompt отправлен в контекстную ленту/)).toBeInTheDocument();
+    expect(await screen.findByText(/Prompt отправлен в контекстную ленту|Prompt sent to context timeline/)).toBeInTheDocument();
   });
 });
