@@ -3,6 +3,7 @@
 import {
   ArrowDownToLine,
   CheckCheck,
+  ChevronDown,
   Copy,
   ExternalLink,
   Eye,
@@ -150,7 +151,7 @@ export function HomeRightSidebar({
         </div>
       </div>
 
-      <div className="h-[calc(100vh-6.75rem)] space-y-2.5 overflow-auto p-3 pt-0">
+      <div className="h-[calc(100vh-6.75rem)] space-y-3 overflow-auto p-3 pt-0">
         <div className="rounded-xl bg-muted/25 p-2.5">
           <div className="mb-2 flex items-center justify-between">
             <p className="text-[11px] font-semibold">{t.quickPrompts}</p>
@@ -451,26 +452,13 @@ export function HomeRightSidebar({
           </div>
         </div>
 
-        <div className="rounded-xl bg-muted/25 p-2.5">
-          <p className="mb-1 text-[11px] font-semibold">{t.parser}</p>
-          <label className="mb-1 block text-[10px] text-muted-foreground">{t.ignoredDirs}</label>
-          <textarea
-            value={settings.ignoredDirectories.join(",")}
-            onChange={(event) => onSetIgnoredDirectories(event.target.value)}
-            className="mb-1.5 min-h-14 w-full rounded-md border border-border/70 bg-background p-1.5 text-[10px]"
-          />
-          <label className="mb-1 block text-[10px] text-muted-foreground">{t.excludedExt}</label>
-          <textarea
-            value={settings.excludedExtensions.join(",")}
-            onChange={(event) => onSetExcludedExtensions(event.target.value)}
-            className="min-h-14 w-full rounded-md border border-border/70 bg-background p-1.5 text-[10px]"
-          />
-        </div>
-
-        <div className="rounded-xl bg-muted/25 p-2.5">
-          <p className="mb-1 text-[11px] font-semibold">{t.output}</p>
-          <div className="space-y-1.5 text-[10px]">
-            <label className="flex items-center justify-between rounded-md border border-border/60 px-2 py-1.5">
+        <details className="group rounded-xl bg-muted/25 p-2.5" open>
+          <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] font-semibold">
+            {t.output}
+            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="mt-2 space-y-1.5 text-[10px]">
+            <label className="flex items-center justify-between rounded-md border border-border/60 bg-background/80 px-2 py-1.5">
               {t.includePrompt}
               <input
                 type="checkbox"
@@ -478,7 +466,7 @@ export function HomeRightSidebar({
                 onChange={(event) => onSetIncludePromptInResult(event.target.checked)}
               />
             </label>
-            <label className="flex items-center justify-between rounded-md border border-border/60 px-2 py-1.5">
+            <label className="flex items-center justify-between rounded-md border border-border/60 bg-background/80 px-2 py-1.5">
               {t.showSkipped}
               <input
                 type="checkbox"
@@ -487,31 +475,57 @@ export function HomeRightSidebar({
               />
             </label>
           </div>
-        </div>
+        </details>
 
-        <div className="rounded-xl bg-muted/25 p-2.5 text-[10px]">
-          <div className="mb-1.5 flex items-center justify-between">
-            <p className="font-semibold">{t.activity}</p>
-            <a href="https://github.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
-              {t.source} <ExternalLink className="h-3 w-3" />
-            </a>
+        <details className="group rounded-xl bg-muted/25 p-2.5">
+          <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] font-semibold">
+            {t.parser}
+            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="mt-2">
+            <label className="mb-1 block text-[10px] text-muted-foreground">{t.ignoredDirs}</label>
+            <textarea
+              value={settings.ignoredDirectories.join(",")}
+              onChange={(event) => onSetIgnoredDirectories(event.target.value)}
+              className="mb-1.5 min-h-14 w-full rounded-md border border-border/60 bg-background p-1.5 text-[10px]"
+            />
+            <label className="mb-1 block text-[10px] text-muted-foreground">{t.excludedExt}</label>
+            <textarea
+              value={settings.excludedExtensions.join(",")}
+              onChange={(event) => onSetExcludedExtensions(event.target.value)}
+              className="min-h-14 w-full rounded-md border border-border/60 bg-background p-1.5 text-[10px]"
+            />
           </div>
-          <div className="space-y-1">
-            {activity.length === 0 && (
-              <p className="rounded-md border border-dashed border-border/60 px-2 py-1.5 text-muted-foreground">
-                {t.noActions}
-              </p>
-            )}
-            {activity.map((item) => (
-              <div key={item.id} className="rounded-md border border-border/60 px-2 py-1.5">
-                <p>{item.label}</p>
-                <p className="mt-0.5 text-[9px] text-muted-foreground">
-                  {new Date(item.at).toLocaleTimeString()}
+        </details>
+
+        <details className="group rounded-xl bg-muted/25 p-2.5 text-[10px]">
+          <summary className="flex cursor-pointer list-none items-center justify-between font-semibold">
+            {t.activity}
+            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="mt-2">
+            <div className="mb-1.5 flex items-center justify-end">
+              <a href="https://github.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
+                {t.source} <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
+            <div className="space-y-1">
+              {activity.length === 0 && (
+                <p className="rounded-md border border-dashed border-border/60 px-2 py-1.5 text-muted-foreground">
+                  {t.noActions}
                 </p>
-              </div>
-            ))}
+              )}
+              {activity.map((item) => (
+                <div key={item.id} className="rounded-md border border-border/60 bg-background/80 px-2 py-1.5">
+                  <p>{item.label}</p>
+                  <p className="mt-0.5 text-[9px] text-muted-foreground">
+                    {new Date(item.at).toLocaleTimeString()}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </details>
       </div>
     </aside>
   );
