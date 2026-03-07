@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("mammoth", () => ({
   default: {
+    convertToHtml: vi.fn().mockResolvedValue({ value: "<p>DOCX CONTENT</p>" }),
     extractRawText: vi.fn().mockResolvedValue({ value: "DOCX CONTENT" }),
   },
 }));

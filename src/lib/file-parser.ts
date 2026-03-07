@@ -1,5 +1,7 @@
 import JSZip from "jszip";
 import mammoth from "mammoth";
+import TurndownService from "turndown";
+import { gfm } from "turndown-plugin-gfm";
 
 export type ParseSettings = {
   ignoredDirectories: string[];
@@ -118,8 +120,20 @@ async function parsePdf(file: Blob) {
 }
 
 async function parseDocx(file: Blob) {
-  const result = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
-  return result.value.trim();
+  const arrayBuffer = await file.arrayBuffer();
+  const htmlResult = await mammoth.convertToHtml({ arrayBuffer });
+  const turndown = new TurndownService({
+    headingStyle: "atx",
+    codeBlockStyle: "fenced",
+    bulletListMarker: "-",
+  });
+  turndown.use(gfm);
+
+  const markdown = turndown.turndown(htmlResult.value || "").trim();
+  if (markdown) return markdown;
+
+  const fallback = await mammoth.extractRawText({ arrayBuffer });
+  return fallback.value.trim();
 }
 
 async function parseBlob(path: string, blob: Blob, size: number, settings: ParseSettings): Promise<ParsedItem> {

@@ -1,9 +1,15 @@
 "use client";
 
 import * as React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import {
   ArrowDownToLine,
   Archive,
+  ChevronDown,
   CheckCheck,
   Code2,
   Copy,
@@ -94,8 +100,93 @@ const HISTORY_KEY = "txt-wwew-tech-history";
 const UI_PREFS_KEY = "txt-wwew-tech-ui-prefs";
 
 const defaultSettings: ParseSettings = {
-  ignoredDirectories: ["node_modules", ".next", ".git", "dist", "build", ".cache"],
-  excludedExtensions: ["pyc", "map", "lock", "exe", "dll", "md"],
+  ignoredDirectories: ["node_modules", ".next", ".git", "dist", "build", ".cache", "venv", "__pycache__", "obj", "bin", ],
+  excludedExtensions: ["pyc", "map", "lock", "exe", "dll", "bin", "dat", "iso", "img"],
+};
+
+export function CollapsibleMarkdownPre({ children }: { children: React.ReactNode }) {
+  const first = React.Children.toArray(children)[0] as
+    | React.ReactElement<{ className?: string; children?: React.ReactNode }>
+    | undefined;
+  const className = first?.props?.className ?? "";
+  const lang = /language-([a-zA-Z0-9_-]+)/.exec(className)?.[1] ?? "code";
+
+  const textContent = React.useMemo(() => {
+    const raw = first?.props?.children;
+    if (typeof raw === "string") return raw;
+    if (Array.isArray(raw)) {
+      return raw
+        .map((part) => (typeof part === "string" ? part : ""))
+        .join("");
+    }
+    return "";
+  }, [first]);
+
+  const lineCount = React.useMemo(() => {
+    if (!textContent) return 0;
+    return textContent.split(/\r?\n/).length;
+  }, [textContent]);
+
+  const [collapsed, setCollapsed] = React.useState(lineCount > 8);
+  const previousTextContentRef = React.useRef(textContent);
+
+  React.useEffect(() => {
+    if (previousTextContentRef.current === textContent) return;
+    previousTextContentRef.current = textContent;
+    setCollapsed(lineCount > 8);
+  }, [lineCount, textContent]);
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/40">
+      <div className="flex items-center justify-between border-b border-border/50 px-3 py-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+        <span>{lang}</span>
+        <button
+          type="button"
+          onClick={() => setCollapsed((value) => !value)}
+          className="inline-flex items-center gap-1 rounded px-1 py-0.5 normal-case hover:bg-background/70"
+          aria-label="Toggle code block"
+        >
+          <span>{collapsed ? "Expand" : "Collapse"}</span>
+          <ChevronDown className={cn("h-3 w-3 transition-transform", collapsed && "-rotate-90")} />
+        </button>
+      </div>
+      {collapsed ? (
+        <div className="px-3 py-2 text-[11px] text-muted-foreground">Code hidden • {lineCount} lines</div>
+      ) : (
+        <pre className="overflow-x-auto p-3 text-xs leading-5">{children}</pre>
+      )}
+    </div>
+  );
+}
+
+const markdownComponents = {
+  h1: ({ children }: { children?: React.ReactNode }) => <p className="text-lg font-semibold">{children}</p>,
+  h2: ({ children }: { children?: React.ReactNode }) => <p className="text-base font-semibold">{children}</p>,
+  h3: ({ children }: { children?: React.ReactNode }) => <p className="text-sm font-semibold">{children}</p>,
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <p className="whitespace-pre-wrap text-sm leading-6 wrap-anywhere">{children}</p>
+  ),
+  ul: ({ children }: { children?: React.ReactNode }) => <ul className="list-disc space-y-1 pl-5 text-sm">{children}</ul>,
+  ol: ({ children }: { children?: React.ReactNode }) => <ol className="list-decimal space-y-1 pl-5 text-sm">{children}</ol>,
+  li: ({ children }: { children?: React.ReactNode }) => <li>{children}</li>,
+  table: ({ children }: { children?: React.ReactNode }) => (
+    <div className="overflow-x-auto rounded-xl border border-border/60 bg-background">
+      <table className="w-full border-collapse text-xs">{children}</table>
+    </div>
+  ),
+  th: ({ children }: { children?: React.ReactNode }) => (
+    <th className="border-b border-border/60 bg-muted/40 px-2 py-1.5 text-left font-medium">{children}</th>
+  ),
+  td: ({ children }: { children?: React.ReactNode }) => <td className="border-b border-border/40 px-2 py-1.5 align-top">{children}</td>,
+  pre: ({ children }: { children?: React.ReactNode }) => {
+    return <CollapsibleMarkdownPre>{children}</CollapsibleMarkdownPre>;
+  },
+  code: ({ className, children, ...props }: { className?: string; children?: React.ReactNode; inline?: boolean }) => {
+    const isInline = props.inline;
+    const isBlock = Boolean(className?.includes("language-")) || isInline === false;
+    if (isBlock) return <code className={className}>{children}</code>;
+    return <code className="rounded border border-border/60 bg-muted/40 px-1 py-0.5 text-xs">{children}</code>;
+  },
 };
 
 export default function Home() {
@@ -130,6 +221,7 @@ export default function Home() {
   const [markdownEnabled, setMarkdownEnabled] = React.useState(true);
   const [activeMode, setActiveMode] = React.useState<"chat" | "stream" | "realtime">("chat");
   const [chatMessages, setChatMessages] = React.useState<ChatMessage[]>([]);
+  const [autoSaveEnabled, setAutoSaveEnabled] = React.useState(true);
 
   React.useEffect(() => {
     setMounted(true);
@@ -154,10 +246,13 @@ export default function Home() {
       return;
     }
     try {
-      const parsed = JSON.parse(raw) as { language?: Language; rightSidebarWidth?: number };
+      const parsed = JSON.parse(raw) as { language?: Language; rightSidebarWidth?: number; autoSaveEnabled?: boolean };
       if (parsed.language) setLanguage(parsed.language);
       if (typeof parsed.rightSidebarWidth === "number") {
         setRightSidebarWidth(Math.min(520, Math.max(280, parsed.rightSidebarWidth)));
+      }
+      if (typeof parsed.autoSaveEnabled === "boolean") {
+        setAutoSaveEnabled(parsed.autoSaveEnabled);
       }
     } catch {
       const detected = navigator.language.toLowerCase().startsWith("ru") ? "ru" : "en";
@@ -173,9 +268,9 @@ export default function Home() {
   React.useEffect(() => {
     window.localStorage.setItem(
       UI_PREFS_KEY,
-      JSON.stringify({ language, rightSidebarWidth })
+      JSON.stringify({ language, rightSidebarWidth, autoSaveEnabled })
     );
-  }, [language, rightSidebarWidth]);
+  }, [language, rightSidebarWidth, autoSaveEnabled]);
 
   React.useEffect(() => {
     document.documentElement.lang = language;
@@ -208,7 +303,33 @@ export default function Home() {
       ),
     [items, prompt, mounted, includePromptInResult]
   );
-  const totalTokens = React.useMemo(() => estimateTokens(finalText), [finalText]);
+
+  const estimateIfNotEmpty = React.useCallback((text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed) return 0;
+    return estimateTokens(trimmed);
+  }, []);
+
+  const contextTokens = React.useMemo(
+    () => items.reduce((sum, item) => sum + item.tokenEstimate, 0),
+    [items]
+  );
+
+  const draftPromptTokens = React.useMemo(
+    () => estimateIfNotEmpty(prompt),
+    [estimateIfNotEmpty, prompt]
+  );
+
+  const userChatTokens = React.useMemo(() => {
+    const text = chatMessages
+      .filter((message) => message.role === "user")
+      .map((message) => message.content)
+      .join("\n\n");
+
+    return estimateIfNotEmpty(text);
+  }, [chatMessages, estimateIfNotEmpty]);
+
+  const totalTokens = contextTokens + userChatTokens + draftPromptTokens;
 
   const promptSuggestions = React.useMemo(
     () => [
@@ -361,77 +482,31 @@ export default function Home() {
 
   const hasContent = prompt.trim().length > 0 || items.length > 0 || chatMessages.length > 0;
 
-  const escapeHtml = React.useCallback((source: string) => {
-    return source
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }, []);
-
-  const highlightCode = React.useCallback(
-    (source: string) => {
-      const escaped = escapeHtml(source);
-      return escaped
-        .replace(
-          /\b(const|let|var|function|return|if|else|for|while|class|import|export|from|type|interface|await|async|try|catch)\b/g,
-          '<span class="text-sky-500">$1</span>'
-        )
-        .replace(/("[^"]*"|'[^']*'|`[^`]*`)/g, '<span class="text-emerald-500">$1</span>');
-    },
-    [escapeHtml]
-  );
-
   const renderMessageBody = React.useCallback(
     (content: string) => {
-      const blocks = content.split(/```[\s\S]*?```/g);
-      const codeMatches = Array.from(content.matchAll(/```([a-zA-Z0-9_-]+)?\n?([\s\S]*?)```/g));
-      const rendered: React.ReactNode[] = [];
+      const hasMarkdownSyntax = /(^|\n)\s{0,3}(#{1,6}\s|[-*+]\s|\d+\.\s|>\s)|```|`[^`]+`|\*\*[^*]+\*\*|\[[^\]]+\]\([^\)]+\)|\|.+\||\$[^$]+\$/.test(
+        content
+      );
 
-      blocks.forEach((block, index) => {
-        if (block.trim()) {
-          if (!markdownEnabled) {
-            rendered.push(
-              <pre key={`raw-${index}`} className="whitespace-pre-wrap font-mono text-xs leading-5">
-                {block}
-              </pre>
-            );
-          } else {
-            rendered.push(
-              <div key={`md-${index}`} className="space-y-1.5 text-sm leading-6">
-                {block.split("\n").map((line, lineIndex) => {
-                  const trimmed = line.trim();
-                  if (!trimmed) return <div key={`ln-${lineIndex}`} className="h-1" />;
-                  if (trimmed.startsWith("### ")) return <p key={`ln-${lineIndex}`} className="text-sm font-semibold">{trimmed.slice(4)}</p>;
-                  if (trimmed.startsWith("## ")) return <p key={`ln-${lineIndex}`} className="text-base font-semibold">{trimmed.slice(3)}</p>;
-                  if (trimmed.startsWith("# ")) return <p key={`ln-${lineIndex}`} className="text-lg font-semibold">{trimmed.slice(2)}</p>;
-                  if (trimmed.startsWith("- ")) return <p key={`ln-${lineIndex}`} className="pl-3 text-sm">• {trimmed.slice(2)}</p>;
-                  return <p key={`ln-${lineIndex}`} className="text-sm">{line}</p>;
-                })}
-              </div>
-            );
-          }
-        }
+      if (!markdownEnabled) {
+        return <pre className="whitespace-pre-wrap wrap-anywhere font-mono text-xs leading-5">{content}</pre>;
+      }
 
-        const codeBlock = codeMatches[index];
-        if (!codeBlock) return;
-        rendered.push(
-          <div key={`code-${index}`} className="overflow-hidden rounded-xl border border-border/60 bg-muted/40">
-            <div className="flex items-center justify-between border-b border-border/50 px-3 py-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-              <span>{codeBlock[1] || "code"}</span>
-              <Code2 className="h-3 w-3" />
-            </div>
-            <pre className="overflow-x-auto p-3 text-xs leading-5">
-              <code dangerouslySetInnerHTML={{ __html: highlightCode(codeBlock[2].trim()) }} />
-            </pre>
-          </div>
-        );
-      });
+      if (!hasMarkdownSyntax) {
+        return <pre className="whitespace-pre-wrap wrap-anywhere text-sm leading-6 font-sans">{content}</pre>;
+      }
 
-      return rendered;
+      return (
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm, remarkMath]}
+          rehypePlugins={[rehypeKatex]}
+          components={markdownComponents}
+        >
+          {content}
+        </ReactMarkdown>
+      );
     },
-    [highlightCode, markdownEnabled]
+    [markdownEnabled]
   );
 
   const i18n = {
@@ -457,8 +532,9 @@ export default function Home() {
       ignoredDirs: "Игнорировать папки",
       excludedExt: "Исключить расширения",
       build: "Собрать",
-      clear: "Очистить",
       draft: "Черновик",
+      autosave: "Автосейв",
+      chatLabel: "Чат",
       visible: "visible",
       selected: "selected",
       skipped: "skipped",
@@ -524,8 +600,9 @@ export default function Home() {
       ignoredDirs: "Ignore directories",
       excludedExt: "Excluded extensions",
       build: "Build",
-      clear: "Clear",
       draft: "Draft",
+      autosave: "Autosave",
+      chatLabel: "Chat",
       visible: "visible",
       selected: "selected",
       skipped: "skipped",
@@ -578,7 +655,16 @@ export default function Home() {
     [currentChatId, history]
   );
 
-  const activeChatTitle = currentHistoryEntry?.title ?? t.draftChat;
+  const nextUntitledTitle = React.useMemo(() => {
+    const untitledNumbers = history
+      .map((entry) => /^Untitled\s+(\d+)$/i.exec(entry.title)?.[1])
+      .filter(Boolean)
+      .map((value) => Number(value));
+    const maxUntitled = untitledNumbers.length ? Math.max(...untitledNumbers) : 0;
+    return `Untitled ${maxUntitled + 1}`;
+  }, [history]);
+
+  const activeChatTitle = currentHistoryEntry?.title ?? nextUntitledTitle;
 
   const bytesToText = (value: number) => {
     if (value < 1024) return `${value} B`;
@@ -598,14 +684,16 @@ export default function Home() {
       if (!hasContent && !force) return;
 
       const id = currentChatId ?? crypto.randomUUID();
+      const existingEntry = currentChatId ? history.find((entry) => entry.id === currentChatId) ?? null : null;
       const firstUserMessage = chatMessages.find((message) => message.role === "user")?.content.trim();
       const entry: HistoryItem = {
         id,
-        title: prompt.trim()
-          ? prompt.trim().slice(0, 70)
-          : firstUserMessage
-            ? firstUserMessage.slice(0, 70)
-            : "Новый чат",
+        title: existingEntry?.title
+          ?? (prompt.trim()
+            ? prompt.trim().slice(0, 70)
+            : firstUserMessage
+              ? firstUserMessage.slice(0, 70)
+              : nextUntitledTitle),
         updatedAt: new Date().toISOString(),
         tokenEstimate: totalTokens,
         finalText,
@@ -617,11 +705,11 @@ export default function Home() {
       if (!currentChatId) setCurrentChatId(id);
       upsertHistory(entry);
     },
-    [anonymousMode, chatMessages, currentChatId, finalText, items, prompt, totalTokens, upsertHistory]
+    [anonymousMode, chatMessages, currentChatId, finalText, history, items, nextUntitledTitle, prompt, totalTokens, upsertHistory]
   );
 
   React.useEffect(() => {
-    if (!mounted || anonymousMode) return;
+    if (!mounted || anonymousMode || !autoSaveEnabled) return;
     const hasContent = prompt.trim().length > 0 || items.length > 0 || chatMessages.length > 0;
     if (!hasContent) return;
 
@@ -630,7 +718,7 @@ export default function Home() {
     }, 450);
 
     return () => window.clearTimeout(timer);
-  }, [mounted, anonymousMode, prompt, items, chatMessages, saveToHistory]);
+  }, [mounted, anonymousMode, autoSaveEnabled, prompt, items, chatMessages, saveToHistory]);
 
   React.useEffect(() => {
     const handleOutside = (event: MouseEvent) => {
@@ -664,59 +752,6 @@ export default function Home() {
         );
         const clean = parsed.filter((item) => !item.error || item.error === "Skipped by filters");
         setItems((prev) => [...prev, ...clean]);
-        setChatMessages((prev) => {
-          const messages: ChatMessage[] = [];
-          const folderGroups = new Map<string, ParsedItem[]>();
-
-          clean.forEach((item) => {
-            if (item.kind === "archive") {
-              const files = item.children?.length ?? 0;
-              const folders = new Set(
-                item.children
-                  ?.map((child) => child.path.split("/").slice(0, -1).join("/"))
-                  .filter(Boolean) ?? []
-              ).size;
-              messages.push({
-                id: crypto.randomUUID(),
-                role: "user",
-                createdAt: new Date().toISOString(),
-                content: `Перетащил архив ${item.name} (${files} файлов, ${folders} папок)`,
-              });
-              return;
-            }
-
-            if (item.path.includes("/")) {
-              const root = item.path.split("/")[0];
-              const list = folderGroups.get(root) ?? [];
-              list.push(item);
-              folderGroups.set(root, list);
-              return;
-            }
-
-            messages.push({
-              id: crypto.randomUUID(),
-              role: "user",
-              createdAt: new Date().toISOString(),
-              content: `Загрузка: ${item.name}`,
-            });
-          });
-
-          folderGroups.forEach((groupItems, root) => {
-            const folders = new Set(
-              groupItems
-                .map((item) => item.path.split("/").slice(0, -1).join("/"))
-                .filter(Boolean)
-            ).size;
-            messages.push({
-              id: crypto.randomUUID(),
-              role: "user",
-              createdAt: new Date().toISOString(),
-              content: `Добавил структуру ${root} (${groupItems.length} файлов, ${folders} папок)`,
-            });
-          });
-
-          return [...prev, ...messages];
-        });
         pushActivity(`Добавлено в workspace: ${clean.length}`);
       } finally {
         setIsParsing(false);
@@ -768,6 +803,86 @@ export default function Home() {
       }
     }
   };
+
+  const toTxtContext = React.useCallback((content: string) => {
+    return content
+      .replace(/^### FILE: .*$/gm, "")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }, []);
+
+  const triggerDownload = React.useCallback((fileName: string, content: string, mime: string) => {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, []);
+
+  const removeContextItems = React.useCallback((ids: string[], label: string) => {
+    if (!ids.length) return;
+    const idSet = new Set(ids);
+    setItems((prev) => prev.filter((entry) => !idSet.has(entry.id)));
+    setSelectedItemIds((prev) => prev.filter((id) => !idSet.has(id)));
+    setFavoriteItemIds((prev) => prev.filter((id) => !idSet.has(id)));
+    setActivePreview((prev) => (prev && idSet.has(prev.id) ? null : prev));
+    pushActivity(`Удален контекст: ${label}`);
+  }, [pushActivity]);
+
+  const editContextItems = React.useCallback((group: ContextGroup) => {
+    const current = group.items.map((entry) => entry.text).filter(Boolean).join("\n\n");
+    const next = window.prompt("Изменить контекст", current);
+    if (next === null) return;
+    const edited = next.trim();
+    if (!edited) return;
+
+    const ids = group.items.map((entry) => entry.id);
+    const idSet = new Set(ids);
+    const primaryId = ids[0] ?? crypto.randomUUID();
+    const replacement: ParsedItem = {
+      id: primaryId,
+      name: group.label,
+      path: group.path,
+      size: edited.length,
+      kind: "file",
+      text: edited,
+      tokenEstimate: estimateTokens(edited),
+      sourceType: "md",
+    };
+
+    setItems((prev) => {
+      const nextItems: ParsedItem[] = [];
+      let inserted = false;
+
+      prev.forEach((entry) => {
+        if (!idSet.has(entry.id)) {
+          nextItems.push(entry);
+          return;
+        }
+
+        if (!inserted) {
+          nextItems.push(replacement);
+          inserted = true;
+        }
+      });
+
+      if (!inserted) nextItems.push(replacement);
+      return nextItems;
+    });
+
+    setSelectedItemIds((prev) => {
+      const kept = prev.filter((id) => !idSet.has(id));
+      return kept.includes(primaryId) ? kept : [...kept, primaryId];
+    });
+    setFavoriteItemIds((prev) => {
+      const kept = prev.filter((id) => !idSet.has(id));
+      return kept.includes(primaryId) ? kept : [...kept, primaryId];
+    });
+    setActivePreview((prev) => (prev && idSet.has(prev.id) ? replacement : prev));
+    pushActivity(`Контекст изменен: ${group.label}`);
+  }, [pushActivity]);
 
   const toBase64Unicode = (input: string) => {
     const bytes = new TextEncoder().encode(input);
@@ -873,29 +988,20 @@ export default function Home() {
     if (!trimmed) return;
 
     const now = new Date().toISOString();
-    const assistantSummary = [
-      "### Context Updated",
-      `- Sources: ${items.length}`,
-      `- Files: ${totalFiles}`,
-      `- Tokens: ~${totalTokens}`,
-      "",
-      "```txt",
-      `${finalText.slice(0, 900)}${finalText.length > 900 ? "\n..." : ""}`,
-      "```",
-    ].join("\n");
-
-    setChatMessages((prev) => [
-      ...prev,
-      { id: crypto.randomUUID(), role: "user", content: trimmed, createdAt: now },
-      { id: crypto.randomUUID(), role: "assistant", content: assistantSummary, createdAt: now },
-    ]);
+    setChatMessages((prev) => {
+      return [
+        ...prev,
+        { id: crypto.randomUUID(), role: "user", content: trimmed, createdAt: now },
+      ];
+    });
     pushActivity("Prompt отправлен в контекстную ленту");
-    saveToHistory(true);
+    if (autoSaveEnabled) {
+      saveToHistory(true);
+    }
     setPrompt("");
   };
 
-  const startNewChat = () => {
-    saveToHistory();
+  const resetCurrentSession = () => {
     setPrompt("");
     setItems([]);
     setChatMessages([]);
@@ -903,6 +1009,13 @@ export default function Home() {
     setSelectedItemIds([]);
     setFavoriteItemIds([]);
     setActivePreview(null);
+  };
+
+  const startNewChat = () => {
+    if (autoSaveEnabled) {
+      saveToHistory();
+    }
+    resetCurrentSession();
     pushActivity("Новый чат");
   };
 
@@ -914,11 +1027,11 @@ export default function Home() {
           "grid min-h-screen grid-cols-1",
           rightSidebarOpen
             ? leftCollapsed
-              ? "xl:grid-cols-[minmax(700px,1fr)_4px_var(--right-sidebar-width)]"
-              : "xl:grid-cols-[280px_minmax(700px,1fr)_4px_var(--right-sidebar-width)]"
+              ? "xl:grid-cols-[minmax(0,1fr)_4px_var(--right-sidebar-width)]"
+              : "xl:grid-cols-[280px_minmax(0,1fr)_4px_var(--right-sidebar-width)]"
             : leftCollapsed
-              ? "xl:grid-cols-[minmax(700px,1fr)]"
-              : "xl:grid-cols-[280px_minmax(700px,1fr)]"
+              ? "xl:grid-cols-[minmax(0,1fr)]"
+              : "xl:grid-cols-[280px_minmax(0,1fr)]"
         )}
       >
         {!leftCollapsed && (
@@ -947,6 +1060,19 @@ export default function Home() {
             <MessageSquarePlus className="h-4 w-4" />
             <span>{t.newChat}</span>
           </button>
+
+            <div className="mb-3 rounded-2xl border border-border/70 bg-background/80 p-2">
+              <button
+                type="button"
+                onClick={() => setAutoSaveEnabled((value) => !value)}
+                className={cn(
+                  "w-full rounded-lg border px-2 py-1.5 text-left text-[11px]",
+                  autoSaveEnabled ? "border-primary bg-primary/10" : "border-border/70"
+                )}
+              >
+                {t.autosave}: {autoSaveEnabled ? "ON" : "OFF"}
+              </button>
+            </div>
 
             <div className="min-h-0 w-full flex-1 overflow-auto rounded-2xl border border-border/70 bg-background/60 p-2">
               <p className="mb-2 px-2 text-xs uppercase tracking-wide text-muted-foreground">{t.history}</p>
@@ -1152,19 +1278,10 @@ export default function Home() {
                     </span>
                   </div>
                   <p className="mt-1 truncate text-xs text-muted-foreground">
-                    {currentChatId ? "Активный чат:" : "Сессия:"} {activeChatTitle}
+                    {t.chatLabel}: {activeChatTitle}
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={startNewChat}
-                    className="inline-flex h-8 items-center gap-1 rounded-lg border border-border/70 bg-background px-2 text-xs hover:bg-muted"
-                    title={t.closeChat}
-                  >
-                    <X className="h-3.5 w-3.5" />
-                    {t.closeChat}
-                  </button>
                   <button
                     type="button"
                     onClick={() => setMarkdownEnabled((value) => !value)}
@@ -1218,7 +1335,7 @@ export default function Home() {
                           <span>{message.role === "user" ? "You" : "Context Engine"}</span>
                           <span>{new Date(message.createdAt).toLocaleTimeString()}</span>
                         </div>
-                        <div className="space-y-2">{renderMessageBody(message.content)}</div>
+                        <div className="space-y-2 wrap-anywhere">{renderMessageBody(message.content)}</div>
                       </div>
                     ))}
 
@@ -1280,9 +1397,40 @@ export default function Home() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => {
-                                  setPrompt((prev) => (prev ? `${prev}\nУточни контекст по ${group.label}` : `Уточни контекст по ${group.label}`));
+                                onClick={async () => {
+                                  const txt = toTxtContext(joinedText);
+                                  await onCopy(txt);
+                                  pushActivity(`Скопирован TXT: ${group.label}`);
                                 }}
+                                className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
+                              >
+                                TXT
+                              </button>
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  await onCopy(joinedText);
+                                  pushActivity(`Скопирован MD: ${group.label}`);
+                                }}
+                                className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
+                              >
+                                <Copy className="h-3.5 w-3.5" />
+                                MD
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  triggerDownload(`${group.label}.md`, joinedText, "text/markdown;charset=utf-8");
+                                  pushActivity(`Скачан MD: ${group.label}`);
+                                }}
+                                className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
+                              >
+                                <ArrowDownToLine className="h-3.5 w-3.5" />
+                                Download
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => editContextItems(group)}
                                 className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
                               >
                                 <Pencil className="h-3.5 w-3.5" />
@@ -1290,17 +1438,8 @@ export default function Home() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => onCopy(joinedText)}
-                                className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
-                              >
-                                <Copy className="h-3.5 w-3.5" />
-                                Скопировать
-                              </button>
-                              <button
-                                type="button"
                                 onClick={() => {
-                                  const removeIds = new Set(group.items.map((entry) => entry.id));
-                                  setItems((prev) => prev.filter((entry) => !removeIds.has(entry.id)));
+                                  removeContextItems(group.items.map((entry) => entry.id), group.label);
                                 }}
                                 className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
                               >
@@ -1458,16 +1597,6 @@ export default function Home() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      setPrompt("");
-                      pushActivity("Поле prompt очищено");
-                    }}
-                    className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted"
-                  >
-                    {t.clear}
-                  </button>
-                  <button
-                    type="button"
                     onClick={async () => {
                       await onCopy(finalText);
                       pushActivity("Черновой контекст скопирован");
@@ -1481,95 +1610,100 @@ export default function Home() {
               </div>
 
               <div className="rounded-xl border border-border/70 bg-background p-2">
-                <div className="mb-2 grid grid-cols-[1fr_auto] gap-1.5">
-                  <div className="relative">
-                    <Search className="pointer-events-none absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" />
-                    <input
-                      value={bundleFilter}
-                      onChange={(e) => setBundleFilter(e.target.value)}
-                      placeholder={t.filter}
-                      className="h-8 w-full rounded-md border border-border/70 bg-background pl-7 pr-2 text-[11px]"
-                    />
-                  </div>
-                  <select
-                    value={sortMode}
-                    onChange={(e) => setSortMode(e.target.value as SortMode)}
-                    className="h-8 min-w-24 rounded-md border border-border/70 bg-background px-2 text-[11px]"
-                  >
-                    <option value="latest">Default</option>
-                    <option value="name">Name</option>
-                    <option value="tokens">Tokens</option>
-                    <option value="size">Size</option>
-                  </select>
-                </div>
+                {items.length > 0 && (
+                  <>
+                    <p className="mb-1 text-[10px] text-muted-foreground">Поиск по имени или пути файла</p>
+                    <div className="mb-2 grid grid-cols-[1fr_auto] gap-1.5">
+                      <div className="relative">
+                        <Search className="pointer-events-none absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" />
+                        <input
+                          value={bundleFilter}
+                          onChange={(e) => setBundleFilter(e.target.value)}
+                          placeholder={t.filter}
+                          className="h-8 w-full rounded-md border border-border/70 bg-background pl-7 pr-2 text-[11px]"
+                        />
+                      </div>
+                      <select
+                        value={sortMode}
+                        onChange={(e) => setSortMode(e.target.value as SortMode)}
+                        className="h-8 min-w-24 rounded-md border border-border/70 bg-background px-2 text-[11px]"
+                      >
+                        <option value="latest">Default</option>
+                        <option value="name">Name</option>
+                        <option value="tokens">Tokens</option>
+                        <option value="size">Size</option>
+                      </select>
+                    </div>
 
-                <div className="mb-2 flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("cards")}
-                    className={cn(
-                      "inline-flex h-7 w-7 items-center justify-center rounded-md border border-border/70",
-                      viewMode === "cards" ? "bg-muted" : "bg-background"
-                    )}
-                  >
-                    <Grid3X3 className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("compact")}
-                    className={cn(
-                      "inline-flex h-7 w-7 items-center justify-center rounded-md border border-border/70",
-                      viewMode === "compact" ? "bg-muted" : "bg-background"
-                    )}
-                  >
-                    <ChevronsUpDown className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={selectAllVisible}
-                    className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted"
-                  >
-                    <CheckCheck className="h-3 w-3" /> {t.visible}
-                  </button>
-                </div>
+                    <div className="mb-2 flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setViewMode("cards")}
+                        className={cn(
+                          "inline-flex h-7 w-7 items-center justify-center rounded-md border border-border/70",
+                          viewMode === "cards" ? "bg-muted" : "bg-background"
+                        )}
+                      >
+                        <Grid3X3 className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setViewMode("compact")}
+                        className={cn(
+                          "inline-flex h-7 w-7 items-center justify-center rounded-md border border-border/70",
+                          viewMode === "compact" ? "bg-muted" : "bg-background"
+                        )}
+                      >
+                        <ChevronsUpDown className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={selectAllVisible}
+                        className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted"
+                      >
+                        <CheckCheck className="h-3 w-3" /> {t.visible}
+                      </button>
+                    </div>
 
-                <div className="mb-2 flex flex-wrap items-center gap-1.5 text-[10px]">
-                  <span className="rounded-md border border-border/70 px-1.5 py-0.5">{t.visible}: {visibleItems.length}</span>
-                  <span className="rounded-md border border-border/70 px-1.5 py-0.5">{t.selected}: {selectedItems.length}</span>
-                  <span className="rounded-md border border-border/70 px-1.5 py-0.5">{t.skipped}: {skippedFiles}</span>
-                </div>
+                    <div className="mb-2 flex flex-wrap items-center gap-1.5 text-[10px]">
+                      <span className="rounded-md border border-border/70 px-1.5 py-0.5">{t.visible}: {visibleItems.length}</span>
+                      <span className="rounded-md border border-border/70 px-1.5 py-0.5">{t.selected}: {selectedItems.length}</span>
+                      <span className="rounded-md border border-border/70 px-1.5 py-0.5">{t.skipped}: {skippedFiles}</span>
+                    </div>
 
-                <div className="mb-2 flex flex-wrap gap-1.5">
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      const text = combineToFinalTxt(
-                        selectedItems,
-                        includePromptInResult ? prompt : "",
-                        mounted ? new Date().toISOString() : undefined
-                      );
-                      await onCopy(text);
-                      pushActivity(`Собран selected: ${selectedItems.length}`);
-                    }}
-                    disabled={!selectedItems.length}
-                    className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
-                  >
-                    <ListFilter className="h-3 w-3" /> {t.buildSelected}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!selectedItems.length) return;
-                      setItems((prev) => prev.filter((item) => !selectedItemIds.includes(item.id)));
-                      pushActivity(`Удалено selected: ${selectedItems.length}`);
-                      setSelectedItemIds([]);
-                    }}
-                    disabled={!selectedItems.length}
-                    className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
-                  >
-                    <Trash2 className="h-3 w-3" /> {t.remove}
-                  </button>
-                </div>
+                    <div className="mb-2 flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const text = combineToFinalTxt(
+                            selectedItems,
+                            includePromptInResult ? prompt : "",
+                            mounted ? new Date().toISOString() : undefined
+                          );
+                          await onCopy(text);
+                          pushActivity(`Собран selected: ${selectedItems.length}`);
+                        }}
+                        disabled={!selectedItems.length}
+                        className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
+                      >
+                        <ListFilter className="h-3 w-3" /> {t.buildSelected}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!selectedItems.length) return;
+                          setItems((prev) => prev.filter((item) => !selectedItemIds.includes(item.id)));
+                          pushActivity(`Удалено selected: ${selectedItems.length}`);
+                          setSelectedItemIds([]);
+                        }}
+                        disabled={!selectedItems.length}
+                        className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
+                      >
+                        <Trash2 className="h-3 w-3" /> {t.remove}
+                      </button>
+                    </div>
+                  </>
+                )}
 
                 {!hasContent ? (
                   <div className="rounded-lg border border-dashed border-border/60 px-2 py-3 text-center text-[11px] text-muted-foreground">
@@ -1615,18 +1749,74 @@ export default function Home() {
                             <button
                               type="button"
                               onClick={async () => {
-                                await onCopy(item.text);
-                                pushActivity(`Скопирован source: ${item.name}`);
+                                await onCopy(toTxtContext(item.text));
+                                pushActivity(`Скопирован TXT: ${item.name}`);
                               }}
-                              className="inline-flex h-5 w-5 items-center justify-center rounded hover:bg-muted"
+                              className="inline-flex h-5 items-center justify-center rounded px-1.5 text-[10px] hover:bg-muted"
                             >
-                              <Copy className="h-3 w-3" />
+                              TXT
+                            </button>
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                await onCopy(item.text);
+                                pushActivity(`Скопирован MD: ${item.name}`);
+                              }}
+                              className="inline-flex h-5 items-center justify-center rounded px-1.5 text-[10px] hover:bg-muted"
+                            >
+                              MD
                             </button>
                             <button
                               type="button"
                               onClick={() => {
-                                setItems((prev) => prev.filter((entry) => entry.id !== item.id));
-                                pushActivity(`Удален source: ${item.name}`);
+                                triggerDownload(`${item.name}.txt`, toTxtContext(item.text), "text/plain;charset=utf-8");
+                                pushActivity(`Скачан TXT: ${item.name}`);
+                              }}
+                              className="inline-flex h-5 w-5 items-center justify-center rounded hover:bg-muted"
+                              title="Download TXT"
+                            >
+                              <ArrowDownToLine className="h-3 w-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const next = window.prompt("Изменить контекст", item.text);
+                                if (next === null) return;
+                                const edited = next.trim();
+                                if (!edited) return;
+                                setItems((prev) =>
+                                  prev.map((entry) =>
+                                    entry.id === item.id
+                                      ? {
+                                          ...entry,
+                                          text: edited,
+                                          size: edited.length,
+                                          tokenEstimate: estimateTokens(edited),
+                                        }
+                                      : entry
+                                  )
+                                );
+                                setActivePreview((prev) =>
+                                  prev?.id === item.id
+                                    ? {
+                                        ...prev,
+                                        text: edited,
+                                        size: edited.length,
+                                        tokenEstimate: estimateTokens(edited),
+                                      }
+                                    : prev
+                                );
+                                pushActivity(`Контекст изменен: ${item.name}`);
+                              }}
+                              className="inline-flex h-5 w-5 items-center justify-center rounded hover:bg-muted"
+                              title="Edit"
+                            >
+                              <Pencil className="h-3 w-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                removeContextItems([item.id], item.name);
                               }}
                               className="inline-flex h-5 w-5 items-center justify-center rounded text-red-500 hover:bg-muted"
                             >
@@ -1661,15 +1851,6 @@ export default function Home() {
                   <div className="rounded-md border border-border/60 px-2 py-1.5">{t.files}: {totalFiles}</div>
                   <div className="rounded-md border border-border/60 px-2 py-1.5">{t.size}: {bytesToText(totalBytes)}</div>
                   <div className="rounded-md border border-border/60 px-2 py-1.5">{t.tokens}: ~{totalTokens}</div>
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-border/70 bg-background p-2">
-                <p className="mb-1 text-[11px] font-semibold">{t.pipeline}</p>
-                <div className="space-y-1 text-[10px]">
-                  <div className="rounded-md border border-border/60 px-2 py-1.5">{t.parser}: {processing ? t.parserProcessing : t.parserReady}</div>
-                  <div className="rounded-md border border-border/60 px-2 py-1.5">Builder: {finalText ? t.builderReady : t.builderWaiting}</div>
-                  <div className="rounded-md border border-border/60 px-2 py-1.5">History: {history.length} {t.historyEntries}</div>
                 </div>
               </div>
 
@@ -1812,7 +1993,7 @@ export default function Home() {
               </div>
             </div>
             <div className="preview-scroll min-h-0 flex-1 overflow-auto p-4">
-              <pre className="text-xs whitespace-pre-wrap">{activePreview.text || t.noData}</pre>
+              <div className="space-y-2">{renderMessageBody(activePreview.text || t.noData)}</div>
             </div>
             <div className="border-t border-border/70 p-3">
               <button
