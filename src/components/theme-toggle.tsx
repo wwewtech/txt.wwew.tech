@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { DragSegmented } from "@/components/drag-segmented";
+import { DragSegmented } from "./drag-segmented";
 
 type ThemeValue = "light" | "dark" | "system";
 

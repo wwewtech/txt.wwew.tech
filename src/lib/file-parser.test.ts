@@ -15,7 +15,7 @@ import {
   isIgnoredPath,
   parseFileWithPath,
   type ParsedItem,
-} from "@/lib/file-parser";
+} from "@/lib";
 
 const settings = {
   ignoredDirectories: ["node_modules", ".git"],

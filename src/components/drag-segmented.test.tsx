@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { DragSegmented } from "@/components/drag-segmented";
+import { DragSegmented } from "@/components";
 
 describe("DragSegmented UI behavior", () => {
   const options = [

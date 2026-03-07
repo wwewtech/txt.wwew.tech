@@ -18,6 +18,17 @@
 - `next-themes`, `lucide-react`
 - `mammoth` (DOCX), `pdfjs-dist` (PDF), `jszip` (ZIP)
 
+## Архитектура `src`
+
+- `src/app` — только route-слой Next.js (`page.tsx`, `layout.tsx`, `manifest.ts`, `robots.ts`, `sitemap.ts`, стили и route-тесты).
+- `src/features/home` — весь feature-модуль домашней страницы (UI-компоненты, state/actions hooks, типы, константы, markdown renderers).
+- `src/lib` — переиспользуемая инфраструктура и парсинг файлов.
+- `src/components` — общие UI-компоненты, не привязанные к конкретной фиче.
+
+### Правило
+
+Новый бизнес-код не добавляется в `src/app`, кроме route-entrypoint файлов Next.js. Функциональность размещается в `src/features/<feature-name>`.
+
 ## Запуск
 
 ```bash

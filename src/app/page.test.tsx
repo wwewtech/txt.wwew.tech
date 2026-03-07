@@ -2,8 +2,8 @@ import { render, screen, fireEvent, waitFor, within } from "@testing-library/rea
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/file-parser", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/file-parser")>();
+vi.mock("@/lib", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib")>();
 
   return {
     ...actual,
@@ -21,7 +21,7 @@ vi.mock("@/lib/file-parser", async (importOriginal) => {
 });
 
 import Home from "@/app/page";
-import { parseFileWithPath, type ParsedItem } from "@/lib/file-parser";
+import { parseFileWithPath, type ParsedItem } from "@/lib";
 
 function makeParsedItem(path: string, overrides: Partial<ParsedItem> = {}): ParsedItem {
   return {
@@ -228,7 +228,7 @@ describe("Home central panel UI/UX", () => {
 
     clickNewChat();
 
-    expect(screen.getByText(/Chat: Untitled|Чат: Untitled/)).toBeInTheDocument();
+    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
     expect(screen.queryByText("state.txt")).not.toBeInTheDocument();
     expect(composer).toHaveValue("");
   });
@@ -252,7 +252,7 @@ describe("Home central panel UI/UX", () => {
 
     const restored = await screen.findAllByText("История восстановление");
     expect(restored.length).toBeGreaterThan(0);
-    expect(screen.getByText(/Chat:|Чат:/)).toBeInTheDocument();
+    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
   });
 
   it("does not create history entry when closing an empty draft", async () => {
@@ -261,7 +261,7 @@ describe("Home central panel UI/UX", () => {
     clickNewChat();
 
     expect(screen.getByText(/No entries yet|Записей пока нет/)).toBeInTheDocument();
-    expect(screen.getByText(/Chat: Untitled|Чат: Untitled/)).toBeInTheDocument();
+    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
   });
 
   it("keeps chats isolated when switching from history", async () => {
@@ -301,7 +301,7 @@ describe("Home central panel UI/UX", () => {
     fireEvent.click(within(target).getByRole("button", { name: "Actions" }));
     fireEvent.click(await screen.findByRole("button", { name: "Delete" }));
 
-    expect(screen.getByText(/Chat: Untitled|Чат: Untitled/)).toBeInTheDocument();
+    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
   });
 
   it("left New chat keeps history entries but clears current center state", async () => {
@@ -317,7 +317,7 @@ describe("Home central panel UI/UX", () => {
 
     expect(screen.getByRole("button", { name: /Левый new chat/i })).toBeInTheDocument();
     expect(composer).toHaveValue("");
-    expect(screen.getByText(/Chat: Untitled|Чат: Untitled/)).toBeInTheDocument();
+    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
   });
 
   it("starting new chat while preview is open closes modal too", async () => {
@@ -374,7 +374,7 @@ describe("Home central panel UI/UX", () => {
     fireEvent.click(within(chatOneContainer).getByRole("button", { name: "Actions" }));
     fireEvent.click(await screen.findByRole("button", { name: "Delete" }));
 
-    expect(screen.getByText(/Chat:|Чат:/)).toBeInTheDocument();
+    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
     expect(screen.getAllByText(/Чат два|Чат два \(copy\)/).length).toBeGreaterThan(0);
     expect(screen.queryByRole("button", { name: /Чат один/i })).not.toBeInTheDocument();
   });
@@ -847,7 +847,7 @@ describe("Home central panel UI/UX", () => {
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "activity-file.txt", { type: "text/plain" })] } });
 
-    expect(await screen.findByText(/Загрузка: 1 шт\./)).toBeInTheDocument();
+    expect(await screen.findByText(/Загрузка:\s*1\s*шт\.|Upload:\s*1\s*item\(s\)/i)).toBeInTheDocument();
   });
 
   it("[extra 30] activity log records prompt send", async () => {
