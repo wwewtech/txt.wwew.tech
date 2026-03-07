@@ -1,0 +1,105 @@
+# txt.wwew.tech
+
+<div align="center">
+
+### ⚡ Files → one LLM-ready `.txt`
+
+Local-first context builder for people who work with LLMs and want clean, structured input without server-side processing.
+
+![Next.js](https://img.shields.io/badge/Next.js-App%20Router-000000?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind%20CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Client-side](https://img.shields.io/badge/Processing-Client--Side-22C55E?style=for-the-badge)
+
+</div>
+
+<p align="center">
+	<img src="./public/readme-home.png" alt="txt.wwew.tech interface" width="100%" />
+</p>
+
+<p align="center">
+	<a href="./README.ru.md">Русская версия</a>
+</p>
+
+---
+
+## What this project does
+
+`txt.wwew.tech` helps you combine content from multiple files into one clean `.txt` that is easy to paste into an LLM.
+Instead of manually stitching pieces together, you load your sources and export a structured result in one pass.
+
+Everything runs in the browser, on the client side.
+
+## Why it is useful
+
+- Turns scattered files into one consistent, LLM-ready context.
+- Keeps structure readable so prompts stay maintainable.
+- Shows an approximate token count before export.
+- Processes data locally, without uploading files to a backend.
+- Works well for quick one-off tasks and larger recurring workflows.
+
+## How it works
+
+1. Add files and/or folders via drag-and-drop or upload buttons.
+2. The app parses content locally and builds a workspace tree.
+3. Apply folder and extension filters to remove noise.
+4. Review the generated context and export it as `.txt`.
+
+## Supported formats
+
+| Category | Formats |
+|---|---|
+| Text & code | `txt`, `json`, `csv`, `html`, `xml`, `yaml`, and other text-based files |
+| Documents | `pdf`, `docx` |
+| Archives | `zip` |
+
+If a `zip` archive contains supported file types, they are included in the final output as well.
+
+## Tech stack
+
+- **Framework:** Next.js (App Router)
+- **Language:** TypeScript
+- **Styles:** Tailwind CSS v4
+- **UI/UX:** `next-themes`, `lucide-react`
+- **Parsing:** `mammoth` (DOCX), `pdfjs-dist` (PDF), `jszip` (ZIP)
+
+## Architecture
+
+```text
+src/
+├─ app/            # Next.js route layer (entrypoints + route metadata)
+├─ features/home/  # home feature module (UI, hooks, model, store)
+├─ components/     # shared UI components
+└─ lib/            # reusable infrastructure and parsing utilities
+```
+
+### Project rule
+
+Do not place new business logic in `src/app` (except Next.js route-entrypoint files).
+Feature code should live in `src/features/<feature-name>`.
+
+## Quick start
+
+```bash
+npm install
+npm run dev
+```
+
+Open: `http://localhost:3000`
+
+Useful commands:
+
+```bash
+npm run test:run
+npm run build
+```
+
+- `test:run` — runs unit/integration tests.
+- `build` — validates the production build.
+
+## Privacy
+
+- All processing is performed in the browser.
+- In anonymous mode, history is not stored in `localStorage`.
+
+This allows working with sensitive files locally, without sending content to external services.
