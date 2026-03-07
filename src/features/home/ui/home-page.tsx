@@ -89,6 +89,7 @@ export default function Home() {
           l={state.l}
           onTriggerDownload={actions.triggerDownload}
           onEditContextGroup={actions.editContextItems}
+          onEditContextItem={actions.editItem}
           onRemoveContextItems={actions.removeContextItems}
           onFilePick={actions.onFilePick}
           onPromptChange={state.setPrompt}

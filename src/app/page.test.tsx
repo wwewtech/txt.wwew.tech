@@ -133,6 +133,31 @@ describe("Home central panel UI/UX", () => {
     expect(screen.queryByText(/файлов:\s*1|files:\s*1/i)).not.toBeInTheDocument();
   });
 
+  it("renders per-file actions for each item inside grouped context", async () => {
+    render(<Home />);
+
+    const hiddenInputs = document.querySelectorAll('input[type="file"]');
+    const fileInput = hiddenInputs[0] as HTMLInputElement;
+    const fileA = new File(["a"], "a.txt", { type: "text/plain" });
+    const fileB = new File(["b"], "b.txt", { type: "text/plain" });
+    Object.defineProperty(fileA, "webkitRelativePath", { value: "project/src/a.txt" });
+    Object.defineProperty(fileB, "webkitRelativePath", { value: "project/src/b.txt" });
+
+    fireEvent.change(fileInput, { target: { files: [fileA, fileB] } });
+
+    const itemACard = (await screen.findAllByText("a.txt"))[0].closest(".rounded-xl") as HTMLElement;
+    const itemBCard = (await screen.findAllByText("b.txt"))[0].closest(".rounded-xl") as HTMLElement;
+
+    [itemACard, itemBCard].forEach((card) => {
+      expect(within(card).getByRole("button", { name: /Preview|Предпросмотр/i })).toBeInTheDocument();
+      expect(within(card).getByRole("button", { name: "TXT" })).toBeInTheDocument();
+      expect(within(card).getByRole("button", { name: "MD" })).toBeInTheDocument();
+      expect(within(card).getByRole("button", { name: /Download|Скачать/i })).toBeInTheDocument();
+      expect(within(card).getByRole("button", { name: /Edit|Изменить/i })).toBeInTheDocument();
+      expect(within(card).getByRole("button", { name: /Delete|Удалить/i })).toBeInTheDocument();
+    });
+  });
+
   it("opens preview modal and deletes context from modal action", async () => {
     render(<Home />);
 

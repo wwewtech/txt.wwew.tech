@@ -50,12 +50,17 @@ type HomeMainPanelProps = {
   l: (ruText: string, enText: string) => string;
   onTriggerDownload: (fileName: string, content: string, mime: string) => void;
   onEditContextGroup: (group: ContextGroup) => void;
+  onEditContextItem: (item: ParsedItem) => void;
   onRemoveContextItems: (ids: string[], label: string) => void;
   onFilePick: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   onPromptChange: (value: string) => void;
   onSendPrompt: () => void;
   onExportTxt: () => void;
 };
+
+const ITEM_ACTION_BUTTON_CLASS =
+  "inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted";
+const GROUP_META_CHIP_CLASS = "rounded-md border border-border/60 px-2 py-1";
 
 export function HomeMainPanel({
   t,
@@ -85,6 +90,7 @@ export function HomeMainPanel({
   l,
   onTriggerDownload,
   onEditContextGroup,
+  onEditContextItem,
   onRemoveContextItems,
   onFilePick,
   onPromptChange,
@@ -202,87 +208,133 @@ export function HomeMainPanel({
                       </div>
 
                       <div className="mb-2 flex flex-wrap gap-1.5 text-[11px] text-muted-foreground">
-                        <span className="rounded-md border border-border/60 px-2 py-1">{t.fileCount}: {group.fileCount}</span>
-                        <span className="rounded-md border border-border/60 px-2 py-1">{t.folderCount}: {group.folderCount}</span>
-                        <span className="rounded-md border border-border/60 px-2 py-1">{bytesToText(group.size)}</span>
+                        <span className={GROUP_META_CHIP_CLASS}>{t.fileCount}: {group.fileCount}</span>
+                        <span className={GROUP_META_CHIP_CLASS}>{t.folderCount}: {group.folderCount}</span>
+                        <span className={GROUP_META_CHIP_CLASS}>{bytesToText(group.size)}</span>
                       </div>
 
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="truncate text-xs text-muted-foreground">
-                          {group.kind === "archive"
-                            ? `${t.archiveParsed}: ${group.fileCount} ${t.fileCount}`
-                            : group.kind === "folder"
-                              ? `${t.folderStructure}: ${group.label}`
-                              : t.singleFile}
-                        </p>
-                        <div className="flex items-center gap-1 opacity-100 transition md:opacity-0 md:group-hover:opacity-100">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (group.items.length === 1 && group.kind === "file") {
-                                onPreviewItem(group.items[0]);
-                                return;
-                              }
-
-                              onPreviewGroup(group, joinedText);
-                            }}
-                            className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
-                          >
-                            <Eye className="h-3.5 w-3.5" />
-                            {t.previewAction}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              const txt = onToTxtContext(joinedText);
-                              await onCopy(txt);
-                              onPushActivity(l(`Скопирован TXT: ${group.label}`, `Copied TXT: ${group.label}`));
-                            }}
-                            className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
-                          >
-                            TXT
-                          </button>
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              await onCopy(joinedText);
-                              onPushActivity(l(`Скопирован MD: ${group.label}`, `Copied MD: ${group.label}`));
-                            }}
-                            className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
-                          >
-                            <Copy className="h-3.5 w-3.5" />
-                            MD
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              onTriggerDownload(`${group.label}.md`, joinedText, "text/markdown;charset=utf-8");
-                              onPushActivity(l(`Скачан MD: ${group.label}`, `Downloaded MD: ${group.label}`));
-                            }}
-                            className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
-                          >
-                            <ArrowDownToLine className="h-3.5 w-3.5" />
-                            {t.download}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => onEditContextGroup(group)}
-                            className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
-                          >
-                            <Pencil className="h-3.5 w-3.5" />
-                            {t.edit}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              onRemoveContextItems(group.items.map((contextItem) => contextItem.id), group.label);
-                            }}
-                            className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                            {t.delete}
-                          </button>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="truncate text-xs text-muted-foreground">
+                            {group.kind === "archive"
+                              ? `${t.archiveParsed}: ${group.fileCount} ${t.fileCount}`
+                              : group.kind === "folder"
+                                ? `${t.folderStructure}: ${group.label}`
+                                : t.singleFile}
+                          </p>
+                          {group.items.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => onPreviewGroup(group, joinedText)}
+                              className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
+                            >
+                              <Eye className="h-3.5 w-3.5" />
+                              {t.previewAction}
+                            </button>
+                          )}
                         </div>
+
+                        <div className="space-y-1.5 border-l border-border/50 pl-2">
+                          {group.items.map((item) => {
+                            const itemActions: Array<{
+                              key: string;
+                              label: string;
+                              icon?: React.ReactNode;
+                              onClick: () => void | Promise<void>;
+                            }> = [
+                              {
+                                key: "preview",
+                                label: t.previewAction,
+                                icon: <Eye className="h-3.5 w-3.5" />,
+                                onClick: () => onPreviewItem(item),
+                              },
+                              {
+                                key: "txt",
+                                label: "TXT",
+                                onClick: async () => {
+                                  const txt = onToTxtContext(item.text);
+                                  await onCopy(txt);
+                                  onPushActivity(l(`Скопирован TXT: ${item.name}`, `Copied TXT: ${item.name}`));
+                                },
+                              },
+                              {
+                                key: "md",
+                                label: "MD",
+                                icon: <Copy className="h-3.5 w-3.5" />,
+                                onClick: async () => {
+                                  await onCopy(item.text);
+                                  onPushActivity(l(`Скопирован MD: ${item.name}`, `Copied MD: ${item.name}`));
+                                },
+                              },
+                              {
+                                key: "download",
+                                label: t.download,
+                                icon: <ArrowDownToLine className="h-3.5 w-3.5" />,
+                                onClick: () => {
+                                  onTriggerDownload(`${item.name}.md`, item.text, "text/markdown;charset=utf-8");
+                                  onPushActivity(l(`Скачан MD: ${item.name}`, `Downloaded MD: ${item.name}`));
+                                },
+                              },
+                              {
+                                key: "edit",
+                                label: t.edit,
+                                icon: <Pencil className="h-3.5 w-3.5" />,
+                                onClick: () => onEditContextItem(item),
+                              },
+                              {
+                                key: "delete",
+                                label: t.delete,
+                                icon: <Trash2 className="h-3.5 w-3.5" />,
+                                onClick: () => onRemoveContextItems([item.id], item.name),
+                              },
+                            ];
+
+                            return (
+                              <div
+                                key={item.id}
+                                className="rounded-xl border border-border/60 bg-background/70 px-2.5 py-2"
+                              >
+                                <div className="mb-1.5 flex items-center justify-between gap-2">
+                                  <p className="truncate text-xs font-medium">{item.name}</p>
+                                  <span className="shrink-0 rounded-full border border-border/60 px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                                    ~{item.tokenEstimate} {t.tokenSuffix}
+                                  </span>
+                                </div>
+                                  <div className="flex flex-col gap-1.5">
+                                  <p className="max-w-full truncate text-[11px] text-muted-foreground">
+                                    {group.items.length === 1 ? t.singleFile : item.path}
+                                  </p>
+                                    <div className="flex flex-wrap items-center gap-1">
+                                    {itemActions.map((action) => (
+                                      <button
+                                        key={`${item.id}-${action.key}`}
+                                        type="button"
+                                        onClick={action.onClick}
+                                        className={ITEM_ACTION_BUTTON_CLASS}
+                                      >
+                                        {action.icon}
+                                        {action.label}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {group.items.length > 1 && (
+                          <div className="flex justify-end">
+                            <button
+                              type="button"
+                              onClick={() => onEditContextGroup(group)}
+                              className={`${ITEM_ACTION_BUTTON_CLASS} text-muted-foreground`}
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                              {l("Изменить весь контекст", "Edit all context")}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
