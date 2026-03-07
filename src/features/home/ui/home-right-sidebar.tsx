@@ -128,11 +128,11 @@ export function HomeRightSidebar({
 }: HomeRightSidebarProps) {
   return (
     <aside
-      className="hidden h-screen border-l border-border/70 bg-muted/10 xl:sticky xl:top-0 xl:block"
+      className="hidden h-screen border-l border-border/50 bg-background/90 xl:sticky xl:top-0 xl:block"
       style={{ width: `${rightSidebarWidth}px` }}
     >
-      <div className="p-2 pb-0">
-        <div className="mb-3 w-full rounded-2xl border border-border/70 bg-background/80 p-3">
+      <div className="p-3 pb-0">
+        <div className="mb-3 border-b border-border/40 pb-3">
           <div className="flex items-start justify-between gap-2">
             <div>
               <p className="text-sm font-semibold tracking-tight">{t.settings}</p>
@@ -141,7 +141,7 @@ export function HomeRightSidebar({
             <button
               type="button"
               onClick={onCloseRight}
-              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted"
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border/60 bg-background hover:bg-muted"
               title={t.closeRight}
             >
               <PanelRightClose className="h-4 w-4" />
@@ -150,8 +150,8 @@ export function HomeRightSidebar({
         </div>
       </div>
 
-      <div className="h-[calc(100vh-6.75rem)] space-y-2 overflow-auto p-2">
-        <div className="rounded-xl border border-border/70 bg-background p-2">
+      <div className="h-[calc(100vh-6.75rem)] space-y-2.5 overflow-auto p-3 pt-0">
+        <div className="rounded-xl bg-muted/25 p-2.5">
           <div className="mb-2 flex items-center justify-between">
             <p className="text-[11px] font-semibold">{t.quickPrompts}</p>
             <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
@@ -162,7 +162,7 @@ export function HomeRightSidebar({
                 key={item}
                 type="button"
                 onClick={() => onAddPromptSuggestion(item)}
-                className="rounded-full border border-border/70 px-2 py-1 text-[10px] hover:bg-muted"
+                className="rounded-full border border-border/60 bg-background/70 px-2 py-1 text-[10px] hover:bg-muted"
               >
                 {item}
               </button>
@@ -173,7 +173,7 @@ export function HomeRightSidebar({
               type="button"
               onClick={onQuickBuild}
               disabled={processing || !items.length}
-              className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
+              className="inline-flex h-7 items-center gap-1 rounded-md border border-border/60 bg-background/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
             >
               <WandSparkles className="h-3 w-3" /> {t.build}
             </button>
@@ -181,7 +181,7 @@ export function HomeRightSidebar({
               type="button"
               onClick={onCopyDraft}
               disabled={!items.length}
-              className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
+              className="inline-flex h-7 items-center gap-1 rounded-md border border-border/60 bg-background/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
             >
               <Copy className="h-3 w-3" /> {t.draft}
             </button>
@@ -189,7 +189,7 @@ export function HomeRightSidebar({
         </div>
 
         {(items.length > 0 || processing) && (
-          <div className="rounded-xl border border-border/70 bg-background p-2">
+          <div className="rounded-xl bg-muted/25 p-2.5">
           {items.length > 0 && (
             <>
               <p className="mb-1 text-[10px] text-muted-foreground">{t.searchHint}</p>
@@ -206,7 +206,7 @@ export function HomeRightSidebar({
                 <select
                   value={sortMode}
                   onChange={(event) => onSetSortMode(event.target.value as SortMode)}
-                  className="h-8 min-w-24 rounded-md border border-border/70 bg-background px-2 text-[11px]"
+                  className="h-8 min-w-24 rounded-md border border-border/60 bg-background px-2 text-[11px]"
                 >
                   <option value="latest">{t.sortDefault}</option>
                   <option value="name">{t.sortName}</option>
@@ -221,7 +221,7 @@ export function HomeRightSidebar({
                   onClick={() => onSetViewMode("cards")}
                   className={cn(
                     "inline-flex h-7 w-7 items-center justify-center rounded-md border border-border/70",
-                    viewMode === "cards" ? "bg-muted" : "bg-background"
+                    viewMode === "cards" ? "bg-muted" : "bg-background/80"
                   )}
                 >
                   <Grid3X3 className="h-3.5 w-3.5" />
@@ -231,7 +231,7 @@ export function HomeRightSidebar({
                   onClick={() => onSetViewMode("compact")}
                   className={cn(
                     "inline-flex h-7 w-7 items-center justify-center rounded-md border border-border/70",
-                    viewMode === "compact" ? "bg-muted" : "bg-background"
+                    viewMode === "compact" ? "bg-muted" : "bg-background/80"
                   )}
                 >
                   <ChevronsUpDown className="h-3.5 w-3.5" />
@@ -239,16 +239,16 @@ export function HomeRightSidebar({
                 <button
                   type="button"
                   onClick={onSelectAllVisible}
-                  className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted"
+                  className="inline-flex h-7 items-center gap-1 rounded-md border border-border/60 bg-background/80 px-2 text-[10px] hover:bg-muted"
                 >
                   <CheckCheck className="h-3 w-3" /> {t.visible}
                 </button>
               </div>
 
               <div className="mb-2 flex flex-wrap items-center gap-1.5 text-[10px]">
-                <span className="rounded-md border border-border/70 px-1.5 py-0.5">{t.visible}: {visibleItems.length}</span>
-                <span className="rounded-md border border-border/70 px-1.5 py-0.5">{t.selected}: {selectedItems.length}</span>
-                <span className="rounded-md border border-border/70 px-1.5 py-0.5">{t.skipped}: {skippedFiles}</span>
+                <span className="rounded-md border border-border/60 bg-background/70 px-1.5 py-0.5">{t.visible}: {visibleItems.length}</span>
+                <span className="rounded-md border border-border/60 bg-background/70 px-1.5 py-0.5">{t.selected}: {selectedItems.length}</span>
+                <span className="rounded-md border border-border/60 bg-background/70 px-1.5 py-0.5">{t.skipped}: {skippedFiles}</span>
               </div>
 
               <div className="mb-2 flex flex-wrap gap-1.5">
@@ -256,7 +256,7 @@ export function HomeRightSidebar({
                   type="button"
                   onClick={onBuildSelected}
                   disabled={!selectedItems.length}
-                  className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
+                  className="inline-flex h-7 items-center gap-1 rounded-md border border-border/60 bg-background/80 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
                 >
                   <ListFilter className="h-3 w-3" /> {t.buildSelected}
                 </button>
@@ -264,7 +264,7 @@ export function HomeRightSidebar({
                   type="button"
                   onClick={onRemoveSelected}
                   disabled={!selectedItems.length}
-                  className="inline-flex h-7 items-center gap-1 rounded-md border border-border/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
+                  className="inline-flex h-7 items-center gap-1 rounded-md border border-border/60 bg-background/80 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
                 >
                   <Trash2 className="h-3 w-3" /> {t.remove}
                 </button>
@@ -282,7 +282,7 @@ export function HomeRightSidebar({
                   <div
                     key={item.id}
                     className={cn(
-                      "rounded-lg border border-border/60 bg-background px-2 py-1.5",
+                      "rounded-lg border border-border/50 bg-background/90 px-2 py-1.5",
                       isSelected && "border-primary/40 bg-primary/5"
                     )}
                   >
@@ -373,17 +373,17 @@ export function HomeRightSidebar({
           </div>
         )}
 
-        <div className="rounded-xl border border-border/70 bg-background p-2">
+        <div className="rounded-xl bg-muted/25 p-2.5">
           <p className="mb-1 text-[11px] font-semibold">{t.workspace}</p>
           <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-            <div className="rounded-md border border-border/60 px-2 py-1.5">{t.sources}: {items.length}</div>
-            <div className="rounded-md border border-border/60 px-2 py-1.5">{t.files}: {totalFiles}</div>
-            <div className="rounded-md border border-border/60 px-2 py-1.5">{t.size}: {onBytesToText(totalBytes)}</div>
-            <div className="rounded-md border border-border/60 px-2 py-1.5">{t.tokens}: ~{totalTokens}</div>
+            <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.sources}: {items.length}</div>
+            <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.files}: {totalFiles}</div>
+            <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.size}: {onBytesToText(totalBytes)}</div>
+            <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.tokens}: ~{totalTokens}</div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-border/70 bg-background p-2">
+        <div className="rounded-xl bg-muted/25 p-2.5">
           <div className="mb-2 flex items-center justify-between">
             <p className="text-[11px] font-semibold">{t.privacy}</p>
             <Shield className="h-3.5 w-3.5 text-muted-foreground" />
@@ -451,7 +451,7 @@ export function HomeRightSidebar({
           </div>
         </div>
 
-        <div className="rounded-xl border border-border/70 bg-background p-2">
+        <div className="rounded-xl bg-muted/25 p-2.5">
           <p className="mb-1 text-[11px] font-semibold">{t.parser}</p>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t.ignoredDirs}</label>
           <textarea
@@ -467,7 +467,7 @@ export function HomeRightSidebar({
           />
         </div>
 
-        <div className="rounded-xl border border-border/70 bg-background p-2">
+        <div className="rounded-xl bg-muted/25 p-2.5">
           <p className="mb-1 text-[11px] font-semibold">{t.output}</p>
           <div className="space-y-1.5 text-[10px]">
             <label className="flex items-center justify-between rounded-md border border-border/60 px-2 py-1.5">
@@ -489,7 +489,7 @@ export function HomeRightSidebar({
           </div>
         </div>
 
-        <div className="rounded-xl border border-border/70 bg-background p-2 text-[10px]">
+        <div className="rounded-xl bg-muted/25 p-2.5 text-[10px]">
           <div className="mb-1.5 flex items-center justify-between">
             <p className="font-semibold">{t.activity}</p>
             <a href="https://github.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">

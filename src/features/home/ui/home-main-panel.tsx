@@ -103,7 +103,7 @@ export function HomeMainPanel({
         <button
           type="button"
           onClick={onExpandLeft}
-          className="fixed left-4 top-4 z-40 hidden h-8 w-8 items-center justify-center rounded-lg border border-border bg-background shadow-sm transition-colors hover:bg-muted md:left-6 md:top-6 xl:inline-flex"
+          className="fixed left-4 top-4 z-40 hidden h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-background transition-colors hover:bg-muted md:left-6 md:top-6 xl:inline-flex"
         >
           <PanelLeftOpen className="h-4 w-4" />
         </button>
@@ -112,14 +112,14 @@ export function HomeMainPanel({
         <button
           type="button"
           onClick={onOpenRight}
-          className="fixed right-4 top-4 z-40 hidden h-8 w-8 items-center justify-center rounded-lg border border-border bg-background shadow-sm transition-colors hover:bg-muted md:right-6 md:top-6 xl:inline-flex"
+          className="fixed right-4 top-4 z-40 hidden h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-background transition-colors hover:bg-muted md:right-6 md:top-6 xl:inline-flex"
           title={t.openRight}
         >
           <PanelRightOpen className="h-4 w-4" />
         </button>
       )}
       <div className="mx-auto flex h-full w-full max-w-4xl flex-1 flex-col p-4 md:p-6">
-        <div className="mb-3 rounded-2xl border border-border/70 bg-background/90 px-4 py-3">
+        <div className="mb-3 border-b border-border/40 px-1 pb-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
@@ -158,13 +158,13 @@ export function HomeMainPanel({
         <div
           onDrop={onDrop}
           onDragOver={(event) => event.preventDefault()}
-          className="min-h-0 flex-1 overflow-hidden rounded-3xl border border-border/70 bg-muted/10"
+          className="min-h-0 flex-1 overflow-hidden rounded-2xl bg-muted/15"
         >
           <div className="flex h-full flex-col">
             <div className="min-h-0 flex-1 overflow-y-auto p-4">
               <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
                 {timelineEntries.length === 0 && (
-                  <div className="rounded-2xl border border-dashed border-border/70 bg-background/70 px-4 py-6 text-center text-sm text-muted-foreground">
+                  <div className="rounded-2xl border border-dashed border-border/60 bg-background/70 px-4 py-6 text-center text-sm text-muted-foreground">
                     {t.dropHint}
                   </div>
                 )}
@@ -195,7 +195,7 @@ export function HomeMainPanel({
                   const joinedText = group.items.map((item) => item.text).filter(Boolean).join("\n\n");
 
                   return (
-                    <div key={entry.id} className="group rounded-2xl border border-border/70 bg-background/90 p-3">
+                    <div key={entry.id} className="group rounded-2xl border border-border/50 bg-background/85 p-3">
                       <div className="mb-2 flex items-start justify-between gap-2">
                         <div className="min-w-0">
                           <p className="truncate text-sm font-medium">{group.label}</p>
@@ -292,7 +292,7 @@ export function HomeMainPanel({
                             return (
                               <div
                                 key={item.id}
-                                className="rounded-xl border border-border/60 bg-background/70 px-2.5 py-2"
+                                className="rounded-xl border border-border/40 bg-background/70 px-2.5 py-2"
                               >
                                 <div className="mb-1.5 flex items-center justify-between gap-2">
                                   <p className="truncate text-xs font-medium">{item.name}</p>
@@ -342,8 +342,8 @@ export function HomeMainPanel({
               </div>
             </div>
 
-            <div className="border-t border-border/60 bg-background/90 p-3 md:p-4">
-              <div className="mx-auto flex w-full max-w-3xl items-end gap-2 rounded-2xl border border-border/70 bg-background px-3 py-2 shadow-sm">
+            <div className="border-t border-border/40 bg-background/90 p-3 md:p-4">
+              <div className="mx-auto flex w-full max-w-3xl items-end gap-2 rounded-2xl border border-border/50 bg-background px-3 py-2">
                 <input
                   ref={fileInputRef}
                   type="file"

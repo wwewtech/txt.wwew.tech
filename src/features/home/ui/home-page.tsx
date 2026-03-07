@@ -21,8 +21,8 @@ export default function Home() {
           "grid min-h-screen grid-cols-1",
           state.rightSidebarOpen
             ? state.leftCollapsed
-              ? "xl:grid-cols-[minmax(0,1fr)_4px_var(--right-sidebar-width)]"
-              : "xl:grid-cols-[280px_minmax(0,1fr)_4px_var(--right-sidebar-width)]"
+              ? "xl:grid-cols-[minmax(0,1fr)_1px_var(--right-sidebar-width)]"
+              : "xl:grid-cols-[280px_minmax(0,1fr)_1px_var(--right-sidebar-width)]"
             : state.leftCollapsed
               ? "xl:grid-cols-[minmax(0,1fr)]"
               : "xl:grid-cols-[280px_minmax(0,1fr)]"
@@ -102,7 +102,7 @@ export default function Home() {
             <div
               role="separator"
               aria-orientation="vertical"
-              className="hidden w-1 shrink-0 cursor-col-resize bg-border/40 transition-colors hover:bg-border xl:block"
+              className="hidden w-px shrink-0 cursor-col-resize bg-border/50 transition-colors hover:bg-primary/30 xl:block"
               onMouseDown={(event) => {
                 event.preventDefault();
                 state.setResizingSidebar("right");
