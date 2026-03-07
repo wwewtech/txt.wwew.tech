@@ -8,6 +8,11 @@
   --border: oklch(0.922 0 0);
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
+  --ui-scale: 1;
+}
+
+html {
+  font-size: calc(16px * var(--ui-scale, 1));
 }
 
 @theme inline {

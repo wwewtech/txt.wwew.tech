@@ -38,6 +38,8 @@ type HomeLeftSidebarProps = {
   onCopyHistoryPrompt: (id: string) => Promise<void>;
   onCopyHistoryFinal: (id: string) => Promise<void>;
   onDeleteHistoryItem: (id: string) => void;
+  /** Когда компонент рендерится в мобильном drawer'е */
+  drawerMode?: boolean;
 };
 
 export function HomeLeftSidebar({
@@ -57,9 +59,17 @@ export function HomeLeftSidebar({
   onCopyHistoryPrompt,
   onCopyHistoryFinal,
   onDeleteHistoryItem,
+  drawerMode = false,
 }: HomeLeftSidebarProps) {
   return (
-    <aside className="hidden h-screen border-r border-border/50 bg-background/90 px-4 py-4 xl:sticky xl:top-0 xl:flex xl:flex-col">
+    <aside
+      className={cn(
+        "border-r border-border/50 bg-background/90 px-4 py-4",
+        drawerMode
+          ? "flex h-full flex-col"
+          : "hidden h-screen xl:sticky xl:top-0 xl:flex xl:flex-col"
+      )}
+    >
       <div className="mb-3 border-b border-border/40 pb-3">
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -226,7 +236,7 @@ export function HomeLeftSidebar({
           <a href="https://openspacedev.ru" target="_blank" rel="noreferrer" className="hover:text-foreground">
             <LinkIcon className="h-4 w-4" />
           </a>
-          <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-foreground">
+          <a href="https://github.com/wwewtech/txt.wwew.tech" target="_blank" rel="noreferrer" className="hover:text-foreground">
             <Github className="h-4 w-4" />
           </a>
           <a href="#" className="text-[11px] hover:text-foreground">

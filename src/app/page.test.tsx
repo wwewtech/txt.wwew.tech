@@ -54,9 +54,8 @@ describe("Home central panel UI/UX", () => {
     render(<Home />);
 
     expect(await screen.findByPlaceholderText("Type something…")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Chat" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Stream" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Realtime" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Markdown ON|Markdown ВКЛ/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Download \.txt|Скачать \.txt/i })).toBeInTheDocument();
   });
 
   it("switches markdown toggle to raw mode", async () => {

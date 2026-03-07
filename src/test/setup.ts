@@ -2,6 +2,15 @@ import "@testing-library/jest-dom/vitest";
 import { beforeEach, vi } from "vitest";
 import { resetHomeStores } from "@/features/home/store/reset-home-stores";
 
+// Mock ResizeObserver (not available in jsdom but required by @radix-ui/react-use-size)
+if (!globalThis.ResizeObserver) {
+  globalThis.ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+}
+
 if (!globalThis.crypto?.randomUUID) {
   Object.defineProperty(globalThis, "crypto", {
     value: {

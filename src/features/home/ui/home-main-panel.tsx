@@ -8,19 +8,20 @@ import {
   Copy,
   Eye,
   Files,
+  Menu,
   PanelLeftOpen,
   PanelRightOpen,
   Paperclip,
   Pencil,
   SendHorizontal,
+  Settings,
   Trash2,
   Upload,
 } from "lucide-react";
 
-import { DragSegmented } from "@/components";
 import { cn, type ParsedItem } from "@/lib";
 import type { I18nDict } from "../model/page-constants";
-import type { ActiveMode, ContextGroup, TimelineEntry } from "../model/page-types";
+import type { ContextGroup, TimelineEntry } from "../model/page-types";
 
 type HomeMainPanelProps = {
   t: I18nDict;
@@ -28,7 +29,6 @@ type HomeMainPanelProps = {
   rightSidebarOpen: boolean;
   totalTokens: number;
   markdownEnabled: boolean;
-  activeMode: ActiveMode;
   timelineEntries: TimelineEntry[];
   prompt: string;
   isParsing: boolean;
@@ -39,8 +39,9 @@ type HomeMainPanelProps = {
   bytesToText: (value: number) => string;
   onExpandLeft: () => void;
   onOpenRight: () => void;
+  onOpenMobileLeft: () => void;
+  onOpenMobileRight: () => void;
   onToggleMarkdown: () => void;
-  onChangeActiveMode: (value: ActiveMode) => void;
   onDrop: (event: React.DragEvent<HTMLDivElement>) => Promise<void>;
   onPreviewItem: (item: ParsedItem) => void;
   onPreviewGroup: (group: ContextGroup, joinedText: string) => void;
@@ -68,7 +69,6 @@ export function HomeMainPanel({
   rightSidebarOpen,
   totalTokens,
   markdownEnabled,
-  activeMode,
   timelineEntries,
   prompt,
   isParsing,
@@ -79,8 +79,9 @@ export function HomeMainPanel({
   bytesToText,
   onExpandLeft,
   onOpenRight,
+  onOpenMobileLeft,
+  onOpenMobileRight,
   onToggleMarkdown,
-  onChangeActiveMode,
   onDrop,
   onPreviewItem,
   onPreviewGroup,
@@ -99,6 +100,7 @@ export function HomeMainPanel({
 }: HomeMainPanelProps) {
   return (
     <main className="flex h-screen min-h-screen flex-col overflow-hidden">
+      {/* Desktop expand buttons */}
       {leftCollapsed && (
         <button
           type="button"
@@ -118,7 +120,29 @@ export function HomeMainPanel({
           <PanelRightOpen className="h-4 w-4" />
         </button>
       )}
-      <div className="mx-auto flex h-full w-full max-w-4xl flex-1 flex-col p-4 md:p-6">
+
+      {/* Mobile header — only visible on < xl */}
+      <header className="flex items-center justify-between border-b border-border/40 bg-background/95 px-4 py-2 xl:hidden">
+        <button
+          type="button"
+          onClick={onOpenMobileLeft}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 hover:bg-muted"
+          aria-label="Open navigation"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <span className="text-sm font-semibold tracking-tight">txt.wwew.tech</span>
+        <button
+          type="button"
+          onClick={onOpenMobileRight}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 hover:bg-muted"
+          aria-label="Open settings"
+        >
+          <Settings className="h-5 w-5" />
+        </button>
+      </header>
+
+      <div className="mx-auto flex h-full w-full max-w-4xl flex-1 flex-col overflow-hidden px-3 py-3 md:px-6 md:py-6">
         <div className="mb-3 border-b border-border/40 px-1 pb-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="min-w-0">
@@ -141,16 +165,6 @@ export function HomeMainPanel({
                 <Code2 className="h-3.5 w-3.5" />
                 {markdownEnabled ? t.markdownOn : t.raw}
               </button>
-              <DragSegmented
-                value={activeMode}
-                onValueChange={onChangeActiveMode}
-                options={[
-                  { value: "chat", label: t.modeChat, content: <span className="text-[11px]">{t.modeChat}</span> },
-                  { value: "stream", label: t.modeStream, content: <span className="text-[11px]">{t.modeStream}</span> },
-                  { value: "realtime", label: t.modeRealtime, content: <span className="text-[11px]">{t.modeRealtime}</span> },
-                ]}
-                buttonClassName="h-7 px-2"
-              />
             </div>
           </div>
         </div>

@@ -60,8 +60,21 @@
 - **Framework:** Next.js (App Router)
 - **Language:** TypeScript
 - **Styles:** Tailwind CSS v4
-- **UI/UX:** `next-themes`, `lucide-react`
+- **UI/UX:** `next-themes`, `lucide-react`, `vaul` (мобильные drawer'ы), `@radix-ui/react-slider`
 - **Парсинг:** `mammoth` (DOCX), `pdfjs-dist` (PDF), `jszip` (ZIP)
+- **State:** Zustand
+
+## Мобильный UX
+
+Начиная с текущей версии приложение поддерживает мобильные экраны:
+
+- **Мобильный header** — hamburger + логотип + кнопка настроек вместо sidebar-кнопок (видим на `< xl`)
+- **Swipe Drawer'ы** — левый сайдбар (история) и правый (настройки) открываются по свайпу или кнопке
+- **UI-зум** — слайдер 75–150% в секции Display + пресеты Compact / Default / Large, персистируется между сессиями
+- **Компактный режим** — уменьшает отступы и шрифты для экономии места
+- **Нативный zoom** — `user-scalable` не заблокирован, pinch-to-zoom работает параллельно с UI-зумом
+- **Touch resize** — перетаскивание разделителя правого сайдбара работает на тач-устройствах
+- **Персистенция** — настройки (язык, масштаб, тема, режим markdown) сохраняются в `localStorage`
 
 ## Архитектура
 

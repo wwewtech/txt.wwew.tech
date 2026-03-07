@@ -106,6 +106,13 @@ export const i18n = {
     editPlaceholder: "Введите новый контекст...",
     renamePlaceholder: "Введите название чата...",
     cancel: "Отмена",
+    display: "Отображение",
+    uiScale: "Масштаб UI",
+    uiScaleCompact: "Компакт",
+    uiScaleDefault: "По умолчанию",
+    uiScaleLarge: "Крупный",
+    fontSizeLabel: "Размер шрифта",
+    compactModeLabel: "Компактный режим",
   },
   en: {
     settings: "Settings",
@@ -203,6 +210,13 @@ export const i18n = {
     editPlaceholder: "Enter updated context...",
     renamePlaceholder: "Enter chat title...",
     cancel: "Cancel",
+    display: "Display",
+    uiScale: "UI Scale",
+    uiScaleCompact: "Compact",
+    uiScaleDefault: "Default",
+    uiScaleLarge: "Large",
+    fontSizeLabel: "Font size",
+    compactModeLabel: "Compact mode",
   },
 } as const;
 

@@ -60,8 +60,21 @@ If a `zip` archive contains supported file types, they are included in the final
 - **Framework:** Next.js (App Router)
 - **Language:** TypeScript
 - **Styles:** Tailwind CSS v4
-- **UI/UX:** `next-themes`, `lucide-react`
+- **UI/UX:** `next-themes`, `lucide-react`, `vaul` (mobile drawers), `@radix-ui/react-slider`
 - **Parsing:** `mammoth` (DOCX), `pdfjs-dist` (PDF), `jszip` (ZIP)
+- **State:** Zustand
+
+## Mobile UX
+
+The app is fully responsive with first-class mobile support:
+
+- **Mobile header** — hamburger + logo + settings button instead of sidebar controls (visible at `< xl`)
+- **Swipe Drawers** — left sidebar (history) and right sidebar (settings) open via swipe or tap
+- **UI Zoom** — 75–150% slider in the Display section with Compact / Default / Large presets, persisted between sessions
+- **Compact mode** — reduces paddings and icon sizes to save screen space
+- **Native zoom** — `user-scalable` is NOT blocked, pinch-to-zoom works alongside UI zoom
+- **Touch resize** — right sidebar drag-to-resize works on touch devices
+- **Persistence** — settings (language, scale, theme, markdown mode) are saved in `localStorage`
 
 ## Architecture
 

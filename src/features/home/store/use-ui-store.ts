@@ -5,6 +5,16 @@ import type { EditDialogState, Language, ActivityItem, HistoryItem } from '../mo
 interface UIState {
   leftCollapsed: boolean;
   setLeftCollapsed: (collapsed: boolean | ((prev: boolean) => boolean)) => void;
+  mobileLeftOpen: boolean;
+  setMobileLeftOpen: (open: boolean | ((prev: boolean) => boolean)) => void;
+  mobileRightOpen: boolean;
+  setMobileRightOpen: (open: boolean | ((prev: boolean) => boolean)) => void;
+  uiScale: number;
+  setUiScale: (scale: number) => void;
+  compactMode: boolean;
+  setCompactMode: (compact: boolean) => void;
+  fontSizeOffset: number;
+  setFontSizeOffset: (offset: number) => void;
   anonymousMode: boolean;
   setAnonymousMode: (anonymous: boolean) => void;
   history: HistoryItem[];
@@ -36,6 +46,16 @@ interface UIState {
 export const useUIStore = create<UIState>((set) => ({
   leftCollapsed: false,
   setLeftCollapsed: (val) => set((s) => ({ leftCollapsed: typeof val === 'function' ? val(s.leftCollapsed) : val })),
+  mobileLeftOpen: false,
+  setMobileLeftOpen: (val) => set((s) => ({ mobileLeftOpen: typeof val === 'function' ? val(s.mobileLeftOpen) : val })),
+  mobileRightOpen: false,
+  setMobileRightOpen: (val) => set((s) => ({ mobileRightOpen: typeof val === 'function' ? val(s.mobileRightOpen) : val })),
+  uiScale: 100,
+  setUiScale: (uiScale) => set({ uiScale }),
+  compactMode: false,
+  setCompactMode: (compactMode) => set({ compactMode }),
+  fontSizeOffset: 0,
+  setFontSizeOffset: (fontSizeOffset) => set({ fontSizeOffset }),
   anonymousMode: false,
   setAnonymousMode: (anonymousMode) => set({ anonymousMode }),
   history: [],
@@ -71,6 +91,11 @@ export const useUIStore = create<UIState>((set) => ({
 export function resetUIStore() {
   useUIStore.setState({
     leftCollapsed: false,
+    mobileLeftOpen: false,
+    mobileRightOpen: false,
+    uiScale: 100,
+    compactMode: false,
+    fontSizeOffset: 0,
     anonymousMode: false,
     history: [],
     openHistoryMenuId: null,

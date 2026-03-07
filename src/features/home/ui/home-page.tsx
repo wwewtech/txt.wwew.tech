@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib";
+import { MobileDrawer } from "@/components";
 import { HomeEditDialog } from "./home-edit-dialog";
 import { HomeLeftSidebar } from "./home-left-sidebar";
 import { HomeMainPanel } from "./home-main-panel";
@@ -21,6 +22,10 @@ export default function Home() {
 
   const leftCollapsed = useUIStore((state) => state.leftCollapsed);
   const setLeftCollapsed = useUIStore((state) => state.setLeftCollapsed);
+  const mobileLeftOpen = useUIStore((state) => state.mobileLeftOpen);
+  const setMobileLeftOpen = useUIStore((state) => state.setMobileLeftOpen);
+  const mobileRightOpen = useUIStore((state) => state.mobileRightOpen);
+  const setMobileRightOpen = useUIStore((state) => state.setMobileRightOpen);
   const rightSidebarOpen = useUIStore((state) => state.rightSidebarOpen);
   const setRightSidebarOpen = useUIStore((state) => state.setRightSidebarOpen);
   const rightSidebarWidth = useUIStore((state) => state.rightSidebarWidth);
@@ -42,12 +47,16 @@ export default function Home() {
   const setAnonymousMode = useUIStore((state) => state.setAnonymousMode);
   const editDialog = useUIStore((state) => state.editDialog);
   const setEditDialog = useUIStore((state) => state.setEditDialog);
+  const uiScale = useUIStore((state) => state.uiScale);
+  const setUiScale = useUIStore((state) => state.setUiScale);
+  const compactMode = useUIStore((state) => state.compactMode);
+  const setCompactMode = useUIStore((state) => state.setCompactMode);
+  const fontSizeOffset = useUIStore((state) => state.fontSizeOffset);
+  const setFontSizeOffset = useUIStore((state) => state.setFontSizeOffset);
 
   const prompt = useChatStore((state) => state.prompt);
   const setPrompt = useChatStore((state) => state.setPrompt);
   const chatMessages = useChatStore((state) => state.chatMessages);
-  const activeMode = useChatStore((state) => state.activeMode);
-  const setActiveMode = useChatStore((state) => state.setActiveMode);
   const includePromptInResult = useChatStore((state) => state.includePromptInResult);
   const setIncludePromptInResult = useChatStore((state) => state.setIncludePromptInResult);
 
@@ -100,6 +109,108 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/* Mobile drawers — видны только на < xl */}
+      <MobileDrawer
+        open={mobileLeftOpen}
+        onOpenChange={setMobileLeftOpen}
+        direction="left"
+      >
+        <HomeLeftSidebar
+          t={t}
+          language={language}
+          onLanguageChange={setLanguage}
+          history={history}
+          currentChatId={currentChatId}
+          openHistoryMenuId={openHistoryMenuId}
+          onCollapseLeft={() => setMobileLeftOpen(false)}
+          onStartNewChat={() => { actions.startNewChat(); setMobileLeftOpen(false); }}
+          onSelectHistory={(entry) => { actions.selectHistory(entry); setMobileLeftOpen(false); }}
+          onToggleHistoryMenu={(id) => setOpenHistoryMenuId((prev) => (prev === id ? null : id))}
+          onDuplicateHistoryItem={(id) => {
+            actions.duplicateHistoryItem(id);
+            setOpenHistoryMenuId(null);
+          }}
+          onShareHistoryItem={async (id) => {
+            await actions.shareHistoryItem(id);
+            setOpenHistoryMenuId(null);
+          }}
+          onRenameHistoryItem={(id) => {
+            actions.renameHistoryItem(id);
+            setOpenHistoryMenuId(null);
+          }}
+          onCopyHistoryPrompt={actions.copyHistoryPrompt}
+          onCopyHistoryFinal={actions.copyHistoryFinal}
+          onDeleteHistoryItem={(id) => {
+            actions.deleteHistoryItem(id);
+            setOpenHistoryMenuId(null);
+          }}
+          drawerMode
+        />
+      </MobileDrawer>
+
+      <MobileDrawer
+        open={mobileRightOpen}
+        onOpenChange={setMobileRightOpen}
+        direction="right"
+      >
+        <HomeRightSidebar
+          t={t}
+          rightSidebarWidth={320}
+          items={items}
+          processing={processing}
+          promptSuggestions={promptSuggestions}
+          bundleFilter={bundleFilter}
+          sortMode={sortMode}
+          viewMode={viewMode}
+          visibleItems={visibleItems}
+          selectedItems={selectedItems}
+          skippedFiles={skippedFiles}
+          selectedItemIds={selectedItemIds}
+          favoriteItemIds={favoriteItemIds}
+          totalFiles={totalFiles}
+          totalBytes={totalBytes}
+          totalTokens={totalTokens}
+          activity={activity}
+          autoSaveEnabled={autoSaveEnabled}
+          anonymousMode={anonymousMode}
+          includePromptInResult={includePromptInResult}
+          showSkippedFiles={showSkippedFiles}
+          settings={settings}
+          onCloseRight={() => setMobileRightOpen(false)}
+          onSetBundleFilter={setBundleFilter}
+          onSetSortMode={setSortMode}
+          onSetViewMode={setViewMode}
+          onSelectAllVisible={actions.selectAllVisible}
+          onBuildSelected={actions.buildSelected}
+          onRemoveSelected={actions.removeSelected}
+          onAddPromptSuggestion={actions.addPromptSuggestion}
+          onQuickBuild={actions.quickBuild}
+          onCopyDraft={actions.copyDraft}
+          onToggleSelectItem={actions.toggleSelectItem}
+          onToggleFavoriteItem={actions.toggleFavoriteItem}
+          onPreviewItem={setActivePreview}
+          onCopyItemTxt={actions.copyItemTxt}
+          onCopyItemMd={actions.copyItemMd}
+          onDownloadItemTxt={actions.downloadItemTxt}
+          onEditItem={actions.editItem}
+          onRemoveItem={(item) => actions.removeContextItems([item.id], item.name)}
+          onToggleAutoSave={() => setAutoSaveEnabled((value) => !value)}
+          onToggleAnonymousMode={() => setAnonymousMode(!anonymousMode)}
+          onSetIgnoredDirectories={actions.setIgnoredDirectories}
+          onSetExcludedExtensions={actions.setExcludedExtensions}
+          onSetIncludePromptInResult={setIncludePromptInResult}
+          onSetShowSkippedFiles={setShowSkippedFiles}
+          onBytesToText={bytesToText}
+          uiScale={uiScale}
+          compactMode={compactMode}
+          fontSizeOffset={fontSizeOffset}
+          onSetUiScale={setUiScale}
+          onSetCompactMode={setCompactMode}
+          onSetFontSizeOffset={setFontSizeOffset}
+          drawerMode
+        />
+      </MobileDrawer>
+
       <div
         style={{ ["--right-sidebar-width" as string]: `${rightSidebarWidth}px` }}
         className={cn(
@@ -152,7 +263,6 @@ export default function Home() {
           rightSidebarOpen={rightSidebarOpen}
           totalTokens={totalTokens}
           markdownEnabled={markdownEnabled}
-          activeMode={activeMode}
           timelineEntries={timelineEntries}
           prompt={prompt}
           isParsing={isParsing}
@@ -163,8 +273,9 @@ export default function Home() {
           bytesToText={bytesToText}
           onExpandLeft={() => setLeftCollapsed(false)}
           onOpenRight={() => setRightSidebarOpen(true)}
+          onOpenMobileLeft={() => setMobileLeftOpen(true)}
+          onOpenMobileRight={() => setMobileRightOpen(true)}
           onToggleMarkdown={() => setMarkdownEnabled((value) => !value)}
-          onChangeActiveMode={setActiveMode}
           onDrop={actions.onDrop}
           onPreviewItem={setActivePreview}
           onPreviewGroup={actions.previewGroup}
@@ -241,6 +352,12 @@ export default function Home() {
               onSetIncludePromptInResult={setIncludePromptInResult}
               onSetShowSkippedFiles={setShowSkippedFiles}
               onBytesToText={bytesToText}
+              uiScale={uiScale}
+              compactMode={compactMode}
+              fontSizeOffset={fontSizeOffset}
+              onSetUiScale={setUiScale}
+              onSetCompactMode={setCompactMode}
+              onSetFontSizeOffset={setFontSizeOffset}
             />
           </>
         )}
