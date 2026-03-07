@@ -77,7 +77,10 @@ export function isIgnoredPath(path: string, settings: ParseSettings) {
   }
 
   const ext = getExt(normalized);
-  if (ext && settings.excludedExtensions.map((e) => e.toLowerCase()).includes(ext)) {
+  const excludedExtensions = settings.excludedExtensions
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+  if (ext && excludedExtensions.includes(ext)) {
     return true;
   }
 

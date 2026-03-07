@@ -3,8 +3,9 @@
 import * as React from "react";
 import {
   ArrowDownToLine,
-  Bot,
+  Archive,
   CheckCheck,
+  Code2,
   Copy,
   ChevronsUpDown,
   Files,
@@ -25,9 +26,9 @@ import {
   PanelRightOpen,
   Paperclip,
   Pencil,
+  SendHorizontal,
   Search,
   Shield,
-  Save,
   Share2,
   Sparkles,
   WandSparkles,
@@ -57,12 +58,32 @@ type HistoryItem = {
   finalText: string;
   prompt: string;
   items: ParsedItem[];
+  chatMessages: ChatMessage[];
 };
 
 type ActivityItem = {
   id: string;
   label: string;
   at: string;
+};
+
+type ChatMessage = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  createdAt: string;
+};
+
+type ContextGroup = {
+  id: string;
+  label: string;
+  path: string;
+  kind: "file" | "folder" | "archive";
+  fileCount: number;
+  folderCount: number;
+  tokenEstimate: number;
+  size: number;
+  items: ParsedItem[];
 };
 
 type SortMode = "latest" | "name" | "tokens" | "size";
@@ -80,6 +101,7 @@ const defaultSettings: ParseSettings = {
 export default function Home() {
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const folderInputRef = React.useRef<HTMLInputElement | null>(null);
+  const composerRef = React.useRef<HTMLTextAreaElement | null>(null);
 
   const [leftCollapsed, setLeftCollapsed] = React.useState(false);
   const [anonymousMode, setAnonymousMode] = React.useState(false);
@@ -105,6 +127,9 @@ export default function Home() {
   const [rightSidebarWidth, setRightSidebarWidth] = React.useState(320);
   const [resizingSidebar, setResizingSidebar] = React.useState<null | "right">(null);
   const [language, setLanguage] = React.useState<Language>("ru");
+  const [markdownEnabled, setMarkdownEnabled] = React.useState(true);
+  const [activeMode, setActiveMode] = React.useState<"chat" | "stream" | "realtime">("chat");
+  const [chatMessages, setChatMessages] = React.useState<ChatMessage[]>([]);
 
   React.useEffect(() => {
     setMounted(true);
@@ -239,7 +264,175 @@ export default function Home() {
     }, 0);
   }, [items]);
 
-  const hasContent = prompt.trim().length > 0 || items.length > 0;
+  const contextGroups = React.useMemo<ContextGroup[]>(() => {
+    const map = new Map<string, ContextGroup>();
+    const order: string[] = [];
+
+    const addToGroup = (key: string, seed: Omit<ContextGroup, "items" | "tokenEstimate" | "size" | "fileCount" | "folderCount">, item: ParsedItem) => {
+      if (!map.has(key)) {
+        map.set(key, {
+          ...seed,
+          tokenEstimate: 0,
+          size: 0,
+          fileCount: 0,
+          folderCount: 0,
+          items: [],
+        });
+        order.push(key);
+      }
+
+      const current = map.get(key);
+      if (!current) return;
+      current.items.push(item);
+      current.tokenEstimate += item.tokenEstimate;
+      current.size += item.size;
+      current.fileCount += item.kind === "archive" ? item.children?.length ?? 0 : 1;
+    };
+
+    items.forEach((item) => {
+      if (item.kind === "archive") {
+        const folderSet = new Set<string>();
+        item.children?.forEach((child) => {
+          const normalized = child.path.replaceAll("\\", "/").split("/");
+          for (let index = 1; index < normalized.length - 1; index += 1) {
+            folderSet.add(normalized.slice(0, index + 1).join("/"));
+          }
+        });
+        map.set(`archive:${item.id}`, {
+          id: `archive:${item.id}`,
+          label: item.name,
+          path: item.path,
+          kind: "archive",
+          fileCount: item.children?.length ?? 0,
+          folderCount: folderSet.size,
+          tokenEstimate: item.tokenEstimate,
+          size: item.size,
+          items: [item],
+        });
+        order.push(`archive:${item.id}`);
+        return;
+      }
+
+      const normalizedPath = item.path.replaceAll("\\", "/");
+      const segments = normalizedPath.split("/").filter(Boolean);
+      if (segments.length > 1) {
+        addToGroup(
+          `folder:${segments[0]}`,
+          {
+            id: `folder:${segments[0]}`,
+            label: segments[0],
+            path: segments[0],
+            kind: "folder",
+          },
+          item
+        );
+        return;
+      }
+
+      map.set(`file:${item.id}`, {
+        id: `file:${item.id}`,
+        label: item.name,
+        path: item.path,
+        kind: "file",
+        fileCount: 1,
+        folderCount: 0,
+        tokenEstimate: item.tokenEstimate,
+        size: item.size,
+        items: [item],
+      });
+      order.push(`file:${item.id}`);
+    });
+
+    order.forEach((key) => {
+      const entry = map.get(key);
+      if (!entry || entry.kind !== "folder") return;
+      const folderSet = new Set<string>();
+      entry.items.forEach((item) => {
+        const normalized = item.path.replaceAll("\\", "/").split("/");
+        for (let index = 1; index < normalized.length - 1; index += 1) {
+          folderSet.add(normalized.slice(0, index + 1).join("/"));
+        }
+      });
+      entry.folderCount = folderSet.size;
+    });
+
+    return order.map((key) => map.get(key)).filter((value): value is ContextGroup => Boolean(value));
+  }, [items]);
+
+  const hasContent = prompt.trim().length > 0 || items.length > 0 || chatMessages.length > 0;
+
+  const escapeHtml = React.useCallback((source: string) => {
+    return source
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }, []);
+
+  const highlightCode = React.useCallback(
+    (source: string) => {
+      const escaped = escapeHtml(source);
+      return escaped
+        .replace(
+          /\b(const|let|var|function|return|if|else|for|while|class|import|export|from|type|interface|await|async|try|catch)\b/g,
+          '<span class="text-sky-500">$1</span>'
+        )
+        .replace(/("[^"]*"|'[^']*'|`[^`]*`)/g, '<span class="text-emerald-500">$1</span>');
+    },
+    [escapeHtml]
+  );
+
+  const renderMessageBody = React.useCallback(
+    (content: string) => {
+      const blocks = content.split(/```[\s\S]*?```/g);
+      const codeMatches = Array.from(content.matchAll(/```([a-zA-Z0-9_-]+)?\n?([\s\S]*?)```/g));
+      const rendered: React.ReactNode[] = [];
+
+      blocks.forEach((block, index) => {
+        if (block.trim()) {
+          if (!markdownEnabled) {
+            rendered.push(
+              <pre key={`raw-${index}`} className="whitespace-pre-wrap font-mono text-xs leading-5">
+                {block}
+              </pre>
+            );
+          } else {
+            rendered.push(
+              <div key={`md-${index}`} className="space-y-1.5 text-sm leading-6">
+                {block.split("\n").map((line, lineIndex) => {
+                  const trimmed = line.trim();
+                  if (!trimmed) return <div key={`ln-${lineIndex}`} className="h-1" />;
+                  if (trimmed.startsWith("### ")) return <p key={`ln-${lineIndex}`} className="text-sm font-semibold">{trimmed.slice(4)}</p>;
+                  if (trimmed.startsWith("## ")) return <p key={`ln-${lineIndex}`} className="text-base font-semibold">{trimmed.slice(3)}</p>;
+                  if (trimmed.startsWith("# ")) return <p key={`ln-${lineIndex}`} className="text-lg font-semibold">{trimmed.slice(2)}</p>;
+                  if (trimmed.startsWith("- ")) return <p key={`ln-${lineIndex}`} className="pl-3 text-sm">• {trimmed.slice(2)}</p>;
+                  return <p key={`ln-${lineIndex}`} className="text-sm">{line}</p>;
+                })}
+              </div>
+            );
+          }
+        }
+
+        const codeBlock = codeMatches[index];
+        if (!codeBlock) return;
+        rendered.push(
+          <div key={`code-${index}`} className="overflow-hidden rounded-xl border border-border/60 bg-muted/40">
+            <div className="flex items-center justify-between border-b border-border/50 px-3 py-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+              <span>{codeBlock[1] || "code"}</span>
+              <Code2 className="h-3 w-3" />
+            </div>
+            <pre className="overflow-x-auto p-3 text-xs leading-5">
+              <code dangerouslySetInnerHTML={{ __html: highlightCode(codeBlock[2].trim()) }} />
+            </pre>
+          </div>
+        );
+      });
+
+      return rendered;
+    },
+    [highlightCode, markdownEnabled]
+  );
 
   const i18n = {
     ru: {
@@ -304,6 +497,8 @@ export default function Home() {
       finalTxt: "Итоговый LLM-ready TXT",
       addFilesToSee: "Добавьте файлы, чтобы увидеть итоговый контекст.",
       close: "Закрыть",
+      closeChat: "Закрыть чат",
+      draftChat: "Новый чат (черновик)",
       down: "Вниз",
       noData: "Нет данных",
     },
@@ -369,12 +564,21 @@ export default function Home() {
       finalTxt: "Final LLM-ready TXT",
       addFilesToSee: "Add files to see final context.",
       close: "Close",
+      closeChat: "Close chat",
+      draftChat: "New chat (draft)",
       down: "Down",
       noData: "No data",
     },
   } as const;
 
   const t = i18n[language];
+
+  const currentHistoryEntry = React.useMemo(
+    () => (currentChatId ? history.find((entry) => entry.id === currentChatId) ?? null : null),
+    [currentChatId, history]
+  );
+
+  const activeChatTitle = currentHistoryEntry?.title ?? t.draftChat;
 
   const bytesToText = (value: number) => {
     if (value < 1024) return `${value} B`;
@@ -390,29 +594,35 @@ export default function Home() {
     (force = false) => {
       if (anonymousMode) return;
 
-      const hasContent = prompt.trim().length > 0 || items.length > 0;
+      const hasContent = prompt.trim().length > 0 || items.length > 0 || chatMessages.length > 0;
       if (!hasContent && !force) return;
 
       const id = currentChatId ?? crypto.randomUUID();
+      const firstUserMessage = chatMessages.find((message) => message.role === "user")?.content.trim();
       const entry: HistoryItem = {
         id,
-        title: prompt.trim() ? prompt.trim().slice(0, 70) : "Новый чат",
+        title: prompt.trim()
+          ? prompt.trim().slice(0, 70)
+          : firstUserMessage
+            ? firstUserMessage.slice(0, 70)
+            : "Новый чат",
         updatedAt: new Date().toISOString(),
         tokenEstimate: totalTokens,
         finalText,
         prompt,
         items,
+        chatMessages,
       };
 
       if (!currentChatId) setCurrentChatId(id);
       upsertHistory(entry);
     },
-    [anonymousMode, currentChatId, finalText, items, prompt, totalTokens, upsertHistory]
+    [anonymousMode, chatMessages, currentChatId, finalText, items, prompt, totalTokens, upsertHistory]
   );
 
   React.useEffect(() => {
     if (!mounted || anonymousMode) return;
-    const hasContent = prompt.trim().length > 0 || items.length > 0;
+    const hasContent = prompt.trim().length > 0 || items.length > 0 || chatMessages.length > 0;
     if (!hasContent) return;
 
     const timer = window.setTimeout(() => {
@@ -420,7 +630,7 @@ export default function Home() {
     }, 450);
 
     return () => window.clearTimeout(timer);
-  }, [mounted, anonymousMode, prompt, items, saveToHistory]);
+  }, [mounted, anonymousMode, prompt, items, chatMessages, saveToHistory]);
 
   React.useEffect(() => {
     const handleOutside = (event: MouseEvent) => {
@@ -434,6 +644,14 @@ export default function Home() {
     return () => window.removeEventListener("click", handleOutside);
   }, []);
 
+  React.useEffect(() => {
+    const element = composerRef.current;
+    if (!element) return;
+    element.style.height = "0px";
+    const next = Math.min(220, Math.max(56, element.scrollHeight));
+    element.style.height = `${next}px`;
+  }, [prompt]);
+
   const handleFiles = React.useCallback(
     async (incoming: { file: File; path: string }[]) => {
       if (!incoming.length) return;
@@ -446,6 +664,59 @@ export default function Home() {
         );
         const clean = parsed.filter((item) => !item.error || item.error === "Skipped by filters");
         setItems((prev) => [...prev, ...clean]);
+        setChatMessages((prev) => {
+          const messages: ChatMessage[] = [];
+          const folderGroups = new Map<string, ParsedItem[]>();
+
+          clean.forEach((item) => {
+            if (item.kind === "archive") {
+              const files = item.children?.length ?? 0;
+              const folders = new Set(
+                item.children
+                  ?.map((child) => child.path.split("/").slice(0, -1).join("/"))
+                  .filter(Boolean) ?? []
+              ).size;
+              messages.push({
+                id: crypto.randomUUID(),
+                role: "user",
+                createdAt: new Date().toISOString(),
+                content: `Перетащил архив ${item.name} (${files} файлов, ${folders} папок)`,
+              });
+              return;
+            }
+
+            if (item.path.includes("/")) {
+              const root = item.path.split("/")[0];
+              const list = folderGroups.get(root) ?? [];
+              list.push(item);
+              folderGroups.set(root, list);
+              return;
+            }
+
+            messages.push({
+              id: crypto.randomUUID(),
+              role: "user",
+              createdAt: new Date().toISOString(),
+              content: `Загрузка: ${item.name}`,
+            });
+          });
+
+          folderGroups.forEach((groupItems, root) => {
+            const folders = new Set(
+              groupItems
+                .map((item) => item.path.split("/").slice(0, -1).join("/"))
+                .filter(Boolean)
+            ).size;
+            messages.push({
+              id: crypto.randomUUID(),
+              role: "user",
+              createdAt: new Date().toISOString(),
+              content: `Добавил структуру ${root} (${groupItems.length} файлов, ${folders} папок)`,
+            });
+          });
+
+          return [...prev, ...messages];
+        });
         pushActivity(`Добавлено в workspace: ${clean.length}`);
       } finally {
         setIsParsing(false);
@@ -530,6 +801,7 @@ export default function Home() {
       title: `${target.title} (copy)`.slice(0, 80),
       updatedAt: new Date().toISOString(),
       items: [...target.items],
+      chatMessages: [...(target.chatMessages ?? [])],
     };
     setHistory((prev) => [duplicate, ...prev]);
   };
@@ -540,6 +812,10 @@ export default function Home() {
       setCurrentChatId(null);
       setPrompt("");
       setItems([]);
+      setChatMessages([]);
+      setSelectedItemIds([]);
+      setFavoriteItemIds([]);
+      setActivePreview(null);
     }
   };
 
@@ -592,13 +868,41 @@ export default function Home() {
     pushActivity(copied ? "Быстрая сборка: контекст скопирован" : "Быстрая сборка: не удалось скопировать");
   };
 
+  const sendPrompt = () => {
+    const trimmed = prompt.trim();
+    if (!trimmed) return;
+
+    const now = new Date().toISOString();
+    const assistantSummary = [
+      "### Context Updated",
+      `- Sources: ${items.length}`,
+      `- Files: ${totalFiles}`,
+      `- Tokens: ~${totalTokens}`,
+      "",
+      "```txt",
+      `${finalText.slice(0, 900)}${finalText.length > 900 ? "\n..." : ""}`,
+      "```",
+    ].join("\n");
+
+    setChatMessages((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), role: "user", content: trimmed, createdAt: now },
+      { id: crypto.randomUUID(), role: "assistant", content: assistantSummary, createdAt: now },
+    ]);
+    pushActivity("Prompt отправлен в контекстную ленту");
+    saveToHistory(true);
+    setPrompt("");
+  };
+
   const startNewChat = () => {
     saveToHistory();
     setPrompt("");
     setItems([]);
+    setChatMessages([]);
     setCurrentChatId(null);
     setSelectedItemIds([]);
     setFavoriteItemIds([]);
+    setActivePreview(null);
     pushActivity("Новый чат");
   };
 
@@ -666,6 +970,10 @@ export default function Home() {
                           setCurrentChatId(entry.id);
                           setPrompt(entry.prompt);
                           setItems(entry.items ?? []);
+                          setChatMessages(entry.chatMessages ?? []);
+                          setSelectedItemIds([]);
+                          setFavoriteItemIds([]);
+                          setActivePreview(null);
                           setOpenHistoryMenuId(null);
                         }}
                         className="min-w-0 flex-1 text-left"
@@ -813,7 +1121,7 @@ export default function Home() {
           </aside>
         )}
 
-        <main className="flex min-h-screen flex-col">
+        <main className="flex h-screen min-h-screen flex-col overflow-hidden">
           {leftCollapsed && (
             <button
               type="button"
@@ -833,138 +1141,252 @@ export default function Home() {
               <PanelRightOpen className="h-4 w-4" />
             </button>
           )}
-          <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col p-4 md:p-6">
-            <div
-              onDrop={onDrop}
-              onDragOver={(e) => e.preventDefault()}
-              className="mb-4 rounded-3xl border border-dashed border-border/80 bg-muted/10 p-6"
-            >
-              <div className="mb-3 flex items-center justify-between">
-                <h1 className="text-lg font-semibold tracking-tight">{t.builderTitle}</h1>
-                <span className="rounded-full border border-border/70 px-3 py-1 text-xs text-muted-foreground">
-                  ~{totalTokens} tokens
-                </span>
-              </div>
-
-              <textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder={t.promptPlaceholder}
-                className="min-h-28 w-full resize-none rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm outline-none ring-0"
-              />
-
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  onChange={onFilePick}
-                  className="hidden"
-                />
-                <input
-                  ref={folderInputRef}
-                  type="file"
-                  multiple
-                  onChange={onFilePick}
-                  className="hidden"
-                  {...({ webkitdirectory: "", directory: "" } as React.InputHTMLAttributes<HTMLInputElement>)}
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center gap-2 rounded-xl border border-border/70 bg-background px-3 py-2 text-xs hover:bg-muted"
-                >
-                  <Paperclip className="h-3.5 w-3.5" />
-                  {t.uploadFiles}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => folderInputRef.current?.click()}
-                  className="inline-flex items-center gap-2 rounded-xl border border-border/70 bg-background px-3 py-2 text-xs hover:bg-muted"
-                >
-                  <Upload className="h-3.5 w-3.5" />
-                  {t.uploadFolder}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => saveToHistory(true)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-border/70 bg-background px-3 py-2 text-xs hover:bg-muted"
-                >
-                  <Save className="h-3.5 w-3.5" />
-                  {t.save}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onCopy(finalText)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-border/70 bg-background px-3 py-2 text-xs hover:bg-muted"
-                >
-                  <Copy className="h-3.5 w-3.5" />
-                  {t.copyFinal}
-                </button>
-                <button
-                  type="button"
-                  onClick={exportTxt}
-                  className="inline-flex items-center gap-2 rounded-xl border border-border/70 bg-background px-3 py-2 text-xs hover:bg-muted"
-                >
-                  <ArrowDownToLine className="h-3.5 w-3.5" />
-                  {t.downloadTxt}
-                </button>
-              </div>
-
-              {isParsing && <p className="mt-3 text-xs text-muted-foreground">{t.parsing}</p>}
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-2">
-              {items.map((item) => (
-                <div key={item.id} className="rounded-2xl border border-border/70 bg-background/70 p-3">
-                  <div className="mb-1 flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">{item.name}</p>
-                      <p className="truncate text-xs text-muted-foreground">{item.path}</p>
-                    </div>
-                    <span className="rounded-full border border-border/70 px-2 py-1 text-[11px] text-muted-foreground">
-                      ~{item.tokenEstimate}
+          <div className="mx-auto flex h-full w-full max-w-4xl flex-1 flex-col p-4 md:p-6">
+            <div className="mb-3 rounded-2xl border border-border/70 bg-background/90 px-4 py-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold tracking-tight">{t.builderTitle}</span>
+                    <span className="rounded-full border border-border/70 px-2 py-0.5 text-[11px] text-muted-foreground">
+                      ~{totalTokens} tokens
                     </span>
                   </div>
-
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setActivePreview(item)}
-                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs hover:bg-muted"
-                    >
-                      <Eye className="h-3.5 w-3.5" />
-                      {t.preview}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setItems((prev) => prev.filter((entry) => entry.id !== item.id))}
-                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs hover:bg-muted"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      {t.delete}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onCopy(item.text)}
-                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs hover:bg-muted"
-                    >
-                      <Copy className="h-3.5 w-3.5" />
-                      {t.copyFinal}
-                    </button>
-                  </div>
+                  <p className="mt-1 truncate text-xs text-muted-foreground">
+                    {currentChatId ? "Активный чат:" : "Сессия:"} {activeChatTitle}
+                  </p>
                 </div>
-              ))}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={startNewChat}
+                    className="inline-flex h-8 items-center gap-1 rounded-lg border border-border/70 bg-background px-2 text-xs hover:bg-muted"
+                    title={t.closeChat}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    {t.closeChat}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMarkdownEnabled((value) => !value)}
+                    className={cn(
+                      "inline-flex h-8 items-center gap-1 rounded-lg border px-2 text-xs",
+                      markdownEnabled ? "border-primary/40 bg-primary/10" : "border-border/70 bg-background"
+                    )}
+                  >
+                    <Code2 className="h-3.5 w-3.5" />
+                    {markdownEnabled ? "Markdown ON" : "Raw"}
+                  </button>
+                  <DragSegmented
+                    value={activeMode}
+                    onValueChange={(value) => setActiveMode(value)}
+                    options={[
+                      { value: "chat", label: "Chat", content: <span className="text-[11px]">Chat</span> },
+                      { value: "stream", label: "Stream", content: <span className="text-[11px]">Stream</span> },
+                      { value: "realtime", label: "Realtime", content: <span className="text-[11px]">Realtime</span> },
+                    ]}
+                    buttonClassName="h-7 px-2"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="mt-4 rounded-3xl border border-border/70 bg-background p-4">
-              <div className="mb-2 flex items-center justify-between">
-                <p className="text-sm font-semibold">{t.finalTxt}</p>
-                <span className="text-xs text-muted-foreground">{finalText.length.toLocaleString()} chars</span>
+            <div
+              onDrop={onDrop}
+              onDragOver={(event) => event.preventDefault()}
+              className="min-h-0 flex-1 overflow-hidden rounded-3xl border border-border/70 bg-muted/10"
+            >
+              <div className="flex h-full flex-col">
+                <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                  <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
+                    {chatMessages.length === 0 && contextGroups.length === 0 && (
+                      <div className="rounded-2xl border border-dashed border-border/70 bg-background/70 px-4 py-6 text-center text-sm text-muted-foreground">
+                        Перетащи файлы, архивы или папки сюда, чтобы построить единый LLM-ready контекст.
+                      </div>
+                    )}
+
+                    {chatMessages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={cn(
+                          "w-full rounded-2xl border px-4 py-3",
+                          message.role === "user"
+                            ? "ml-auto border-border/70 bg-background"
+                            : "mr-auto border-primary/20 bg-primary/5"
+                        )}
+                      >
+                        <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
+                          <span>{message.role === "user" ? "You" : "Context Engine"}</span>
+                          <span>{new Date(message.createdAt).toLocaleTimeString()}</span>
+                        </div>
+                        <div className="space-y-2">{renderMessageBody(message.content)}</div>
+                      </div>
+                    ))}
+
+                    {contextGroups.map((group) => {
+                      const joinedText = group.items.map((entry) => entry.text).filter(Boolean).join("\n\n");
+
+                      return (
+                        <div key={group.id} className="group rounded-2xl border border-border/70 bg-background/90 p-3">
+                          <div className="mb-2 flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-medium">{group.label}</p>
+                              <p className="truncate text-xs text-muted-foreground">{group.path}</p>
+                            </div>
+                            <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                              {group.kind === "archive" ? <Archive className="h-3.5 w-3.5" /> : <Files className="h-3.5 w-3.5" />}
+                              <span>~{group.tokenEstimate} tokens</span>
+                            </div>
+                          </div>
+
+                          <div className="mb-2 flex flex-wrap gap-1.5 text-[11px] text-muted-foreground">
+                            <span className="rounded-md border border-border/60 px-2 py-1">файлов: {group.fileCount}</span>
+                            <span className="rounded-md border border-border/60 px-2 py-1">папок: {group.folderCount}</span>
+                            <span className="rounded-md border border-border/60 px-2 py-1">{bytesToText(group.size)}</span>
+                          </div>
+
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="truncate text-xs text-muted-foreground">
+                              {group.kind === "archive"
+                                ? `Архив распарсен: ${group.fileCount} файлов`
+                                : group.kind === "folder"
+                                  ? `Структура папки: ${group.label}`
+                                  : "Одиночный файл"}
+                            </p>
+                            <div className="flex items-center gap-1 opacity-100 transition md:opacity-0 md:group-hover:opacity-100">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (group.items.length === 1 && group.kind === "file") {
+                                    setActivePreview(group.items[0]);
+                                    return;
+                                  }
+
+                                  setActivePreview({
+                                    id: group.id,
+                                    name: group.label,
+                                    path: group.path,
+                                    kind: "archive",
+                                    size: group.size,
+                                    sourceType: group.kind,
+                                    tokenEstimate: group.tokenEstimate,
+                                    text: joinedText,
+                                    children: group.items,
+                                  });
+                                }}
+                                className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
+                              >
+                                <Eye className="h-3.5 w-3.5" />
+                                Предпросмотр
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setPrompt((prev) => (prev ? `${prev}\nУточни контекст по ${group.label}` : `Уточни контекст по ${group.label}`));
+                                }}
+                                className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => onCopy(joinedText)}
+                                className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
+                              >
+                                <Copy className="h-3.5 w-3.5" />
+                                Скопировать
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const removeIds = new Set(group.items.map((entry) => entry.id));
+                                  setItems((prev) => prev.filter((entry) => !removeIds.has(entry.id)));
+                                }}
+                                className="inline-flex h-7 items-center gap-1 rounded-lg border border-border/70 px-2 text-[11px] hover:bg-muted"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                Удалить
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="border-t border-border/60 bg-background/90 p-3 md:p-4">
+                  <div className="mx-auto flex w-full max-w-3xl items-end gap-2 rounded-2xl border border-border/70 bg-background px-3 py-2 shadow-sm">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      onChange={onFilePick}
+                      className="hidden"
+                    />
+                    <input
+                      ref={folderInputRef}
+                      type="file"
+                      multiple
+                      onChange={onFilePick}
+                      className="hidden"
+                      {...({ webkitdirectory: "", directory: "" } as React.InputHTMLAttributes<HTMLInputElement>)}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border/70 hover:bg-muted"
+                      title={t.uploadFiles}
+                    >
+                      <Paperclip className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => folderInputRef.current?.click()}
+                      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border/70 hover:bg-muted"
+                      title={t.uploadFolder}
+                    >
+                      <Upload className="h-4 w-4" />
+                    </button>
+
+                    <textarea
+                      ref={composerRef}
+                      value={prompt}
+                      onChange={(event) => setPrompt(event.target.value)}
+                      placeholder="Type something…"
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" && !event.shiftKey) {
+                          event.preventDefault();
+                          sendPrompt();
+                        }
+                      }}
+                      className="max-h-56 min-h-14 w-full resize-none overflow-y-auto rounded-xl border border-border/60 bg-background px-3 py-2 text-sm outline-none"
+                    />
+
+                    <div className="flex shrink-0 items-center gap-2 pb-1">
+                      <button
+                        type="button"
+                        onClick={exportTxt}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/70 hover:bg-muted"
+                        title={t.downloadTxt}
+                      >
+                        <ArrowDownToLine className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={sendPrompt}
+                        disabled={!prompt.trim()}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary disabled:opacity-40"
+                        title="Send"
+                      >
+                        <SendHorizontal className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  {isParsing && <p className="mx-auto mt-2 w-full max-w-3xl text-xs text-muted-foreground">{t.parsing}</p>}
+                </div>
               </div>
-              <pre className="max-h-80 overflow-auto rounded-2xl bg-muted/30 p-3 text-xs whitespace-pre-wrap">
-                {finalText || t.addFilesToSee}
-              </pre>
             </div>
           </div>
         </main>
