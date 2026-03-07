@@ -675,7 +675,6 @@ export default function Home() {
                       </button>
 
                       <div className="flex items-center gap-1">
-                        <Bot className="h-3.5 w-3.5 text-muted-foreground" />
                         <button
                           type="button"
                           onClick={(event) => {
