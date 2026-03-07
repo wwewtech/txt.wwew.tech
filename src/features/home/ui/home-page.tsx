@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { cn } from "@/lib";
 import { HomeEditDialog } from "./home-edit-dialog";
 import { HomeLeftSidebar } from "./home-left-sidebar";
@@ -7,97 +8,181 @@ import { HomeMainPanel } from "./home-main-panel";
 import { HomePreviewModal } from "./home-preview-modal";
 import { HomeRightSidebar } from "./home-right-sidebar";
 import { useHomeActions } from "../hooks/use-home-actions";
-import { useHomeState } from "../hooks/use-home-state";
+import { useHomeRuntimeEffects } from "../hooks/use-home-runtime-effects";
+import { useHomeUiSelectors } from "../hooks/use-home-ui-selectors";
+import { useChatStore } from "../store/use-chat-store";
+import { useFilesStore } from "../store/use-files-store";
+import { useUIStore } from "../store/use-ui-store";
 
 export default function Home() {
-  const state = useHomeState();
-  const actions = useHomeActions(state);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+  const folderInputRef = React.useRef<HTMLInputElement | null>(null);
+  const composerRef = React.useRef<HTMLTextAreaElement | null>(null);
+
+  const leftCollapsed = useUIStore((state) => state.leftCollapsed);
+  const setLeftCollapsed = useUIStore((state) => state.setLeftCollapsed);
+  const rightSidebarOpen = useUIStore((state) => state.rightSidebarOpen);
+  const setRightSidebarOpen = useUIStore((state) => state.setRightSidebarOpen);
+  const rightSidebarWidth = useUIStore((state) => state.rightSidebarWidth);
+  const setResizingSidebar = useUIStore((state) => state.setResizingSidebar);
+  const language = useUIStore((state) => state.language);
+  const setLanguage = useUIStore((state) => state.setLanguage);
+  const markdownEnabled = useUIStore((state) => state.markdownEnabled);
+  const setMarkdownEnabled = useUIStore((state) => state.setMarkdownEnabled);
+  const history = useUIStore((state) => state.history);
+  const currentChatId = useChatStore((state) => state.currentChatId);
+  const openHistoryMenuId = useUIStore((state) => state.openHistoryMenuId);
+  const setOpenHistoryMenuId = useUIStore((state) => state.setOpenHistoryMenuId);
+  const settings = useUIStore((state) => state.settings);
+  const activity = useUIStore((state) => state.activity);
+  const setActivity = useUIStore((state) => state.setActivity);
+  const autoSaveEnabled = useUIStore((state) => state.autoSaveEnabled);
+  const setAutoSaveEnabled = useUIStore((state) => state.setAutoSaveEnabled);
+  const anonymousMode = useUIStore((state) => state.anonymousMode);
+  const setAnonymousMode = useUIStore((state) => state.setAnonymousMode);
+  const editDialog = useUIStore((state) => state.editDialog);
+  const setEditDialog = useUIStore((state) => state.setEditDialog);
+
+  const prompt = useChatStore((state) => state.prompt);
+  const setPrompt = useChatStore((state) => state.setPrompt);
+  const chatMessages = useChatStore((state) => state.chatMessages);
+  const activeMode = useChatStore((state) => state.activeMode);
+  const setActiveMode = useChatStore((state) => state.setActiveMode);
+  const includePromptInResult = useChatStore((state) => state.includePromptInResult);
+  const setIncludePromptInResult = useChatStore((state) => state.setIncludePromptInResult);
+
+  const items = useFilesStore((state) => state.items);
+  const activePreview = useFilesStore((state) => state.activePreview);
+  const setActivePreview = useFilesStore((state) => state.setActivePreview);
+  const isParsing = useFilesStore((state) => state.isParsing);
+  const processing = useFilesStore((state) => state.processing);
+  const bundleFilter = useFilesStore((state) => state.bundleFilter);
+  const setBundleFilter = useFilesStore((state) => state.setBundleFilter);
+  const sortMode = useFilesStore((state) => state.sortMode);
+  const setSortMode = useFilesStore((state) => state.setSortMode);
+  const viewMode = useFilesStore((state) => state.viewMode);
+  const setViewMode = useFilesStore((state) => state.setViewMode);
+  const selectedItemIds = useFilesStore((state) => state.selectedItemIds);
+  const favoriteItemIds = useFilesStore((state) => state.favoriteItemIds);
+  const showSkippedFiles = useFilesStore((state) => state.showSkippedFiles);
+  const setShowSkippedFiles = useFilesStore((state) => state.setShowSkippedFiles);
+
+  useHomeRuntimeEffects({ composerRef, prompt });
+
+  const actions = useHomeActions();
+
+  const {
+    t,
+    l,
+    totalTokens,
+    timelineEntries,
+    promptSuggestions,
+    visibleItems,
+    selectedItems,
+    skippedFiles,
+    totalBytes,
+    totalFiles,
+    bytesToText,
+    pushActivity,
+    renderMessageBody,
+  } = useHomeUiSelectors({
+    language,
+    markdownEnabled,
+    items,
+    prompt,
+    chatMessages,
+    bundleFilter,
+    sortMode,
+    showSkippedFiles,
+    selectedItemIds,
+    setActivity,
+  });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div
-        style={{ ["--right-sidebar-width" as string]: `${state.rightSidebarWidth}px` }}
+        style={{ ["--right-sidebar-width" as string]: `${rightSidebarWidth}px` }}
         className={cn(
           "grid min-h-screen grid-cols-1",
-          state.rightSidebarOpen
-            ? state.leftCollapsed
+          rightSidebarOpen
+            ? leftCollapsed
               ? "xl:grid-cols-[minmax(0,1fr)_1px_var(--right-sidebar-width)]"
               : "xl:grid-cols-[280px_minmax(0,1fr)_1px_var(--right-sidebar-width)]"
-            : state.leftCollapsed
+            : leftCollapsed
               ? "xl:grid-cols-[minmax(0,1fr)]"
               : "xl:grid-cols-[280px_minmax(0,1fr)]"
         )}
       >
-        {!state.leftCollapsed && (
+        {!leftCollapsed && (
           <HomeLeftSidebar
-            t={state.t}
-            language={state.language}
-            onLanguageChange={state.setLanguage}
-            history={state.history}
-            currentChatId={state.currentChatId}
-            openHistoryMenuId={state.openHistoryMenuId}
-            onCollapseLeft={() => state.setLeftCollapsed(true)}
+            t={t}
+            language={language}
+            onLanguageChange={setLanguage}
+            history={history}
+            currentChatId={currentChatId}
+            openHistoryMenuId={openHistoryMenuId}
+            onCollapseLeft={() => setLeftCollapsed(true)}
             onStartNewChat={actions.startNewChat}
             onSelectHistory={actions.selectHistory}
-            onToggleHistoryMenu={(id) => state.setOpenHistoryMenuId((prev) => (prev === id ? null : id))}
+            onToggleHistoryMenu={(id) => setOpenHistoryMenuId((prev) => (prev === id ? null : id))}
             onDuplicateHistoryItem={(id) => {
               actions.duplicateHistoryItem(id);
-              state.setOpenHistoryMenuId(null);
+              setOpenHistoryMenuId(null);
             }}
             onShareHistoryItem={async (id) => {
               await actions.shareHistoryItem(id);
-              state.setOpenHistoryMenuId(null);
+              setOpenHistoryMenuId(null);
             }}
             onRenameHistoryItem={(id) => {
               actions.renameHistoryItem(id);
-              state.setOpenHistoryMenuId(null);
+              setOpenHistoryMenuId(null);
             }}
             onCopyHistoryPrompt={actions.copyHistoryPrompt}
             onCopyHistoryFinal={actions.copyHistoryFinal}
             onDeleteHistoryItem={(id) => {
               actions.deleteHistoryItem(id);
-              state.setOpenHistoryMenuId(null);
+              setOpenHistoryMenuId(null);
             }}
           />
         )}
 
         <HomeMainPanel
-          t={state.t}
-          leftCollapsed={state.leftCollapsed}
-          rightSidebarOpen={state.rightSidebarOpen}
-          totalTokens={state.totalTokens}
-          markdownEnabled={state.markdownEnabled}
-          activeMode={state.activeMode}
-          timelineEntries={state.timelineEntries}
-          prompt={state.prompt}
-          isParsing={state.isParsing}
-          fileInputRef={state.fileInputRef}
-          folderInputRef={state.folderInputRef}
-          composerRef={state.composerRef}
-          renderMessageBody={state.renderMessageBody}
-          bytesToText={state.bytesToText}
-          onExpandLeft={() => state.setLeftCollapsed(false)}
-          onOpenRight={() => state.setRightSidebarOpen(true)}
-          onToggleMarkdown={() => state.setMarkdownEnabled((value) => !value)}
-          onChangeActiveMode={state.setActiveMode}
+          t={t}
+          leftCollapsed={leftCollapsed}
+          rightSidebarOpen={rightSidebarOpen}
+          totalTokens={totalTokens}
+          markdownEnabled={markdownEnabled}
+          activeMode={activeMode}
+          timelineEntries={timelineEntries}
+          prompt={prompt}
+          isParsing={isParsing}
+          fileInputRef={fileInputRef}
+          folderInputRef={folderInputRef}
+          composerRef={composerRef}
+          renderMessageBody={renderMessageBody}
+          bytesToText={bytesToText}
+          onExpandLeft={() => setLeftCollapsed(false)}
+          onOpenRight={() => setRightSidebarOpen(true)}
+          onToggleMarkdown={() => setMarkdownEnabled((value) => !value)}
+          onChangeActiveMode={setActiveMode}
           onDrop={actions.onDrop}
-          onPreviewItem={state.setActivePreview}
+          onPreviewItem={setActivePreview}
           onPreviewGroup={actions.previewGroup}
           onCopy={actions.onCopy}
           onToTxtContext={actions.toTxtContext}
-          onPushActivity={state.pushActivity}
-          l={state.l}
+          onPushActivity={pushActivity}
+          l={l}
           onTriggerDownload={actions.triggerDownload}
           onEditContextGroup={actions.editContextItems}
           onEditContextItem={actions.editItem}
           onRemoveContextItems={actions.removeContextItems}
           onFilePick={actions.onFilePick}
-          onPromptChange={state.setPrompt}
+          onPromptChange={setPrompt}
           onSendPrompt={actions.sendPrompt}
           onExportTxt={actions.exportTxt}
         />
 
-        {state.rightSidebarOpen && (
+        {rightSidebarOpen && (
           <>
             <div
               role="separator"
@@ -105,36 +190,36 @@ export default function Home() {
               className="hidden w-px shrink-0 cursor-col-resize bg-border/50 transition-colors hover:bg-primary/30 xl:block"
               onMouseDown={(event) => {
                 event.preventDefault();
-                state.setResizingSidebar("right");
+                setResizingSidebar("right");
               }}
             />
             <HomeRightSidebar
-              t={state.t}
-              rightSidebarWidth={state.rightSidebarWidth}
-              items={state.items}
-              processing={state.processing}
-              promptSuggestions={state.promptSuggestions}
-              bundleFilter={state.bundleFilter}
-              sortMode={state.sortMode}
-              viewMode={state.viewMode}
-              visibleItems={state.visibleItems}
-              selectedItems={state.selectedItems}
-              skippedFiles={state.skippedFiles}
-              selectedItemIds={state.selectedItemIds}
-              favoriteItemIds={state.favoriteItemIds}
-              totalFiles={state.totalFiles}
-              totalBytes={state.totalBytes}
-              totalTokens={state.totalTokens}
-              activity={state.activity}
-              autoSaveEnabled={state.autoSaveEnabled}
-              anonymousMode={state.anonymousMode}
-              includePromptInResult={state.includePromptInResult}
-              showSkippedFiles={state.showSkippedFiles}
-              settings={state.settings}
-              onCloseRight={() => state.setRightSidebarOpen(false)}
-              onSetBundleFilter={state.setBundleFilter}
-              onSetSortMode={state.setSortMode}
-              onSetViewMode={state.setViewMode}
+              t={t}
+              rightSidebarWidth={rightSidebarWidth}
+              items={items}
+              processing={processing}
+              promptSuggestions={promptSuggestions}
+              bundleFilter={bundleFilter}
+              sortMode={sortMode}
+              viewMode={viewMode}
+              visibleItems={visibleItems}
+              selectedItems={selectedItems}
+              skippedFiles={skippedFiles}
+              selectedItemIds={selectedItemIds}
+              favoriteItemIds={favoriteItemIds}
+              totalFiles={totalFiles}
+              totalBytes={totalBytes}
+              totalTokens={totalTokens}
+              activity={activity}
+              autoSaveEnabled={autoSaveEnabled}
+              anonymousMode={anonymousMode}
+              includePromptInResult={includePromptInResult}
+              showSkippedFiles={showSkippedFiles}
+              settings={settings}
+              onCloseRight={() => setRightSidebarOpen(false)}
+              onSetBundleFilter={setBundleFilter}
+              onSetSortMode={setSortMode}
+              onSetViewMode={setViewMode}
               onSelectAllVisible={actions.selectAllVisible}
               onBuildSelected={actions.buildSelected}
               onRemoveSelected={actions.removeSelected}
@@ -143,43 +228,43 @@ export default function Home() {
               onCopyDraft={actions.copyDraft}
               onToggleSelectItem={actions.toggleSelectItem}
               onToggleFavoriteItem={actions.toggleFavoriteItem}
-              onPreviewItem={state.setActivePreview}
+              onPreviewItem={setActivePreview}
               onCopyItemTxt={actions.copyItemTxt}
               onCopyItemMd={actions.copyItemMd}
               onDownloadItemTxt={actions.downloadItemTxt}
               onEditItem={actions.editItem}
               onRemoveItem={(item) => actions.removeContextItems([item.id], item.name)}
-              onToggleAutoSave={() => state.setAutoSaveEnabled((value) => !value)}
-              onToggleAnonymousMode={() => state.setAnonymousMode((value) => !value)}
+              onToggleAutoSave={() => setAutoSaveEnabled((value) => !value)}
+              onToggleAnonymousMode={() => setAnonymousMode(!anonymousMode)}
               onSetIgnoredDirectories={actions.setIgnoredDirectories}
               onSetExcludedExtensions={actions.setExcludedExtensions}
-              onSetIncludePromptInResult={state.setIncludePromptInResult}
-              onSetShowSkippedFiles={state.setShowSkippedFiles}
-              onBytesToText={state.bytesToText}
+              onSetIncludePromptInResult={setIncludePromptInResult}
+              onSetShowSkippedFiles={setShowSkippedFiles}
+              onBytesToText={bytesToText}
             />
           </>
         )}
       </div>
 
-      {state.activePreview && (
+      {activePreview && (
         <HomePreviewModal
-          activePreview={state.activePreview}
-          t={state.t}
-          renderMessageBody={state.renderMessageBody}
+          activePreview={activePreview}
+          t={t}
+          renderMessageBody={renderMessageBody}
           onCopy={(value) => {
             void actions.onCopy(value);
           }}
           onDelete={actions.deletePreviewItem}
-          onClose={() => state.setActivePreview(null)}
+          onClose={() => setActivePreview(null)}
         />
       )}
 
-      {state.editDialog && (
+      {editDialog && (
         <HomeEditDialog
-          editDialog={state.editDialog}
-          t={state.t}
-          onClose={() => state.setEditDialog(null)}
-          onChange={(value) => state.setEditDialog((prev) => (prev ? { ...prev, value } : prev))}
+          editDialog={editDialog}
+          t={t}
+          onClose={() => setEditDialog(null)}
+          onChange={(value) => setEditDialog((prev) => (prev ? { ...prev, value } : prev))}
           onSubmit={actions.submitEditDialog}
         />
       )}

@@ -8,50 +8,118 @@ import {
   parseFileWithPath,
   type ParsedItem,
 } from "@/lib";
+import {
+  buildHistoryShareUrl,
+  normalizeCsvInput,
+  stripSyntheticFileHeader,
+  toTxtContext,
+} from "../model/home-actions-logic";
+import { buildNextUntitledTitle, deriveHistoryTitle } from "../model/home-logic";
 import type { ContextGroup, HistoryItem } from "../model/page-types";
-import type { UseHomeStateResult } from "./use-home-state";
+import { useChatStore } from "../store/use-chat-store";
+import { useFilesStore } from "../store/use-files-store";
+import { useUIStore } from "../store/use-ui-store";
+import { useHomeUiSelectors } from "./use-home-ui-selectors";
 
-const toBase64Unicode = (input: string) => {
-  const bytes = new TextEncoder().encode(input);
-  let binary = "";
-  bytes.forEach((byte) => {
-    binary += String.fromCharCode(byte);
-  });
-  return btoa(binary);
-};
+export function useHomeActions() {
+  const settings = useUIStore((state) => state.settings);
+  const setSettings = useUIStore((state) => state.setSettings);
+  const setIsParsing = useFilesStore((state) => state.setIsParsing);
+  const setProcessing = useFilesStore((state) => state.setProcessing);
+  const setItems = useFilesStore((state) => state.setItems);
+  const setSelectedItemIds = useFilesStore((state) => state.setSelectedItemIds);
+  const setFavoriteItemIds = useFilesStore((state) => state.setFavoriteItemIds);
+  const setActivePreview = useFilesStore((state) => state.setActivePreview);
+  const history = useUIStore((state) => state.history);
+  const setEditDialog = useUIStore((state) => state.setEditDialog);
+  const editDialog = useUIStore((state) => state.editDialog);
+  const setHistory = useUIStore((state) => state.setHistory);
+  const currentChatId = useChatStore((state) => state.currentChatId);
+  const setCurrentChatId = useChatStore((state) => state.setCurrentChatId);
+  const setPrompt = useChatStore((state) => state.setPrompt);
+  const setChatMessages = useChatStore((state) => state.setChatMessages);
+  const autoSaveEnabled = useUIStore((state) => state.autoSaveEnabled);
+  const anonymousMode = useUIStore((state) => state.anonymousMode);
+  const items = useFilesStore((state) => state.items);
+  const selectedItemIds = useFilesStore((state) => state.selectedItemIds);
+  const includePromptInResult = useChatStore((state) => state.includePromptInResult);
+  const prompt = useChatStore((state) => state.prompt);
+  const chatMessages = useChatStore((state) => state.chatMessages);
+  const mounted = useUIStore((state) => state.mounted);
+  const setOpenHistoryMenuId = useUIStore((state) => state.setOpenHistoryMenuId);
+  const language = useUIStore((state) => state.language);
+  const markdownEnabled = useUIStore((state) => state.markdownEnabled);
+  const bundleFilter = useFilesStore((state) => state.bundleFilter);
+  const sortMode = useFilesStore((state) => state.sortMode);
+  const showSkippedFiles = useFilesStore((state) => state.showSkippedFiles);
+  const setActivity = useUIStore((state) => state.setActivity);
 
-export function useHomeActions(state: UseHomeStateResult) {
   const {
-    settings,
-    pushActivity,
     l,
-    setIsParsing,
-    setProcessing,
-    setItems,
-    setSelectedItemIds,
-    setFavoriteItemIds,
-    setActivePreview,
-    history,
-    setEditDialog,
-    editDialog,
-    setHistory,
-    currentChatId,
-    setCurrentChatId,
-    setPrompt,
-    setChatMessages,
-    autoSaveEnabled,
-    saveToHistory,
-    items,
-    finalText,
+    pushActivity,
+    totalTokens,
     visibleItems,
     selectedItems,
-    selectedItemIds,
-    includePromptInResult,
+  } = useHomeUiSelectors({
+    language,
+    markdownEnabled,
+    items,
     prompt,
-    mounted,
-    setOpenHistoryMenuId,
-    setSettings,
-  } = state;
+    chatMessages,
+    bundleFilter,
+    sortMode,
+    showSkippedFiles,
+    selectedItemIds,
+    setActivity,
+  });
+
+  const finalText = React.useMemo(
+    () =>
+      combineToFinalTxt(
+        items,
+        includePromptInResult ? prompt : "",
+        mounted ? new Date().toISOString() : undefined
+      ),
+    [items, includePromptInResult, prompt, mounted]
+  );
+
+  const nextUntitledTitle = React.useMemo(() => buildNextUntitledTitle(history), [history]);
+
+  const upsertHistory = React.useCallback((entry: HistoryItem) => {
+    setHistory((prev) => [entry, ...prev.filter((item) => item.id !== entry.id)].slice(0, 30));
+  }, [setHistory]);
+
+  const saveToHistory = React.useCallback(
+    (force = false) => {
+      if (anonymousMode) return;
+
+      const hasCurrentContent = prompt.trim().length > 0 || items.length > 0 || chatMessages.length > 0;
+      if (!hasCurrentContent && !force) return;
+
+      const id = currentChatId ?? crypto.randomUUID();
+      const existingEntry = currentChatId ? history.find((entry) => entry.id === currentChatId) ?? null : null;
+      const entry: HistoryItem = {
+        id,
+        title: deriveHistoryTitle({
+          existingTitle: existingEntry?.title,
+          prompt,
+          chatMessages,
+          items,
+          nextUntitledTitle,
+        }),
+        updatedAt: new Date().toISOString(),
+        tokenEstimate: totalTokens,
+        finalText,
+        prompt,
+        items,
+        chatMessages,
+      };
+
+      if (!currentChatId) setCurrentChatId(id);
+      upsertHistory(entry);
+    },
+    [anonymousMode, chatMessages, currentChatId, finalText, history, items, nextUntitledTitle, prompt, totalTokens, setCurrentChatId, upsertHistory]
+  );
 
   const onCopy = React.useCallback(async (value: string) => {
     try {
@@ -126,13 +194,6 @@ export function useHomeActions(state: UseHomeStateResult) {
     [handleFiles]
   );
 
-  const toTxtContext = React.useCallback((content: string) => {
-    return content
-      .replace(/^### FILE: .*$/gm, "")
-      .replace(/\n{3,}/g, "\n\n")
-      .trim();
-  }, []);
-
   const triggerDownload = React.useCallback((fileName: string, content: string, mime: string) => {
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
@@ -154,7 +215,10 @@ export function useHomeActions(state: UseHomeStateResult) {
   }, [l, pushActivity, setActivePreview, setFavoriteItemIds, setItems, setSelectedItemIds]);
 
   const editContextItems = React.useCallback((group: ContextGroup) => {
-    const current = group.items.map((entry) => entry.text).filter(Boolean).join("\n\n");
+    const current = group.items
+      .map((entry) => stripSyntheticFileHeader(entry.text))
+      .filter(Boolean)
+      .join("\n\n");
     setEditDialog({ mode: "context-group", value: current, group });
   }, [setEditDialog]);
 
@@ -293,14 +357,7 @@ export function useHomeActions(state: UseHomeStateResult) {
   const shareHistoryItem = React.useCallback(async (id: string) => {
     const target = history.find((entry) => entry.id === id);
     if (!target) return;
-    const payload = {
-      title: target.title,
-      tokenEstimate: target.tokenEstimate,
-      updatedAt: target.updatedAt,
-      prompt: target.prompt,
-    };
-    const encoded = toBase64Unicode(JSON.stringify(payload));
-    const url = `${window.location.origin}${window.location.pathname}#shared=${encoded}`;
+    const url = buildHistoryShareUrl(target, window.location.origin, window.location.pathname);
     const copied = await onCopy(url);
     pushActivity(copied ? l("Ссылка чата скопирована", "Chat link copied") : l("Не удалось скопировать ссылку", "Failed to copy chat link"));
   }, [history, l, onCopy, pushActivity]);
@@ -406,7 +463,7 @@ export function useHomeActions(state: UseHomeStateResult) {
   const copyItemTxt = React.useCallback(async (item: ParsedItem) => {
     await onCopy(toTxtContext(item.text));
     pushActivity(l(`Скопирован TXT: ${item.name}`, `Copied TXT: ${item.name}`));
-  }, [l, onCopy, pushActivity, toTxtContext]);
+  }, [l, onCopy, pushActivity]);
 
   const copyItemMd = React.useCallback(async (item: ParsedItem) => {
     await onCopy(item.text);
@@ -416,10 +473,10 @@ export function useHomeActions(state: UseHomeStateResult) {
   const downloadItemTxt = React.useCallback((item: ParsedItem) => {
     triggerDownload(`${item.name}.txt`, toTxtContext(item.text), "text/plain;charset=utf-8");
     pushActivity(l(`Скачан TXT: ${item.name}`, `Downloaded TXT: ${item.name}`));
-  }, [l, pushActivity, toTxtContext, triggerDownload]);
+  }, [l, pushActivity, triggerDownload]);
 
   const editItem = React.useCallback((item: ParsedItem) => {
-    setEditDialog({ mode: "context-item", value: item.text, item });
+    setEditDialog({ mode: "context-item", value: stripSyntheticFileHeader(item.text), item });
   }, [setEditDialog]);
 
   const deletePreviewItem = React.useCallback((id: string) => {
@@ -456,20 +513,14 @@ export function useHomeActions(state: UseHomeStateResult) {
   const setIgnoredDirectories = React.useCallback((value: string) => {
     setSettings((prev) => ({
       ...prev,
-      ignoredDirectories: value
-        .split(",")
-        .map((entry) => entry.trim())
-        .filter(Boolean),
+      ignoredDirectories: normalizeCsvInput(value),
     }));
   }, [setSettings]);
 
   const setExcludedExtensions = React.useCallback((value: string) => {
     setSettings((prev) => ({
       ...prev,
-      excludedExtensions: value
-        .split(",")
-        .map((entry) => entry.trim().toLowerCase())
-        .filter(Boolean),
+      excludedExtensions: normalizeCsvInput(value, { lowercase: true }),
     }));
   }, [setSettings]);
 

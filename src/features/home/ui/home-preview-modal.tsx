@@ -15,6 +15,10 @@ type HomePreviewModalProps = {
   onClose: () => void;
 };
 
+function stripSyntheticFileHeader(text: string) {
+  return text.replace(/^### FILE: .*\r?\n\r?\n/, "");
+}
+
 export function HomePreviewModal({
   activePreview,
   t,
@@ -23,6 +27,8 @@ export function HomePreviewModal({
   onDelete,
   onClose,
 }: HomePreviewModalProps) {
+  const previewText = stripSyntheticFileHeader(activePreview.text || "");
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <div className="flex h-[80vh] w-full max-w-4xl flex-col rounded-2xl border border-border bg-background">
@@ -34,7 +40,7 @@ export function HomePreviewModal({
           <div className="flex items-center gap-1">
             <button
               type="button"
-              onClick={() => onCopy(activePreview.text)}
+              onClick={() => onCopy(previewText)}
               className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs hover:bg-muted"
             >
               <Copy className="h-3.5 w-3.5" />
@@ -59,7 +65,7 @@ export function HomePreviewModal({
           </div>
         </div>
         <div className="preview-scroll min-h-0 flex-1 overflow-auto p-4">
-          <div className="space-y-2">{renderMessageBody(activePreview.text || t.noData)}</div>
+          <div className="space-y-2">{renderMessageBody(previewText || t.noData)}</div>
         </div>
         <div className="border-t border-border/70 p-3">
           <button

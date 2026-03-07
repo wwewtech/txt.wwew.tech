@@ -182,6 +182,7 @@ describe("Home central panel UI/UX", () => {
 
   it("copies aggregated context text from card action", async () => {
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
+    const user = userEvent.setup();
     render(<Home />);
 
     const hiddenInputs = document.querySelectorAll('input[type="file"]');
@@ -192,9 +193,11 @@ describe("Home central panel UI/UX", () => {
     const copyNodes = await screen.findAllByText("copy.txt");
     expect(copyNodes.length).toBeGreaterThan(0);
     const card = copyNodes[0].closest(".group") as HTMLElement;
-    fireEvent.click(within(card).getByRole("button", { name: "MD" }));
+    await user.click(within(card).getByRole("button", { name: "MD" }));
 
-    expect(writeTextSpy).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(writeTextSpy).toHaveBeenCalled();
+    });
     expect(writeTextSpy.mock.calls.at(-1)?.[0]).toContain("### FILE: copy.txt");
   });
 
@@ -611,8 +614,12 @@ describe("Home central panel UI/UX", () => {
     fireEvent.change(fileInput, { target: { files: [new File(["a"], "draft.txt", { type: "text/plain" })] } });
     await screen.findAllByText("draft.txt");
 
-    fireEvent.click(screen.getByLabelText(/Include prompt|Включать prompt|Включать промпт/i));
-    fireEvent.click(screen.getByRole("button", { name: /Draft|Черновик/ }));
+    await user.click(screen.getByLabelText(/Include prompt|Включать prompt|Включать промпт/i));
+    await user.click(screen.getByRole("button", { name: /Draft|Черновик/ }));
+
+    await waitFor(() => {
+      expect(writeTextSpy).toHaveBeenCalled();
+    });
 
     const copied = String(writeTextSpy.mock.calls.at(-1)?.[0] ?? "");
     expect(copied).not.toContain("PROMPT-HIDDEN");
@@ -656,8 +663,12 @@ describe("Home central panel UI/UX", () => {
 
     const historyItem = await screen.findByRole("button", { name: /share me/i });
     const container = historyItem.closest("[data-history-item]") as HTMLElement;
-    fireEvent.click(within(container).getByRole("button", { name: "Actions" }));
-    fireEvent.click(await screen.findByRole("button", { name: /Share|Поделиться/ }));
+    await user.click(within(container).getByRole("button", { name: "Actions" }));
+    await user.click(await screen.findByRole("button", { name: /Share|Поделиться/ }));
+
+    await waitFor(() => {
+      expect(writeTextSpy).toHaveBeenCalled();
+    });
 
     expect(String(writeTextSpy.mock.calls.at(-1)?.[0] ?? "")).toContain("#shared=");
   });
@@ -733,14 +744,19 @@ describe("Home central panel UI/UX", () => {
 
     const historyItem = await screen.findByRole("button", { name: /copy prompt content/i });
     const container = historyItem.closest("[data-history-item]") as HTMLElement;
-    fireEvent.click(within(container).getByRole("button", { name: "Actions" }));
-    fireEvent.click(await screen.findByRole("button", { name: /Copy prompt|Копировать prompt|Копировать промпт/ }));
+    await user.click(within(container).getByRole("button", { name: "Actions" }));
+    await user.click(await screen.findByRole("button", { name: /Copy prompt|Копировать prompt|Копировать промпт/ }));
+
+    await waitFor(() => {
+      expect(writeTextSpy).toHaveBeenCalled();
+    });
 
     expect(String(writeTextSpy.mock.calls.at(-1)?.[0] ?? "")).toContain("copy prompt content");
   });
 
   it("[extra 21] copy final action writes final context", async () => {
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
+    const user = userEvent.setup();
     render(<Home />);
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
@@ -750,8 +766,12 @@ describe("Home central panel UI/UX", () => {
     clickNewChat();
     const historyItem = await screen.findByRole("button", { name: /final.txt/i });
     const container = historyItem.closest("[data-history-item]") as HTMLElement;
-    fireEvent.click(within(container).getByRole("button", { name: "Actions" }));
-    fireEvent.click(await screen.findByRole("button", { name: /Copy final|Копировать итог/ }));
+    await user.click(within(container).getByRole("button", { name: "Actions" }));
+    await user.click(await screen.findByRole("button", { name: /Copy final|Копировать итог/ }));
+
+    await waitFor(() => {
+      expect(writeTextSpy).toHaveBeenCalled();
+    });
 
     expect(String(writeTextSpy.mock.calls.at(-1)?.[0] ?? "")).toContain("# LLM Context Bundle");
   });
@@ -805,6 +825,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 25] build selected copies only selected context", async () => {
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
+    const user = userEvent.setup();
     render(<Home />);
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
@@ -821,8 +842,12 @@ describe("Home central panel UI/UX", () => {
     const fileCheckboxes = screen
       .getAllByRole("checkbox")
       .filter((input) => input.className.includes("h-3.5"));
-    fireEvent.click(fileCheckboxes[0]);
-    fireEvent.click(screen.getByRole("button", { name: /Build selected|Собрать selected|Собрать выбранное/ }));
+    await user.click(fileCheckboxes[0]);
+    await user.click(screen.getByRole("button", { name: /Build selected|Собрать selected|Собрать выбранное/ }));
+
+    await waitFor(() => {
+      expect(writeTextSpy).toHaveBeenCalled();
+    });
 
     const copied = String(writeTextSpy.mock.calls.at(-1)?.[0] ?? "");
     expect(copied).toContain("sel-a.txt");

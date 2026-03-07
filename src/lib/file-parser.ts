@@ -62,9 +62,12 @@ export function estimateTokens(text: string) {
 }
 
 export function getExt(path: string) {
-  const index = path.lastIndexOf(".");
+  const normalized = path.replaceAll("\\", "/");
+  const fileName = normalized.split("/").pop() ?? normalized;
+  const index = fileName.lastIndexOf(".");
   if (index === -1) return "";
-  return path.slice(index + 1).toLowerCase();
+  if (index === fileName.length - 1) return "";
+  return fileName.slice(index + 1).toLowerCase();
 }
 
 export function isIgnoredPath(path: string, settings: ParseSettings) {
@@ -98,6 +101,53 @@ function decorateForLlm(path: string, content: string) {
   return `### FILE: ${path}\n\n${content.trim()}\n`;
 }
 
+type PdfTextItemLike = {
+  str?: unknown;
+  hasEOL?: unknown;
+  transform?: unknown;
+};
+
+function formatPdfPageText(items: PdfTextItemLike[]) {
+  const lines: string[] = [];
+  let currentLine: string[] = [];
+  let previousY: number | null = null;
+
+  const flushLine = () => {
+    if (!currentLine.length) return;
+    lines.push(currentLine.join(" ").replace(/\s+/g, " ").trim());
+    currentLine = [];
+  };
+
+  for (const item of items) {
+    const raw = typeof item.str === "string" ? item.str : "";
+    const token = raw.replace(/\s+/g, " ").trim();
+    const y =
+      Array.isArray(item.transform) && typeof item.transform[5] === "number"
+        ? item.transform[5]
+        : null;
+    const isNewLineByY = previousY !== null && y !== null && Math.abs(previousY - y) > 3;
+
+    if (isNewLineByY) {
+      flushLine();
+    }
+
+    if (token) {
+      currentLine.push(token);
+    }
+
+    if (item.hasEOL === true) {
+      flushLine();
+    }
+
+    if (y !== null) {
+      previousY = y;
+    }
+  }
+
+  flushLine();
+  return lines.join("\n").trim();
+}
+
 async function parsePdf(file: Blob) {
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   pdfjs.GlobalWorkerOptions.workerSrc =
@@ -109,11 +159,7 @@ async function parsePdf(file: Blob) {
   for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
     const page = await pdf.getPage(pageNum);
     const text = await page.getTextContent();
-    const pageText = text.items
-      .map((item) => ("str" in item ? item.str : ""))
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .trim();
+    const pageText = formatPdfPageText(text.items as PdfTextItemLike[]);
     chunks.push(`\n[Page ${pageNum}]\n${pageText}`);
   }
 

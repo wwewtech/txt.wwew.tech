@@ -1,6 +1,7 @@
 import type { ParseSettings } from "@/lib";
 
 export const HISTORY_KEY = "txt-wwew-tech-history";
+export const HISTORY_META_KEY = "txt-wwew-tech-history-meta";
 export const UI_PREFS_KEY = "txt-wwew-tech-ui-prefs";
 
 export const defaultSettings: ParseSettings = {

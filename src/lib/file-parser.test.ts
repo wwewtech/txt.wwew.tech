@@ -1,5 +1,16 @@
 import JSZip from "jszip";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const pdfMocks = vi.hoisted(() => ({
+  getDocument: vi.fn(),
+  getPage: vi.fn(),
+  getTextContent: vi.fn(),
+}));
+
+vi.mock("pdfjs-dist/legacy/build/pdf.mjs", () => ({
+  GlobalWorkerOptions: { workerSrc: "" },
+  getDocument: pdfMocks.getDocument,
+}));
 
 vi.mock("mammoth", () => ({
   default: {
@@ -32,6 +43,12 @@ async function buildZip(entries: Array<{ path: string; content: string }>) {
 }
 
 describe("file-parser business logic", () => {
+  beforeEach(() => {
+    pdfMocks.getDocument.mockReset();
+    pdfMocks.getPage.mockReset();
+    pdfMocks.getTextContent.mockReset();
+  });
+
   it("estimateTokens returns at least 1", () => {
     expect(estimateTokens("")).toBe(1);
     expect(estimateTokens("abcd")).toBe(1);
@@ -48,10 +65,15 @@ describe("file-parser business logic", () => {
     ["/nested/path/file.JSON", "json"],
     ["C:/tmp/report.FINAL.Docx", "docx"],
     [".env.local", "local"],
-    ["folder.name/readme", "name/readme"],
+    ["folder.name/readme", ""],
     ["multi.part.name.test.ts", "ts"],
   ])("extracts extension correctly for %s", (path, expected) => {
     expect(getExt(path)).toBe(expected);
+  });
+
+  it("returns empty extension when dot appears only in parent directory", () => {
+    expect(getExt("workspace.v2/src/readme")).toBe("");
+    expect(getExt("workspace.v2/src/readme.")).toBe("");
   });
 
   it("isIgnoredPath ignores by directory", () => {
@@ -161,6 +183,35 @@ describe("file-parser business logic", () => {
     expect(result.error).toBeUndefined();
     expect(result.text).toContain("DOCX CONTENT");
     expect(result.sourceType).toBe("docx");
+  });
+
+  it("parses pdf keeping line breaks between rows", async () => {
+    pdfMocks.getTextContent.mockResolvedValue({
+      items: [
+        { str: "A1", transform: [1, 0, 0, 1, 10, 700] },
+        { str: "A2", transform: [1, 0, 0, 1, 50, 700] },
+        { str: "B1", transform: [1, 0, 0, 1, 10, 680], hasEOL: true },
+      ],
+    });
+    pdfMocks.getPage.mockResolvedValue({
+      getTextContent: pdfMocks.getTextContent,
+    });
+    pdfMocks.getDocument.mockReturnValue({
+      promise: Promise.resolve({
+        numPages: 1,
+        getPage: pdfMocks.getPage,
+      }),
+    });
+
+    const file = new File([new Uint8Array([37, 80, 68, 70])], "layout.pdf", {
+      type: "application/pdf",
+    });
+    const result = await parseFileWithPath(file, "docs/layout.pdf", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("[Page 1]");
+    expect(result.text).toContain("A1 A2\nB1");
+    expect(result.text).not.toContain("A1 A2 B1");
   });
 
   it("parses DOCX extension case-insensitively", async () => {
@@ -317,6 +368,12 @@ describe("file-parser business logic", () => {
   it("combineToFinalTxt keeps empty prompt marker", () => {
     const output = combineToFinalTxt([], "   ");
     expect(output).toContain("Prompt: (empty)");
+  });
+
+  it("combineToFinalTxt trims prompt value in header", () => {
+    const output = combineToFinalTxt([], "   Keep concise output   ");
+    expect(output).toContain("Prompt: Keep concise output");
+    expect(output).not.toContain("Prompt:    Keep concise output");
   });
 
   it("combineToFinalTxt omits Generated line when timestamp is missing", () => {

@@ -1,5 +1,6 @@
 import "@testing-library/jest-dom/vitest";
-import { vi } from "vitest";
+import { beforeEach, vi } from "vitest";
+import { resetHomeStores } from "@/features/home/store/reset-home-stores";
 
 if (!globalThis.crypto?.randomUUID) {
   Object.defineProperty(globalThis, "crypto", {
@@ -39,3 +40,9 @@ if (!window.HTMLElement.prototype.releasePointerCapture) {
     configurable: true,
   });
 }
+
+beforeEach(() => {
+  resetHomeStores();
+  window.localStorage.clear();
+  window.sessionStorage.clear();
+});
