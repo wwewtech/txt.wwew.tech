@@ -33,8 +33,6 @@ export default function Home() {
             t={state.t}
             language={state.language}
             onLanguageChange={state.setLanguage}
-            autoSaveEnabled={state.autoSaveEnabled}
-            onToggleAutoSave={() => state.setAutoSaveEnabled((value) => !value)}
             history={state.history}
             currentChatId={state.currentChatId}
             openHistoryMenuId={state.openHistoryMenuId}
@@ -68,7 +66,6 @@ export default function Home() {
           leftCollapsed={state.leftCollapsed}
           rightSidebarOpen={state.rightSidebarOpen}
           totalTokens={state.totalTokens}
-          activeChatTitle={state.activeChatTitle}
           markdownEnabled={state.markdownEnabled}
           activeMode={state.activeMode}
           timelineEntries={state.timelineEntries}
@@ -114,7 +111,6 @@ export default function Home() {
               t={state.t}
               rightSidebarWidth={state.rightSidebarWidth}
               items={state.items}
-              hasContent={state.hasContent}
               processing={state.processing}
               promptSuggestions={state.promptSuggestions}
               bundleFilter={state.bundleFilter}
@@ -129,6 +125,7 @@ export default function Home() {
               totalBytes={state.totalBytes}
               totalTokens={state.totalTokens}
               activity={state.activity}
+              autoSaveEnabled={state.autoSaveEnabled}
               anonymousMode={state.anonymousMode}
               includePromptInResult={state.includePromptInResult}
               showSkippedFiles={state.showSkippedFiles}
@@ -151,6 +148,7 @@ export default function Home() {
               onDownloadItemTxt={actions.downloadItemTxt}
               onEditItem={actions.editItem}
               onRemoveItem={(item) => actions.removeContextItems([item.id], item.name)}
+              onToggleAutoSave={() => state.setAutoSaveEnabled((value) => !value)}
               onToggleAnonymousMode={() => state.setAnonymousMode((value) => !value)}
               onSetIgnoredDirectories={actions.setIgnoredDirectories}
               onSetExcludedExtensions={actions.setExcludedExtensions}

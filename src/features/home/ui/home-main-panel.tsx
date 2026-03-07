@@ -27,7 +27,6 @@ type HomeMainPanelProps = {
   leftCollapsed: boolean;
   rightSidebarOpen: boolean;
   totalTokens: number;
-  activeChatTitle: string;
   markdownEnabled: boolean;
   activeMode: ActiveMode;
   timelineEntries: TimelineEntry[];
@@ -63,7 +62,6 @@ export function HomeMainPanel({
   leftCollapsed,
   rightSidebarOpen,
   totalTokens,
-  activeChatTitle,
   markdownEnabled,
   activeMode,
   timelineEntries,

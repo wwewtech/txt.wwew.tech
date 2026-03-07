@@ -25,8 +25,6 @@ type HomeLeftSidebarProps = {
   t: I18nDict;
   language: Language;
   onLanguageChange: (next: Language) => void;
-  autoSaveEnabled: boolean;
-  onToggleAutoSave: () => void;
   history: HistoryItem[];
   currentChatId: string | null;
   openHistoryMenuId: string | null;
@@ -46,8 +44,6 @@ export function HomeLeftSidebar({
   t,
   language,
   onLanguageChange,
-  autoSaveEnabled,
-  onToggleAutoSave,
   history,
   currentChatId,
   openHistoryMenuId,
@@ -88,19 +84,6 @@ export function HomeLeftSidebar({
         <MessageSquarePlus className="h-4 w-4" />
         <span>{t.newChat}</span>
       </button>
-
-      <div className="mb-3 rounded-2xl border border-border/70 bg-background/80 p-2">
-        <button
-          type="button"
-          onClick={onToggleAutoSave}
-          className={cn(
-            "w-full rounded-lg border px-2 py-1.5 text-left text-[11px]",
-            autoSaveEnabled ? "border-primary bg-primary/10" : "border-border/70"
-          )}
-        >
-          {t.autosave}: {autoSaveEnabled ? "ON" : "OFF"}
-        </button>
-      </div>
 
       <div className="min-h-0 w-full flex-1 overflow-auto rounded-2xl border border-border/70 bg-background/60 p-2">
         <p className="mb-2 px-2 text-xs uppercase tracking-wide text-muted-foreground">{t.history}</p>

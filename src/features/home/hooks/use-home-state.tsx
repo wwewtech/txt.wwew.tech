@@ -396,11 +396,6 @@ export function useHomeState() {
   const t = i18n[language];
   const l = React.useCallback((ruText: string, enText: string) => (language === "ru" ? ruText : enText), [language]);
 
-  const currentHistoryEntry = React.useMemo(
-    () => (currentChatId ? history.find((entry) => entry.id === currentChatId) ?? null : null),
-    [currentChatId, history]
-  );
-
   const nextUntitledTitle = React.useMemo(() => {
     const untitledNumbers = history
       .map((entry) => /^Untitled\s+(\d+)$/i.exec(entry.title)?.[1])
@@ -409,8 +404,6 @@ export function useHomeState() {
     const maxUntitled = untitledNumbers.length ? Math.max(...untitledNumbers) : 0;
     return `Untitled ${maxUntitled + 1}`;
   }, [history]);
-
-  const activeChatTitle = currentHistoryEntry?.title ?? nextUntitledTitle;
 
   const bytesToText = (value: number) => {
     if (value < 1024) return `${value} B`;
@@ -581,7 +574,6 @@ export function useHomeState() {
     renderMessageBody,
     t,
     l,
-    activeChatTitle,
     bytesToText,
     saveToHistory,
   };

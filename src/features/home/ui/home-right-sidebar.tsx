@@ -28,7 +28,6 @@ type HomeRightSidebarProps = {
   t: I18nDict;
   rightSidebarWidth: number;
   items: ParsedItem[];
-  hasContent: boolean;
   processing: boolean;
   promptSuggestions: string[];
   bundleFilter: string;
@@ -43,6 +42,7 @@ type HomeRightSidebarProps = {
   totalBytes: number;
   totalTokens: number;
   activity: ActivityItem[];
+  autoSaveEnabled: boolean;
   anonymousMode: boolean;
   includePromptInResult: boolean;
   showSkippedFiles: boolean;
@@ -68,6 +68,7 @@ type HomeRightSidebarProps = {
   onDownloadItemTxt: (item: ParsedItem) => void;
   onEditItem: (item: ParsedItem) => void;
   onRemoveItem: (item: ParsedItem) => void;
+  onToggleAutoSave: () => void;
   onToggleAnonymousMode: () => void;
   onSetIgnoredDirectories: (value: string) => void;
   onSetExcludedExtensions: (value: string) => void;
@@ -80,7 +81,6 @@ export function HomeRightSidebar({
   t,
   rightSidebarWidth,
   items,
-  hasContent,
   processing,
   promptSuggestions,
   bundleFilter,
@@ -95,6 +95,7 @@ export function HomeRightSidebar({
   totalBytes,
   totalTokens,
   activity,
+  autoSaveEnabled,
   anonymousMode,
   includePromptInResult,
   showSkippedFiles,
@@ -117,6 +118,7 @@ export function HomeRightSidebar({
   onDownloadItemTxt,
   onEditItem,
   onRemoveItem,
+  onToggleAutoSave,
   onToggleAnonymousMode,
   onSetIgnoredDirectories,
   onSetExcludedExtensions,
@@ -186,7 +188,8 @@ export function HomeRightSidebar({
           </div>
         </div>
 
-        <div className="rounded-xl border border-border/70 bg-background p-2">
+        {(items.length > 0 || processing) && (
+          <div className="rounded-xl border border-border/70 bg-background p-2">
           {items.length > 0 && (
             <>
               <p className="mb-1 text-[10px] text-muted-foreground">{t.searchHint}</p>
@@ -269,7 +272,7 @@ export function HomeRightSidebar({
             </>
           )}
 
-          {hasContent && (
+          {items.length > 0 && (
             <div className={cn("max-h-60 overflow-auto", viewMode === "cards" ? "space-y-1.5" : "space-y-1")}>
               {visibleItems.map((item) => {
                 const isSelected = selectedItemIds.includes(item.id);
@@ -367,7 +370,8 @@ export function HomeRightSidebar({
               <Loader2 className="h-3.5 w-3.5 animate-spin" /> {t.processing}
             </div>
           )}
-        </div>
+          </div>
+        )}
 
         <div className="rounded-xl border border-border/70 bg-background p-2">
           <p className="mb-1 text-[11px] font-semibold">{t.workspace}</p>
@@ -384,16 +388,67 @@ export function HomeRightSidebar({
             <p className="text-[11px] font-semibold">{t.privacy}</p>
             <Shield className="h-3.5 w-3.5 text-muted-foreground" />
           </div>
-          <button
-            type="button"
-            onClick={onToggleAnonymousMode}
-            className={cn(
-              "w-full rounded-md border px-2 py-1.5 text-left text-[10px]",
-              anonymousMode ? "border-primary bg-primary/10" : "border-border/70"
-            )}
-          >
-            {t.anonymous}: {anonymousMode ? "ON" : "OFF"}
-          </button>
+          <div className="space-y-1.5">
+            <button
+              type="button"
+              onClick={onToggleAutoSave}
+              className={cn(
+                "flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-[10px] transition-colors",
+                autoSaveEnabled ? "border-primary/50 bg-primary/10" : "border-border/70 hover:bg-muted"
+              )}
+              aria-pressed={autoSaveEnabled}
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <span
+                  className={cn(
+                    "h-1.5 w-1.5 rounded-full",
+                    autoSaveEnabled ? "bg-primary" : "bg-muted-foreground/60"
+                  )}
+                  aria-hidden="true"
+                />
+                {t.autosave}
+              </span>
+              <span
+                className={cn(
+                  "rounded-full border px-1.5 py-0.5 text-[9px] font-semibold leading-none",
+                  autoSaveEnabled ? "border-primary/40 bg-primary/15 text-primary" : "border-border/70 text-muted-foreground"
+                )}
+              >
+                {autoSaveEnabled ? "ON" : "OFF"}
+              </span>
+              <span className="sr-only">{t.autosave}: {autoSaveEnabled ? "ON" : "OFF"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onToggleAnonymousMode}
+              className={cn(
+                "flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-[10px] transition-colors",
+                anonymousMode ? "border-primary/50 bg-primary/10" : "border-border/70 hover:bg-muted"
+              )}
+              aria-pressed={anonymousMode}
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <span
+                  className={cn(
+                    "h-1.5 w-1.5 rounded-full",
+                    anonymousMode ? "bg-primary" : "bg-muted-foreground/60"
+                  )}
+                  aria-hidden="true"
+                />
+                {t.anonymous}
+              </span>
+              <span
+                className={cn(
+                  "rounded-full border px-1.5 py-0.5 text-[9px] font-semibold leading-none",
+                  anonymousMode ? "border-primary/40 bg-primary/15 text-primary" : "border-border/70 text-muted-foreground"
+                )}
+              >
+                {anonymousMode ? "ON" : "OFF"}
+              </span>
+              <span className="sr-only">{t.anonymous}: {anonymousMode ? "ON" : "OFF"}</span>
+            </button>
+          </div>
         </div>
 
         <div className="rounded-xl border border-border/70 bg-background p-2">
