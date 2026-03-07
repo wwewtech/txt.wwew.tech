@@ -90,13 +90,6 @@ npm run build
 - `test:run` — прогон unit/integration тестов.
 - `build` — проверка production-сборки.
 
-## 🖼️ Иконки и SEO-ассеты
-
-После изменения `src/app/icon.svg` пересоберите PNG-иконки:
-
-```bash
-npm run icons:generate
-```
 
 ## 🔐 Приватность
 
