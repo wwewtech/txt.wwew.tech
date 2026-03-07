@@ -476,7 +476,35 @@ export default function Home() {
   };
 
   const onCopy = async (value: string) => {
-    await navigator.clipboard.writeText(value);
+    try {
+      await navigator.clipboard.writeText(value);
+      return true;
+    } catch {
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = value;
+        textarea.setAttribute("readonly", "true");
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        const success = document.execCommand("copy");
+        document.body.removeChild(textarea);
+        return success;
+      } catch {
+        return false;
+      }
+    }
+  };
+
+  const toBase64Unicode = (input: string) => {
+    const bytes = new TextEncoder().encode(input);
+    let binary = "";
+    bytes.forEach((byte) => {
+      binary += String.fromCharCode(byte);
+    });
+    return btoa(binary);
   };
 
   const renameHistoryItem = (id: string) => {
@@ -524,9 +552,10 @@ export default function Home() {
       updatedAt: target.updatedAt,
       prompt: target.prompt,
     };
-    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    const encoded = toBase64Unicode(JSON.stringify(payload));
     const url = `${window.location.origin}${window.location.pathname}#shared=${encoded}`;
-    await onCopy(url);
+    const copied = await onCopy(url);
+    pushActivity(copied ? "Ссылка чата скопирована" : "Не удалось скопировать ссылку");
   };
 
   const exportTxt = () => {
@@ -559,8 +588,8 @@ export default function Home() {
 
   const quickBuild = async () => {
     if (!items.length) return;
-    await onCopy(finalText);
-    pushActivity("Быстрая сборка: контекст скопирован");
+    const copied = await onCopy(finalText);
+    pushActivity(copied ? "Быстрая сборка: контекст скопирован" : "Быстрая сборка: не удалось скопировать");
   };
 
   const startNewChat = () => {
