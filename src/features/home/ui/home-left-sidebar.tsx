@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   Files,
   Github,
@@ -239,9 +241,9 @@ export function HomeLeftSidebar({
           <a href="https://github.com/wwewtech/txt.wwew.tech" target="_blank" rel="noreferrer" className="hover:text-foreground">
             <Github className="h-4 w-4" />
           </a>
-          <a href="#" className="text-[11px] hover:text-foreground">
+          <Link href="/terms" className="text-[11px] hover:text-foreground">
             {t.terms}
-          </a>
+          </Link>
         </div>
       </div>
     </aside>
