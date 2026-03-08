@@ -85,7 +85,7 @@ export default function Home() {
     l,
     totalTokens,
     timelineEntries,
-    promptSuggestions,
+    systemCommands,
     visibleItems,
     selectedItems,
     skippedFiles,
@@ -158,7 +158,7 @@ export default function Home() {
           rightSidebarWidth={320}
           items={items}
           processing={processing}
-          promptSuggestions={promptSuggestions}
+          systemCommands={systemCommands}
           bundleFilter={bundleFilter}
           sortMode={sortMode}
           viewMode={viewMode}
@@ -183,7 +183,10 @@ export default function Home() {
           onSelectAllVisible={actions.selectAllVisible}
           onBuildSelected={actions.buildSelected}
           onRemoveSelected={actions.removeSelected}
-          onAddPromptSuggestion={actions.addPromptSuggestion}
+          onApplyCommand={actions.addPromptSuggestion}
+          onAddSystemCommand={actions.addSystemCommand}
+          onRemoveSystemCommand={actions.removeSystemCommand}
+          onUpdateSystemCommand={actions.updateSystemCommand}
           onQuickBuild={actions.quickBuild}
           onCopyDraft={actions.copyDraft}
           onToggleSelectItem={actions.toggleSelectItem}
@@ -309,7 +312,7 @@ export default function Home() {
               rightSidebarWidth={rightSidebarWidth}
               items={items}
               processing={processing}
-              promptSuggestions={promptSuggestions}
+              systemCommands={systemCommands}
               bundleFilter={bundleFilter}
               sortMode={sortMode}
               viewMode={viewMode}
@@ -334,7 +337,10 @@ export default function Home() {
               onSelectAllVisible={actions.selectAllVisible}
               onBuildSelected={actions.buildSelected}
               onRemoveSelected={actions.removeSelected}
-              onAddPromptSuggestion={actions.addPromptSuggestion}
+              onApplyCommand={actions.addPromptSuggestion}
+              onAddSystemCommand={actions.addSystemCommand}
+              onRemoveSystemCommand={actions.removeSystemCommand}
+              onUpdateSystemCommand={actions.updateSystemCommand}
               onQuickBuild={actions.quickBuild}
               onCopyDraft={actions.copyDraft}
               onToggleSelectItem={actions.toggleSelectItem}

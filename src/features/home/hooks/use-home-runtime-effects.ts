@@ -39,6 +39,8 @@ export function useHomeRuntimeEffects({ composerRef, prompt }: UseHomeRuntimeEff
   const setFontSizeOffset = useUIStore((state) => state.setFontSizeOffset);
   const settings = useUIStore((state) => state.settings);
   const setSettings = useUIStore((state) => state.setSettings);
+  const systemCommands = useUIStore((state) => state.systemCommands);
+  const setSystemCommands = useUIStore((state) => state.setSystemCommands);
   const viewMode = useFilesStore((state) => state.viewMode);
   const setViewMode = useFilesStore((state) => state.setViewMode);
   const sortMode = useFilesStore((state) => state.sortMode);
@@ -89,6 +91,7 @@ export function useHomeRuntimeEffects({ composerRef, prompt }: UseHomeRuntimeEff
         viewMode?: ViewMode;
         sortMode?: SortMode;
         settings?: typeof defaultSettings;
+        systemCommands?: unknown;
       };
       if (parsed.language) setLanguage(parsed.language);
       if (typeof parsed.rightSidebarWidth === "number") {
@@ -121,6 +124,9 @@ export function useHomeRuntimeEffects({ composerRef, prompt }: UseHomeRuntimeEff
       if (parsed.settings && typeof parsed.settings === "object") {
         setSettings((prev) => ({ ...prev, ...parsed.settings }));
       }
+      if (Array.isArray(parsed.systemCommands)) {
+        setSystemCommands(parsed.systemCommands as string[]);
+      }
     } catch {
       const detected = navigator.language.toLowerCase().startsWith("ru") ? "ru" : "en";
       setLanguage(detected);
@@ -135,9 +141,9 @@ export function useHomeRuntimeEffects({ composerRef, prompt }: UseHomeRuntimeEff
   React.useEffect(() => {
     window.localStorage.setItem(
       UI_PREFS_KEY,
-      JSON.stringify({ language, rightSidebarWidth, autoSaveEnabled, markdownEnabled, anonymousMode, uiScale, compactMode, fontSizeOffset, viewMode, sortMode, settings })
+      JSON.stringify({ language, rightSidebarWidth, autoSaveEnabled, markdownEnabled, anonymousMode, uiScale, compactMode, fontSizeOffset, viewMode, sortMode, settings, systemCommands })
     );
-  }, [language, rightSidebarWidth, autoSaveEnabled, markdownEnabled, anonymousMode, uiScale, compactMode, fontSizeOffset, viewMode, sortMode, settings]);
+  }, [language, rightSidebarWidth, autoSaveEnabled, markdownEnabled, anonymousMode, uiScale, compactMode, fontSizeOffset, viewMode, sortMode, settings, systemCommands]);
 
   // Apply UI scale as CSS custom property
   React.useEffect(() => {

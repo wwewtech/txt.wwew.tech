@@ -11,6 +11,7 @@ import { i18n } from "../model/page-constants";
 import { buildContextGroups, buildTimelineEntries } from "../model/home-logic";
 import type { ActivityItem, ChatMessage, Language, SortMode } from "../model/page-types";
 import { markdownComponents } from "../ui/markdown-components";
+import { useUIStore } from "../store/use-ui-store";
 
 type ActivitySetter = (value: ActivityItem[] | ((prev: ActivityItem[]) => ActivityItem[])) => void;
 
@@ -80,23 +81,7 @@ export function useHomeUiSelectors({
     [chatMessages, contextGroups]
   );
 
-  const promptSuggestions = React.useMemo(
-    () =>
-      language === "ru"
-        ? [
-            "Сфокусируй ответ на архитектуре решения",
-            "Сделай краткое summary в 5 пунктах",
-            "Выдели риски и edge-cases",
-            "Добавь actionable next steps",
-          ]
-        : [
-            "Focus on solution architecture",
-            "Create a concise 5-point summary",
-            "Highlight risks and edge-cases",
-            "Add actionable next steps",
-          ],
-    [language]
-  );
+  const systemCommands = useUIStore((state) => state.systemCommands);
 
   const visibleItems = React.useMemo(() => {
     const filter = bundleFilter.trim().toLowerCase();
@@ -181,7 +166,7 @@ export function useHomeUiSelectors({
     totalTokens,
     contextGroups,
     timelineEntries,
-    promptSuggestions,
+    systemCommands,
     visibleItems,
     selectedItems,
     skippedFiles,

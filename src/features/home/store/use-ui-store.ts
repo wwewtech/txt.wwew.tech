@@ -41,6 +41,8 @@ interface UIState {
   setAutoSaveEnabled: (enabled: boolean | ((prev: boolean) => boolean)) => void;
   editDialog: EditDialogState | null;
   setEditDialog: (dialog: EditDialogState | null | ((prev: EditDialogState | null) => EditDialogState | null)) => void;
+  systemCommands: string[];
+  setSystemCommands: (commands: string[] | ((prev: string[]) => string[])) => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -86,6 +88,8 @@ export const useUIStore = create<UIState>((set) => ({
   setEditDialog: (val) => set((s) => ({
     editDialog: typeof val === 'function' ? val(s.editDialog) : val,
   })),
+  systemCommands: [],
+  setSystemCommands: (val) => set((s) => ({ systemCommands: typeof val === 'function' ? val(s.systemCommands) : val })),
 }));
 
 export function resetUIStore() {
@@ -109,5 +113,6 @@ export function resetUIStore() {
     markdownEnabled: true,
     autoSaveEnabled: true,
     editDialog: null,
+    systemCommands: [],
   });
 }

@@ -1,10 +1,10 @@
 "use client";
 
+import * as React from "react";
 import {
   ArrowDownToLine,
   CheckCheck,
   ChevronDown,
-  Copy,
   ExternalLink,
   Eye,
   Grid3X3,
@@ -14,12 +14,11 @@ import {
   Monitor,
   PanelRightClose,
   Pencil,
+  Plus,
   Search,
   Shield,
-  Sparkles,
   Star,
   Trash2,
-  WandSparkles,
 } from "lucide-react";
 import * as Slider from "@radix-ui/react-slider";
 
@@ -32,7 +31,7 @@ type HomeRightSidebarProps = {
   rightSidebarWidth: number;
   items: ParsedItem[];
   processing: boolean;
-  promptSuggestions: string[];
+  systemCommands: string[];
   bundleFilter: string;
   sortMode: SortMode;
   viewMode: ViewMode;
@@ -63,7 +62,10 @@ type HomeRightSidebarProps = {
   onSelectAllVisible: () => void;
   onBuildSelected: () => Promise<void>;
   onRemoveSelected: () => void;
-  onAddPromptSuggestion: (value: string) => void;
+  onApplyCommand: (value: string) => void;
+  onAddSystemCommand: (value: string) => void;
+  onRemoveSystemCommand: (index: number) => void;
+  onUpdateSystemCommand: (index: number, text: string) => void;
   onQuickBuild: () => Promise<void>;
   onCopyDraft: () => Promise<void>;
   onToggleSelectItem: (id: string) => void;
@@ -93,7 +95,7 @@ export function HomeRightSidebar({
   rightSidebarWidth,
   items,
   processing,
-  promptSuggestions,
+  systemCommands,
   bundleFilter,
   sortMode,
   viewMode,
@@ -121,7 +123,10 @@ export function HomeRightSidebar({
   onSelectAllVisible,
   onBuildSelected,
   onRemoveSelected,
-  onAddPromptSuggestion,
+  onApplyCommand,
+  onAddSystemCommand,
+  onRemoveSystemCommand,
+  onUpdateSystemCommand,
   onQuickBuild,
   onCopyDraft,
   onToggleSelectItem,
@@ -144,6 +149,11 @@ export function HomeRightSidebar({
   onSetFontSizeOffset,
   drawerMode = false,
 }: HomeRightSidebarProps) {
+  const [isAddingCommand, setIsAddingCommand] = React.useState(false);
+  const [newCommandText, setNewCommandText] = React.useState("");
+  const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
+  const [editingText, setEditingText] = React.useState("");
+
   return (
     <aside
       className={cn(
@@ -176,39 +186,128 @@ export function HomeRightSidebar({
       <div className={cn("space-y-3 overflow-auto p-3 pt-0", drawerMode ? "flex-1" : "h-[calc(100vh-6.75rem)]")}>
         <div className="rounded-xl bg-muted/25 p-2.5">
           <div className="mb-2 flex items-center justify-between">
-            <p className="text-[11px] font-semibold">{t.quickPrompts}</p>
-            <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
-          </div>
-          <div className="mb-2 flex flex-wrap gap-1.5">
-            {promptSuggestions.map((item) => (
+            <p className="text-[11px] font-semibold">{t.sysCommands}</p>
+            {!isAddingCommand && (
               <button
-                key={item}
                 type="button"
-                onClick={() => onAddPromptSuggestion(item)}
-                className="rounded-full border border-border/60 bg-background/70 px-2 py-1 text-[10px] hover:bg-muted"
+                onClick={() => setIsAddingCommand(true)}
+                className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-border/60 bg-background/70 text-muted-foreground hover:bg-muted hover:text-foreground"
+                title={t.addCommand}
               >
-                {item}
+                <Plus className="h-3 w-3" />
               </button>
-            ))}
+            )}
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            <button
-              type="button"
-              onClick={onQuickBuild}
-              disabled={processing || !items.length}
-              className="inline-flex h-7 items-center gap-1 rounded-md border border-border/60 bg-background/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
-            >
-              <WandSparkles className="h-3 w-3" /> {t.build}
-            </button>
-            <button
-              type="button"
-              onClick={onCopyDraft}
-              disabled={!items.length}
-              className="inline-flex h-7 items-center gap-1 rounded-md border border-border/60 bg-background/70 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
-            >
-              <Copy className="h-3 w-3" /> {t.draft}
-            </button>
-          </div>
+
+          {isAddingCommand && (
+            <div className="mb-2">
+              <textarea
+                // eslint-disable-next-line jsx-a11y/no-autofocus
+                autoFocus
+                value={newCommandText}
+                onChange={(e) => setNewCommandText(e.target.value)}
+                placeholder={t.cmdPlaceholder}
+                rows={3}
+                className="w-full resize-none rounded-md border border-border/70 bg-background p-2 text-[11px] leading-relaxed focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+              <div className="mt-1.5 flex items-center justify-end gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => { setIsAddingCommand(false); setNewCommandText(""); }}
+                  className="rounded-md border border-border/60 bg-background/70 px-2.5 py-1 text-[10px] hover:bg-muted"
+                >
+                  {t.cancel}
+                </button>
+                <button
+                  type="button"
+                  disabled={!newCommandText.trim()}
+                  onClick={() => {
+                    if (!newCommandText.trim()) return;
+                    onAddSystemCommand(newCommandText);
+                    setNewCommandText("");
+                    setIsAddingCommand(false);
+                  }}
+                  className="rounded-md border border-primary/40 bg-primary/10 px-2.5 py-1 text-[10px] text-primary hover:bg-primary/20 disabled:opacity-40"
+                >
+                  {t.save}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {systemCommands.length === 0 && !isAddingCommand && (
+            <p className="mb-2 text-[10px] text-muted-foreground">{t.noCommands}</p>
+          )}
+
+          {systemCommands.length > 0 && (
+            <div className="max-h-52 overflow-y-auto space-y-1 pr-0.5">
+              {systemCommands.map((cmd, index) => (
+                <div key={index} className="group rounded-md border border-border/50 bg-background/70">
+                  {editingIndex === index ? (
+                    <div className="p-1.5">
+                      <textarea
+                        // eslint-disable-next-line jsx-a11y/no-autofocus
+                        autoFocus
+                        value={editingText}
+                        onChange={(e) => setEditingText(e.target.value)}
+                        rows={3}
+                        className="w-full resize-none rounded border border-border/70 bg-background p-1.5 text-[11px] leading-relaxed focus:outline-none focus:ring-1 focus:ring-primary/40"
+                      />
+                      <div className="mt-1 flex items-center justify-end gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setEditingIndex(null)}
+                          className="rounded-md border border-border/60 bg-background/70 px-2 py-0.5 text-[10px] hover:bg-muted"
+                        >
+                          {t.cancel}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={!editingText.trim()}
+                          onClick={() => {
+                            if (!editingText.trim()) return;
+                            onUpdateSystemCommand(index, editingText);
+                            setEditingIndex(null);
+                          }}
+                          className="rounded-md border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] text-primary hover:bg-primary/20 disabled:opacity-40"
+                        >
+                          {t.save}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-start gap-1 px-2 py-1.5">
+                      <button
+                        type="button"
+                        onClick={() => onApplyCommand(cmd)}
+                        className="min-w-0 flex-1 text-left text-[10px] leading-snug text-foreground/80 hover:text-foreground"
+                      >
+                        <span className="line-clamp-2 whitespace-pre-wrap">{cmd}</span>
+                      </button>
+                      <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button
+                          type="button"
+                          onClick={() => { setEditingIndex(index); setEditingText(cmd); }}
+                          className="inline-flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+                          title={t.edit}
+                        >
+                          <Pencil className="h-3 w-3" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onRemoveSystemCommand(index)}
+                          className="inline-flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-destructive"
+                          title={t.delete}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {(items.length > 0 || processing) && (

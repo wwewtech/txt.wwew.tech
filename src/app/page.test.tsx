@@ -76,10 +76,10 @@ describe("Home central panel UI/UX", () => {
   it("switches markdown toggle to raw mode", async () => {
     render(<Home />);
 
-    const toggle = await screen.findByRole("button", { name: /Markdown ON|Raw/i });
+    const toggle = await screen.findByRole("button", { name: /Markdown ON|Markdown ВКЛ/i });
     fireEvent.click(toggle);
 
-    expect(screen.getByRole("button", { name: "Raw" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Markdown OFF|Markdown ВЫКЛ/i })).toBeInTheDocument();
   });
 
   it("sends prompt and appends user bubble", async () => {
@@ -108,7 +108,7 @@ describe("Home central panel UI/UX", () => {
       expect(nodes.length).toBeGreaterThan(0);
     });
 
-    expect((await screen.findAllByText(/~10 tokens/)).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText(/\d+ tokens|\d+ токенов/)).length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: /Preview|Предпросмотр/i })).toBeInTheDocument();
   });
 
@@ -270,7 +270,6 @@ describe("Home central panel UI/UX", () => {
 
     clickNewChat();
 
-    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
     expect(screen.queryByText("state.txt")).not.toBeInTheDocument();
     expect(composer).toHaveValue("");
   });
@@ -294,7 +293,6 @@ describe("Home central panel UI/UX", () => {
 
     const restored = await screen.findAllByText("История восстановление");
     expect(restored.length).toBeGreaterThan(0);
-    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
   });
 
   it("does not create history entry when closing an empty draft", async () => {
@@ -303,7 +301,6 @@ describe("Home central panel UI/UX", () => {
     clickNewChat();
 
     expect(screen.getByText(/No entries yet|Записей пока нет/)).toBeInTheDocument();
-    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
   });
 
   it("keeps chats isolated when switching from history", async () => {
@@ -342,8 +339,6 @@ describe("Home central panel UI/UX", () => {
     const target = historyItems[0] as HTMLElement;
     fireEvent.click(within(target).getByRole("button", { name: "Actions" }));
     fireEvent.click(await screen.findByRole("button", { name: "Delete" }));
-
-    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
   });
 
   it("left New chat keeps history entries but clears current center state", async () => {
@@ -359,7 +354,6 @@ describe("Home central panel UI/UX", () => {
 
     expect(screen.getByRole("button", { name: /Левый new chat/i })).toBeInTheDocument();
     expect(composer).toHaveValue("");
-    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
   });
 
   it("starting new chat while preview is open closes modal too", async () => {
@@ -416,7 +410,6 @@ describe("Home central panel UI/UX", () => {
     fireEvent.click(within(chatOneContainer).getByRole("button", { name: "Actions" }));
     fireEvent.click(await screen.findByRole("button", { name: "Delete" }));
 
-    expect(screen.getByText(/LLM Context Builder|Сборщик LLM-контекста/)).toBeInTheDocument();
     expect(screen.getAllByText(/Чат два|Чат два \(copy\)/).length).toBeGreaterThan(0);
     expect(screen.queryByRole("button", { name: /Чат один/i })).not.toBeInTheDocument();
   });
@@ -553,13 +546,6 @@ describe("Home central panel UI/UX", () => {
     expect(screen.getByText(/Settings|Настройки/)).toBeInTheDocument();
   });
 
-  it("[extra 09] quick prompt appends text to composer", async () => {
-    render(<Home />);
-
-    fireEvent.click(screen.getByRole("button", { name: /Сфокусируй ответ на архитектуре решения|Focus on solution architecture/i }));
-    expect(await screen.findByDisplayValue(/Сфокусируй ответ на архитектуре решения|Focus on solution architecture/i)).toBeInTheDocument();
-  });
-
   it("[extra 11] selects all visible files", async () => {
     render(<Home />);
 
@@ -614,29 +600,6 @@ describe("Home central panel UI/UX", () => {
     await screen.findAllByText(/alpha.txt|beta.txt/);
     fireEvent.change(screen.getByPlaceholderText(/Filter|Фильтр/i), { target: { value: "alpha" } });
     expect(screen.getByText(/visible: 1/i)).toBeInTheDocument();
-  });
-
-  it("[extra 14] include prompt off excludes prompt from copied draft", async () => {
-    const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
-    const user = userEvent.setup();
-    render(<Home />);
-
-    const composer = await screen.findByPlaceholderText("Type something…");
-    await user.type(composer, "PROMPT-HIDDEN");
-
-    const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
-    fireEvent.change(fileInput, { target: { files: [new File(["a"], "draft.txt", { type: "text/plain" })] } });
-    await screen.findAllByText("draft.txt");
-
-    await user.click(screen.getByLabelText(/Include prompt|Включать prompt|Включать промпт/i));
-    await user.click(screen.getByRole("button", { name: /Draft|Черновик/ }));
-
-    await waitFor(() => {
-      expect(writeTextSpy).toHaveBeenCalled();
-    });
-
-    const copied = String(writeTextSpy.mock.calls.at(-1)?.[0] ?? "");
-    expect(copied).not.toContain("PROMPT-HIDDEN");
   });
 
   it("[extra 15] anonymous mode prevents history records", async () => {
@@ -898,11 +861,11 @@ describe("Home central panel UI/UX", () => {
   it("[extra 28] markdown toggle can be switched back and forth", async () => {
     render(<Home />);
 
-    const toggle = await screen.findByRole("button", { name: /Markdown ON|Raw/i });
+    const toggle = await screen.findByRole("button", { name: /Markdown ON|Markdown ВКЛ/i });
     fireEvent.click(toggle);
-    expect(screen.getByRole("button", { name: "Raw" })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Raw" }));
-    expect(screen.getByRole("button", { name: "Markdown ON" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Markdown OFF|Markdown ВЫКЛ/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Markdown OFF|Markdown ВЫКЛ/i }));
+    expect(screen.getByRole("button", { name: /Markdown ON|Markdown ВКЛ/i })).toBeInTheDocument();
   });
 
   it("[extra 29] activity log records file upload", async () => {

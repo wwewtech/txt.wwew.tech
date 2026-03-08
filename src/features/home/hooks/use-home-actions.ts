@@ -48,6 +48,7 @@ export function useHomeActions() {
   const mounted = useUIStore((state) => state.mounted);
   const setOpenHistoryMenuId = useUIStore((state) => state.setOpenHistoryMenuId);
   const language = useUIStore((state) => state.language);
+  const setSystemCommands = useUIStore((state) => state.setSystemCommands);
   const markdownEnabled = useUIStore((state) => state.markdownEnabled);
   const bundleFilter = useFilesStore((state) => state.bundleFilter);
   const sortMode = useFilesStore((state) => state.sortMode);
@@ -465,8 +466,20 @@ export function useHomeActions() {
 
   const addPromptSuggestion = React.useCallback((item: string) => {
     setPrompt((prev) => (prev ? `${prev}\n${item}` : item));
-    pushActivity(l("Добавлена prompt-подсказка", "Prompt suggestion added"));
+    pushActivity(l("Добавлена команда", "Command applied"));
   }, [l, pushActivity, setPrompt]);
+
+  const addSystemCommand = React.useCallback((text: string) => {
+    setSystemCommands((prev) => [...prev, text]);
+  }, [setSystemCommands]);
+
+  const removeSystemCommand = React.useCallback((index: number) => {
+    setSystemCommands((prev) => prev.filter((_, i) => i !== index));
+  }, [setSystemCommands]);
+
+  const updateSystemCommand = React.useCallback((index: number, text: string) => {
+    setSystemCommands((prev) => prev.map((cmd, i) => (i === index ? text : cmd)));
+  }, [setSystemCommands]);
 
   const copyDraft = React.useCallback(async () => {
     await onCopy(finalText);
@@ -563,6 +576,9 @@ export function useHomeActions() {
     buildSelected,
     removeSelected,
     addPromptSuggestion,
+    addSystemCommand,
+    removeSystemCommand,
+    updateSystemCommand,
     copyDraft,
     copyItemTxt,
     copyItemMd,
