@@ -147,9 +147,9 @@ export function HomeMainPanel({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold tracking-tight">{t.builderTitle}</span>
+                <span className="text-sm font-semibold tracking-tight"></span>
                 <span className="rounded-full border border-border/70 px-2 py-0.5 text-[11px] text-muted-foreground">
-                  ~{totalTokens} {t.tokenSuffix}
+                  {totalTokens} {t.tokenSuffix}
                 </span>
               </div>
             </div>
@@ -163,7 +163,7 @@ export function HomeMainPanel({
                 )}
               >
                 <Code2 className="h-3.5 w-3.5" />
-                {markdownEnabled ? t.markdownOn : t.raw}
+                {markdownEnabled ? t.markdownOn : t.markdownOFF}
               </button>
             </div>
           </div>
@@ -220,7 +220,7 @@ export function HomeMainPanel({
                         </div>
                         <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
                           {group.kind === "archive" ? <Archive className="h-3.5 w-3.5" /> : <Files className="h-3.5 w-3.5" />}
-                          <span>~{group.tokenEstimate} {t.tokenSuffix}</span>
+                          <span>{group.tokenEstimate} {t.tokenSuffix}</span>
                         </div>
                       </div>
 
@@ -379,7 +379,7 @@ export function HomeMainPanel({
                                   <div className="mb-1.5 flex items-center justify-between gap-2">
                                     <p className="truncate text-xs font-medium">{item.name}</p>
                                     <span className="shrink-0 rounded-full border border-border/60 px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                                      ~{item.tokenEstimate} {t.tokenSuffix}
+                                      {item.tokenEstimate} {t.tokenSuffix}
                                     </span>
                                   </div>
                                   <div className="flex flex-col gap-1.5">

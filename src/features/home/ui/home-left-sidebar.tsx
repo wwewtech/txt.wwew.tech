@@ -119,7 +119,7 @@ export function HomeLeftSidebar({
                   className="min-w-0 flex-1 text-left"
                 >
                   <p className="truncate text-xs font-medium">{entry.title}</p>
-                  <p className="text-[11px] text-muted-foreground">~{entry.tokenEstimate} {t.tokenSuffix}</p>
+                  <p className="text-[11px] text-muted-foreground">{entry.tokenEstimate} {t.tokenSuffix}</p>
                 </button>
 
                 <div className="flex items-center gap-1">

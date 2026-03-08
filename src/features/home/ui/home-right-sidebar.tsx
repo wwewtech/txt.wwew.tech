@@ -402,7 +402,7 @@ export function HomeRightSidebar({
             <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.sources}: {items.length}</div>
             <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.files}: {totalFiles}</div>
             <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.size}: {onBytesToText(totalBytes)}</div>
-            <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.tokens}: ~{totalTokens}</div>
+            <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.tokens}: {totalTokens}</div>
           </div>
         </div>
 

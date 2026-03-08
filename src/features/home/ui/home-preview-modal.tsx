@@ -35,7 +35,7 @@ export function HomePreviewModal({
         <div className="flex items-center justify-between border-b border-border/70 px-4 py-3">
           <div>
             <p className="text-sm font-semibold">{activePreview.name}</p>
-            <p className="text-xs text-muted-foreground">~{activePreview.tokenEstimate} {t.tokenSuffix}</p>
+            <p className="text-xs text-muted-foreground">{activePreview.tokenEstimate} {t.tokenSuffix}</p>
           </div>
           <div className="flex items-center gap-1">
             <button
