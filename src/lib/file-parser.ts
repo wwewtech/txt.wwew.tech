@@ -105,53 +105,133 @@ type PdfTextItemLike = {
   str?: unknown;
   hasEOL?: unknown;
   transform?: unknown;
+  height?: unknown;
+  width?: unknown;
 };
 
-function formatPdfPageText(items: PdfTextItemLike[]) {
-  const lines: string[] = [];
-  let currentLine: string[] = [];
-  let previousY: number | null = null;
+function collapseSpacedPdfWord(match: string) {
+  const parts = match.split(/\s+/).filter(Boolean);
+  const singleLetterParts = parts.filter((part) => part.length === 1).length;
+  const shouldCollapse =
+    parts.length >= 4 &&
+    singleLetterParts >= Math.ceil(parts.length / 2) &&
+    parts.every((part) => /^[A-Za-zА-Яа-яЁё]{1,3}$/.test(part));
 
-  const flushLine = () => {
-    if (!currentLine.length) return;
-    lines.push(currentLine.join(" ").replace(/\s+/g, " ").trim());
-    currentLine = [];
-  };
+  return shouldCollapse ? parts.join("") : match;
+}
+
+function cleanPdfText(text: string) {
+  if (!text.trim()) return "";
+
+  return text
+    .replace(/\r\n?/g, "\n")
+    .replace(/\[Page \d+\]/gi, "")
+    .replace(/^\s*\d+\s*$/gm, "")
+    .replace(/-\s*\n\s*/g, "")
+    .replace(
+      /\b(?:[A-Za-zА-Яа-яЁё]{1,3}\s+){3,}[A-Za-zА-Яа-яЁё]{1,3}\b/g,
+      collapseSpacedPdfWord
+    )
+    .replace(/\s+([.,!?:;])/g, "$1")
+    .replace(/([A-Za-zА-Яа-яЁё])\s*\.\s*([A-Za-zА-Яа-яЁё])/g, "$1.$2")
+    .replace(/([,!?:;])(?=[^\s\n])/g, "$1 ")
+    .replace(/([\p{L}\p{N}])\s[-–—]\s([\p{L}\p{N}])/gu, "$1-$2")
+    .replace(/\(\s+/g, "(")
+    .replace(/\s+\)/g, ")")
+    .replace(/([^\n])\s•/g, "$1\n•")
+    .replace(/([^\n])\s(\d+\.)/g, "$1\n$2")
+    .replace(/(^|\n)(\d+\.)(?=\S)/g, "$1$2 ")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/\n[ \t]+/g, "\n")
+    .trim();
+}
+
+function shouldInsertSpaceBetweenPdfItems(
+  previousToken: string,
+  nextToken: string,
+  gap: number,
+  itemHeight: number
+) {
+  if (!previousToken || !nextToken) return false;
+  if (previousToken === "•") return true;
+  if (/^[.,!?:;)\]%]/.test(nextToken)) return false;
+  if (/^[([{]$/.test(previousToken)) return false;
+  if (/^[-–—]$/.test(previousToken) || /^[-–—]$/.test(nextToken)) {
+    return gap > Math.max(1, itemHeight * 0.75);
+  }
+  if (gap <= Math.max(1, itemHeight * 0.45)) return false;
+  return /[\p{L}\p{N}]$/u.test(previousToken) && /^[\p{L}\p{N}]/u.test(nextToken);
+}
+
+function formatPdfPageText(items: PdfTextItemLike[]) {
+  let pageText = "";
+  let previousY: number | null = null;
+  let previousXEnd: number | null = null;
+  let previousHeight: number | null = null;
+  let previousToken = "";
 
   for (const item of items) {
     const raw = typeof item.str === "string" ? item.str : "";
     const token = raw.replace(/\s+/g, " ").trim();
+    if (!token) continue;
+
     const y =
       Array.isArray(item.transform) && typeof item.transform[5] === "number"
         ? item.transform[5]
         : null;
-    const isNewLineByY = previousY !== null && y !== null && Math.abs(previousY - y) > 3;
+    const x =
+      Array.isArray(item.transform) && typeof item.transform[4] === "number"
+        ? item.transform[4]
+        : null;
+    const itemHeight = typeof item.height === "number" ? item.height : 10;
+    const itemWidth = typeof item.width === "number" ? item.width : token.length * (itemHeight * 0.5);
 
-    if (isNewLineByY) {
-      flushLine();
+    if (previousY !== null && y !== null) {
+      const dy = Math.abs(y - previousY);
+      if (dy > itemHeight * 0.5) {
+        pageText += dy > itemHeight * 1.5 ? "\n\n" : "\n";
+        previousXEnd = null;
+      } else {
+        const gap = x !== null && previousXEnd !== null ? x - previousXEnd : 0;
+        if (
+          shouldInsertSpaceBetweenPdfItems(
+            previousToken,
+            token,
+            gap,
+            previousHeight ?? itemHeight
+          ) &&
+          !pageText.endsWith(" ") &&
+          !pageText.endsWith("\n")
+        ) {
+          pageText += " ";
+        }
+      }
     }
 
-    if (token) {
-      currentLine.push(token);
-    }
+    pageText += token;
 
     if (item.hasEOL === true) {
-      flushLine();
+      pageText += "\n";
+      previousXEnd = null;
     }
 
     if (y !== null) {
       previousY = y;
     }
+    if (x !== null) {
+      previousXEnd = x + itemWidth;
+    }
+    previousHeight = itemHeight;
+    previousToken = token;
   }
 
-  flushLine();
-  return lines.join("\n").trim();
+  return pageText.trim();
 }
 
 async function parsePdf(file: Blob) {
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
-  pdfjs.GlobalWorkerOptions.workerSrc =
-    "https://cdn.jsdelivr.net/npm/pdfjs-dist@5.4.296/legacy/build/pdf.worker.min.mjs";
+  pdfjs.GlobalWorkerOptions.workerSrc ||= "/pdf.worker.min.mjs";
   const loadingTask = pdfjs.getDocument({ data: await file.arrayBuffer() });
   const pdf = await loadingTask.promise;
   const chunks: string[] = [];
@@ -163,7 +243,7 @@ async function parsePdf(file: Blob) {
     chunks.push(`\n[Page ${pageNum}]\n${pageText}`);
   }
 
-  return chunks.join("\n").trim();
+  return cleanPdfText(chunks.join("\n"));
 }
 
 async function parseDocx(file: Blob) {

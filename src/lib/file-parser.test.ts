@@ -19,6 +19,8 @@ vi.mock("mammoth", () => ({
   },
 }));
 
+import mammoth from "mammoth";
+
 import {
   combineToFinalTxt,
   estimateTokens,
@@ -42,11 +44,29 @@ async function buildZip(entries: Array<{ path: string; content: string }>) {
   return new File([data], "bundle.zip", { type: "application/zip" });
 }
 
+function mockPdfPages(pages: Array<Array<Record<string, unknown>>>) {
+  pdfMocks.getPage.mockImplementation(async (pageNum: number) => ({
+    getTextContent: vi.fn().mockResolvedValue({
+      items: pages[pageNum - 1] ?? [],
+    }),
+  }));
+  pdfMocks.getDocument.mockReturnValue({
+    promise: Promise.resolve({
+      numPages: pages.length,
+      getPage: pdfMocks.getPage,
+    }),
+  });
+}
+
 describe("file-parser business logic", () => {
   beforeEach(() => {
     pdfMocks.getDocument.mockReset();
     pdfMocks.getPage.mockReset();
     pdfMocks.getTextContent.mockReset();
+    vi.mocked(mammoth.convertToHtml).mockReset();
+    vi.mocked(mammoth.extractRawText).mockReset();
+    vi.mocked(mammoth.convertToHtml).mockResolvedValue({ value: "<p>DOCX CONTENT</p>" });
+    vi.mocked(mammoth.extractRawText).mockResolvedValue({ value: "DOCX CONTENT" });
   });
 
   it("estimateTokens returns at least 1", () => {
@@ -185,12 +205,69 @@ describe("file-parser business logic", () => {
     expect(result.sourceType).toBe("docx");
   });
 
-  it("parses pdf keeping line breaks between rows", async () => {
+  it("converts docx html output into markdown", async () => {
+    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce({
+      value: "<h1>Title</h1><p>Body</p><ul><li>First</li><li>Second</li></ul>",
+    });
+
+    const file = new File([new Uint8Array([1, 2, 3])], "rich.docx", {
+      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
+    const result = await parseFileWithPath(file, "docs/rich.docx", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("# Title");
+    expect(result.text).toContain("Body");
+    expect(result.text).toMatch(/-\s+First/);
+    expect(result.text).toMatch(/-\s+Second/);
+  });
+
+  it("falls back to mammoth raw text when docx html output is empty", async () => {
+    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce({ value: "" });
+    vi.mocked(mammoth.extractRawText).mockResolvedValueOnce({ value: "RAW DOCX CONTENT" });
+
+    const file = new File([new Uint8Array([1, 2, 3])], "fallback.docx", {
+      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
+    const result = await parseFileWithPath(file, "docs/fallback.docx", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("RAW DOCX CONTENT");
+    expect(mammoth.extractRawText).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps a valid llm block for an empty docx result", async () => {
+    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce({ value: "" });
+    vi.mocked(mammoth.extractRawText).mockResolvedValueOnce({ value: "" });
+
+    const file = new File([new Uint8Array([1, 2, 3])], "empty.docx", {
+      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
+    const result = await parseFileWithPath(file, "docs/empty.docx", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("### FILE: docs/empty.docx");
+    expect(result.tokenEstimate).toBeGreaterThan(0);
+  });
+
+  it("normalizes extracted pdf text into readable prose", async () => {
     pdfMocks.getTextContent.mockResolvedValue({
       items: [
-        { str: "A1", transform: [1, 0, 0, 1, 10, 700] },
-        { str: "A2", transform: [1, 0, 0, 1, 50, 700] },
-        { str: "B1", transform: [1, 0, 0, 1, 10, 680], hasEOL: true },
+        { str: "Аннотация", transform: [1, 0, 0, 1, 10, 720], height: 16, width: 80 },
+        { str: "В", transform: [1, 0, 0, 1, 10, 680], height: 12, width: 8 },
+        { str: "э", transform: [1, 0, 0, 1, 25, 680], height: 12, width: 8 },
+        { str: "ксперименте", transform: [1, 0, 0, 1, 38, 680], height: 12, width: 90 },
+        { str: "использовались", transform: [1, 0, 0, 1, 140, 680], height: 12, width: 110 },
+        { str: "SPA", transform: [1, 0, 0, 1, 10, 664], height: 12, width: 28 },
+        { str: "-", transform: [1, 0, 0, 1, 44, 664], height: 12, width: 6 },
+        { str: "приложения.", transform: [1, 0, 0, 1, 55, 664], height: 12, width: 86 },
+        { str: "•", transform: [1, 0, 0, 1, 10, 628], height: 12, width: 8 },
+        { str: "Lazy", transform: [1, 0, 0, 1, 26, 628], height: 12, width: 36 },
+        { str: "Loading", transform: [1, 0, 0, 1, 68, 628], height: 12, width: 52 },
+        { str: "•", transform: [1, 0, 0, 1, 10, 612], height: 12, width: 8 },
+        { str: "Greedy", transform: [1, 0, 0, 1, 26, 612], height: 12, width: 46 },
+        { str: "Prefetching", transform: [1, 0, 0, 1, 78, 612], height: 12, width: 74 },
+        { str: "2", transform: [1, 0, 0, 1, 10, 580], height: 10, width: 8, hasEOL: true },
       ],
     });
     pdfMocks.getPage.mockResolvedValue({
@@ -209,9 +286,204 @@ describe("file-parser business logic", () => {
     const result = await parseFileWithPath(file, "docs/layout.pdf", settings);
 
     expect(result.error).toBeUndefined();
-    expect(result.text).toContain("[Page 1]");
-    expect(result.text).toContain("A1 A2\nB1");
-    expect(result.text).not.toContain("A1 A2 B1");
+    expect(result.text).not.toContain("[Page 1]");
+    expect(result.text).toContain("Аннотация\n\nВ эксперименте использовались\nSPA-приложения.");
+    expect(result.text).toContain("\n\n• Lazy Loading\n• Greedy Prefetching");
+    expect(result.text).not.toMatch(/\b2\b/);
+    expect(pdfMocks.getDocument).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.any(ArrayBuffer),
+      })
+    );
+    expect((await import("pdfjs-dist/legacy/build/pdf.mjs")).GlobalWorkerOptions.workerSrc).toBe(
+      "/pdf.worker.min.mjs"
+    );
+  });
+
+  it("preserves line breaks and paragraph breaks from vertical offsets", async () => {
+    mockPdfPages([
+      [
+        { str: "Введение", transform: [1, 0, 0, 1, 10, 720], height: 18, width: 80 },
+        { str: "Первая", transform: [1, 0, 0, 1, 10, 680], height: 12, width: 50 },
+        { str: "строка", transform: [1, 0, 0, 1, 70, 680], height: 12, width: 55 },
+        { str: "Вторая", transform: [1, 0, 0, 1, 10, 664], height: 12, width: 50 },
+        { str: "строка.", transform: [1, 0, 0, 1, 72, 664], height: 12, width: 55 },
+      ],
+    ]);
+
+    const file = new File([new Uint8Array([37, 80, 68, 70])], "paragraphs.pdf", {
+      type: "application/pdf",
+    });
+    const result = await parseFileWithPath(file, "docs/paragraphs.pdf", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("Введение\n\nПервая строка\nВторая строка.");
+  });
+
+  it("keeps punctuation attached while preserving structured lines", async () => {
+    mockPdfPages([
+      [
+        { str: "Next", transform: [1, 0, 0, 1, 10, 700], height: 12, width: 32 },
+        { str: ".", transform: [1, 0, 0, 1, 44, 700], height: 12, width: 4 },
+        { str: "js", transform: [1, 0, 0, 1, 50, 700], height: 12, width: 14 },
+        { str: "работает", transform: [1, 0, 0, 1, 74, 700], height: 12, width: 60 },
+        { str: ",", transform: [1, 0, 0, 1, 136, 700], height: 12, width: 4 },
+        { str: "быстро", transform: [1, 0, 0, 1, 144, 700], height: 12, width: 48 },
+        { str: "!", transform: [1, 0, 0, 1, 194, 700], height: 12, width: 4 },
+      ],
+    ]);
+
+    const file = new File([new Uint8Array([37, 80, 68, 70])], "punctuation.pdf", {
+      type: "application/pdf",
+    });
+    const result = await parseFileWithPath(file, "docs/punctuation.pdf", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("Next.js работает, быстро!");
+    expect(result.text).not.toContain("Next . js");
+    expect(result.text).not.toContain("работает ,");
+  });
+
+  it("removes standalone page numbers and preserves page order across multiple pages", async () => {
+    mockPdfPages([
+      [
+        { str: "Первая", transform: [1, 0, 0, 1, 10, 700], height: 12, width: 42 },
+        { str: "страница", transform: [1, 0, 0, 1, 60, 700], height: 12, width: 60 },
+        { str: "1", transform: [1, 0, 0, 1, 10, 660], height: 10, width: 8, hasEOL: true },
+      ],
+      [
+        { str: "Вторая", transform: [1, 0, 0, 1, 10, 700], height: 12, width: 42 },
+        { str: "страница", transform: [1, 0, 0, 1, 60, 700], height: 12, width: 60 },
+        { str: "2", transform: [1, 0, 0, 1, 10, 660], height: 10, width: 8, hasEOL: true },
+      ],
+    ]);
+
+    const file = new File([new Uint8Array([37, 80, 68, 70])], "pages.pdf", {
+      type: "application/pdf",
+    });
+    const result = await parseFileWithPath(file, "docs/pages.pdf", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("Первая страница");
+    expect(result.text).toContain("Вторая страница");
+    expect(result.text.indexOf("Первая страница")).toBeLessThan(result.text.indexOf("Вторая страница"));
+    expect(result.text).not.toMatch(/\n1\n|\n2\n/);
+  });
+
+  it("keeps numbered list items on separate lines", async () => {
+    mockPdfPages([
+      [
+        { str: "1.", transform: [1, 0, 0, 1, 10, 700], height: 12, width: 12 },
+        { str: "Первый", transform: [1, 0, 0, 1, 28, 700], height: 12, width: 44 },
+        { str: "пункт", transform: [1, 0, 0, 1, 78, 700], height: 12, width: 40 },
+        { str: "2.", transform: [1, 0, 0, 1, 10, 684], height: 12, width: 12 },
+        { str: "Второй", transform: [1, 0, 0, 1, 28, 684], height: 12, width: 46 },
+        { str: "пункт", transform: [1, 0, 0, 1, 80, 684], height: 12, width: 40 },
+      ],
+    ]);
+
+    const file = new File([new Uint8Array([37, 80, 68, 70])], "list.pdf", {
+      type: "application/pdf",
+    });
+    const result = await parseFileWithPath(file, "docs/list.pdf", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("1. Первый пункт\n2. Второй пункт");
+  });
+
+  it("normalizes pdf files inside zip archives", async () => {
+    mockPdfPages([
+      [
+        { str: "Отчет", transform: [1, 0, 0, 1, 10, 720], height: 18, width: 50 },
+        { str: "SPA", transform: [1, 0, 0, 1, 10, 684], height: 12, width: 28 },
+        { str: "-", transform: [1, 0, 0, 1, 44, 684], height: 12, width: 6 },
+        { str: "приложения", transform: [1, 0, 0, 1, 54, 684], height: 12, width: 84 },
+      ],
+    ]);
+
+    const zip = new JSZip();
+    zip.file("docs/report.pdf", new Uint8Array([37, 80, 68, 70]));
+    const data = await zip.generateAsync({ type: "uint8array" });
+    const file = new File([data], "pdf-bundle.zip", { type: "application/zip" });
+
+    const result = await parseFileWithPath(file, "pdf-bundle.zip", settings);
+
+    expect(result.kind).toBe("archive");
+    expect(result.children?.some((child) => child.path.endsWith("docs/report.pdf"))).toBe(true);
+    expect(result.text).toContain("### FILE: pdf-bundle.zip/docs/report.pdf");
+    expect(result.text).toContain("Отчет\n\nSPA-приложения");
+  });
+
+  it("parses mixed zip archives with text, docx and pdf entries", async () => {
+    mockPdfPages([
+      [
+        { str: "PDF", transform: [1, 0, 0, 1, 10, 700], height: 12, width: 24 },
+        { str: "section", transform: [1, 0, 0, 1, 42, 700], height: 12, width: 44 },
+      ],
+    ]);
+    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce({
+      value: "<h2>Docx title</h2><p>Docx body</p>",
+    });
+
+    const zip = new JSZip();
+    zip.file("notes/readme.txt", "hello zip");
+    zip.file("docs/guide.docx", new Uint8Array([1, 2, 3]));
+    zip.file("docs/source.pdf", new Uint8Array([37, 80, 68, 70]));
+    const data = await zip.generateAsync({ type: "uint8array" });
+    const file = new File([data], "mixed-assets.zip", { type: "application/zip" });
+
+    const result = await parseFileWithPath(file, "mixed-assets.zip", settings);
+
+    expect(result.kind).toBe("archive");
+    expect(result.children?.length).toBe(3);
+    expect(result.text).toContain("### FILE: mixed-assets.zip/notes/readme.txt");
+    expect(result.text).toContain("### FILE: mixed-assets.zip/docs/guide.docx");
+    expect(result.text).toContain("### FILE: mixed-assets.zip/docs/source.pdf");
+    expect(result.text).toContain("# Docx title");
+    expect(result.text).toContain("PDF section");
+  });
+
+  it("drops docx entries that fail to parse from zip children and archive text", async () => {
+    vi.mocked(mammoth.convertToHtml).mockRejectedValueOnce(new Error("docx parse failed"));
+
+    const zip = new JSZip();
+    zip.file("docs/broken.docx", new Uint8Array([1, 2, 3]));
+    zip.file("notes/ok.txt", "still here");
+    const data = await zip.generateAsync({ type: "uint8array" });
+    const file = new File([data], "broken-docx.zip", { type: "application/zip" });
+
+    const result = await parseFileWithPath(file, "broken-docx.zip", settings);
+
+    expect(result.kind).toBe("archive");
+    expect(result.children?.some((child) => child.path.endsWith("broken.docx"))).toBe(false);
+    expect(result.text).toContain("### FILE: broken-docx.zip/notes/ok.txt");
+    expect(result.text).not.toContain("broken-docx.zip/docs/broken.docx");
+  });
+
+  it("keeps spaced Latin letters merged without flattening surrounding paragraphs", async () => {
+    mockPdfPages([
+      [
+        { str: "Threshold", transform: [1, 0, 0, 1, 10, 720], height: 16, width: 70 },
+        { str: "T", transform: [1, 0, 0, 1, 10, 680], height: 12, width: 8 },
+        { str: "h", transform: [1, 0, 0, 1, 28, 680], height: 12, width: 8 },
+        { str: "r", transform: [1, 0, 0, 1, 46, 680], height: 12, width: 8 },
+        { str: "e", transform: [1, 0, 0, 1, 64, 680], height: 12, width: 8 },
+        { str: "s", transform: [1, 0, 0, 1, 82, 680], height: 12, width: 8 },
+        { str: "h", transform: [1, 0, 0, 1, 100, 680], height: 12, width: 8 },
+        { str: "o", transform: [1, 0, 0, 1, 118, 680], height: 12, width: 8 },
+        { str: "l", transform: [1, 0, 0, 1, 136, 680], height: 12, width: 8 },
+        { str: "d", transform: [1, 0, 0, 1, 154, 680], height: 12, width: 8 },
+      ],
+    ]);
+
+    const file = new File([new Uint8Array([37, 80, 68, 70])], "threshold.pdf", {
+      type: "application/pdf",
+    });
+    const result = await parseFileWithPath(file, "docs/threshold.pdf", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("Threshold\n\nThreshold");
+    expect(result.text).not.toContain("T h r e s h o l d");
   });
 
   it("parses DOCX extension case-insensitively", async () => {

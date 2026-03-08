@@ -154,12 +154,25 @@ export function useHomeActions() {
         const parsed = await Promise.all(
           incoming.map((entry) => parseFileWithPath(entry.file, entry.path, settings))
         );
+        const failed = parsed.filter((item) => item.error && item.error !== "Skipped by filters");
         const addedAt = new Date().toISOString();
         const clean = parsed
           .filter((item) => !item.error || item.error === "Skipped by filters")
           .map((item) => ({ ...item, addedAt }));
         setItems((prev) => [...prev, ...clean]);
         pushActivity(l(`Добавлено в workspace: ${clean.length}`, `Added to workspace: ${clean.length}`));
+        if (failed.length) {
+          const preview = failed
+            .slice(0, 3)
+            .map((item) => `${item.name}: ${item.error}`)
+            .join("; ");
+          pushActivity(
+            l(
+              `Ошибки парсинга: ${failed.length}${preview ? ` (${preview})` : ""}`,
+              `Parse failed: ${failed.length}${preview ? ` (${preview})` : ""}`
+            )
+          );
+        }
       } finally {
         setIsParsing(false);
         setProcessing(false);

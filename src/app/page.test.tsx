@@ -37,6 +37,21 @@ function makeParsedItem(path: string, overrides: Partial<ParsedItem> = {}): Pars
   };
 }
 
+function makeArchiveItem(path: string, children: ParsedItem[], overrides: Partial<ParsedItem> = {}): ParsedItem {
+  return {
+    id: `id-${path}`,
+    name: path.split("/").pop() ?? path,
+    path,
+    size: 100,
+    kind: "archive",
+    text: children.map((child) => child.text).filter(Boolean).join("\n\n"),
+    tokenEstimate: children.reduce((sum, child) => sum + child.tokenEstimate, 0),
+    sourceType: "zip",
+    children,
+    ...overrides,
+  };
+}
+
 const parseFileWithPathMock = vi.mocked(parseFileWithPath);
 
 function clickNewChat() {
@@ -897,6 +912,92 @@ describe("Home central panel UI/UX", () => {
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "activity-file.txt", { type: "text/plain" })] } });
 
     expect(await screen.findByText(/Загрузка:\s*1\s*шт\.|Upload:\s*1\s*item\(s\)/i)).toBeInTheDocument();
+  });
+
+  it("[extra 29.1] activity log records parse failures", async () => {
+    parseFileWithPathMock.mockResolvedValueOnce(
+      makeParsedItem("broken.pdf", {
+        text: "",
+        tokenEstimate: 0,
+        sourceType: "pdf",
+        error: "PDF worker unavailable",
+      })
+    );
+
+    render(<Home />);
+
+    const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
+    fireEvent.change(fileInput, { target: { files: [new File(["x"], "broken.pdf", { type: "application/pdf" })] } });
+
+    expect(await screen.findByText(/Ошибки парсинга:\s*1|Parse failed:\s*1/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Добавлено в workspace:\s*0|Added to workspace:\s*0/i)).toBeInTheDocument();
+  });
+
+  it("[extra 29.2] partial upload keeps successful items and reports failed ones", async () => {
+    parseFileWithPathMock
+      .mockResolvedValueOnce(makeParsedItem("ok.txt"))
+      .mockResolvedValueOnce(
+        makeParsedItem("broken.pdf", {
+          text: "",
+          tokenEstimate: 0,
+          sourceType: "pdf",
+          error: "broken pdf",
+        })
+      );
+
+    render(<Home />);
+
+    const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
+    fireEvent.change(fileInput, {
+      target: {
+        files: [
+          new File(["ok"], "ok.txt", { type: "text/plain" }),
+          new File(["bad"], "broken.pdf", { type: "application/pdf" }),
+        ],
+      },
+    });
+
+    expect(await screen.findByText(/Добавлено в workspace:\s*1|Added to workspace:\s*1/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Ошибки парсинга:\s*1|Parse failed:\s*1/i)).toBeInTheDocument();
+    expect(await screen.findAllByText("ok.txt")).not.toHaveLength(0);
+    expect(screen.queryByText("broken.pdf")).not.toBeInTheDocument();
+  });
+
+  it("[extra 29.3] skipped files are still added to workspace count", async () => {
+    parseFileWithPathMock.mockResolvedValueOnce(
+      makeParsedItem("skip.lock", {
+        text: "",
+        tokenEstimate: 0,
+        sourceType: "lock",
+        error: "Skipped by filters",
+      })
+    );
+
+    render(<Home />);
+
+    const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
+    fireEvent.change(fileInput, { target: { files: [new File(["x"], "skip.lock", { type: "text/plain" })] } });
+
+    expect(await screen.findByText(/Добавлено в workspace:\s*1|Added to workspace:\s*1/i)).toBeInTheDocument();
+    expect(await screen.findAllByText("skip.lock")).not.toHaveLength(0);
+  });
+
+  it("[extra 29.4] archive results render archive card and child summary", async () => {
+    parseFileWithPathMock.mockResolvedValueOnce(
+      makeArchiveItem("workspace.zip", [
+        makeParsedItem("workspace.zip/src/a.ts", { name: "a.ts", path: "workspace.zip/src/a.ts" }),
+        makeParsedItem("workspace.zip/src/b.ts", { name: "b.ts", path: "workspace.zip/src/b.ts" }),
+      ])
+    );
+
+    render(<Home />);
+
+    const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
+    fireEvent.change(fileInput, { target: { files: [new File(["zip"], "workspace.zip", { type: "application/zip" })] } });
+
+    expect(await screen.findAllByText("workspace.zip")).not.toHaveLength(0);
+    expect(await screen.findAllByText(/файлов:\s*2|files:\s*2/i)).not.toHaveLength(0);
+    expect(await screen.findByText(/Добавлено в workspace:\s*1|Added to workspace:\s*1/i)).toBeInTheDocument();
   });
 
   it("[extra 30] activity log records prompt send", async () => {
