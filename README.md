@@ -16,8 +16,3 @@
 <p align="center">
 	<img src="./public/readme-home.png" alt="txt.wwew.tech interface" width="100%" />
 </p>
-
-Choose the language you prefer:
-
-- 🇷🇺 [README.ru.md](./README.ru.md)
-- 🇬🇧 [README.en.md](./README.en.md)
