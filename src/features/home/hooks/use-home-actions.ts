@@ -228,6 +228,11 @@ export function useHomeActions() {
     pushActivity(l(`Удален контекст: ${label}`, `Context removed: ${label}`));
   }, [l, pushActivity, setActivePreview, setFavoriteItemIds, setItems, setSelectedItemIds]);
 
+  const removeMessage = React.useCallback((id: string) => {
+    setChatMessages((prev) => prev.filter((m) => m.id !== id));
+    pushActivity(l(`Удалено сообщение`, `Message removed`));
+  }, [l, pushActivity, setChatMessages]);
+
   const editContextItems = React.useCallback((group: ContextGroup) => {
     const current = group.items
       .map((entry) => stripSyntheticFileHeader(entry.text))
@@ -558,6 +563,7 @@ export function useHomeActions() {
     toTxtContext,
     triggerDownload,
     removeContextItems,
+    removeMessage,
     editContextItems,
     renameHistoryItem,
     submitEditDialog,

@@ -290,6 +290,7 @@ export default function Home() {
           onEditContextGroup={actions.editContextItems}
           onEditContextItem={actions.editItem}
           onRemoveContextItems={actions.removeContextItems}
+          onRemoveMessage={actions.removeMessage}
           onFilePick={actions.onFilePick}
           onPromptChange={setPrompt}
           onSendPrompt={actions.sendPrompt}

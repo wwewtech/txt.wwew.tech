@@ -108,7 +108,7 @@ export function HomeLeftSidebar({
               key={entry.id}
               data-history-item
               className={cn(
-                "group relative rounded-xl px-2 py-2 transition-colors hover:bg-muted/70",
+                "group relative rounded-xl px-2 py-1 transition-colors hover:bg-muted/70",
                 currentChatId === entry.id && "bg-muted"
               )}
             >
