@@ -43,3 +43,8 @@ next-env.d.ts
 # local test artifacts
 .vitest-page.json
 page-test.log
+
+/*.log
+/*.log.*
+/*.log-*
+/EXAMPLES
