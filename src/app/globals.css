@@ -1,13 +1,34 @@
 @import "tailwindcss";
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --border: oklch(0.922 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  --ds-gray-100: #F2F2F2;
+  --ds-gray-200: #EBEBEB;
+  --ds-gray-300: #E6E6E6;
+  --ds-gray-400: #EBEBEB;
+  --ds-gray-500: #CACACA;
+  --ds-gray-600: #A8A8A8;
+  --ds-gray-700: #8F8F8F;
+  --ds-gray-900: #4D4D4D;
+  --ds-gray-1000: #171717;
+
+  --ds-background-100: #ffffff;
+  --ds-background-200: #fafafa;
+  --ds-focus-color: #0070f3;
+  --ds-focus-ring: 0 0 0 2px var(--ds-background-100), 0 0 0 4px var(--ds-focus-color);
+
+  --ds-shadow-small: 0px 2px 2px rgba(0,0,0,0.04);
+  --ds-shadow-medium: 0px 2px 2px rgba(0,0,0,0.04), 0px 8px 8px rgba(0,0,0,0.04);
+  --ds-shadow-large: 0px 2px 2px rgba(0,0,0,0.04), 0px 8px 16px rgba(0,0,0,0.04);
+  --ds-shadow-modal: 0 0 0 1px var(--ds-gray-400), 0px 8px 16px rgba(0,0,0,0.04), 0px 24px 32px rgba(0,0,0,0.04);
+
+  --background: var(--ds-background-200);
+  --foreground: var(--ds-gray-1000);
+  --muted: var(--ds-background-100);
+  --muted-foreground: var(--ds-gray-700);
+  --border: var(--ds-gray-400);
+  --primary: var(--ds-gray-1000);
+  --primary-foreground: var(--ds-background-100);
+
   --ui-scale: 1;
 }
 
@@ -28,20 +49,49 @@ html {
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --muted: oklch(0.205 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --border: oklch(0.269 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --ds-gray-100: #1A1A1A;
+  --ds-gray-200: #1F1F1F;
+  --ds-gray-300: #292929;
+  --ds-gray-400: #2E2E2E;
+  --ds-gray-500: #454545;
+  --ds-gray-600: #878787;
+  --ds-gray-700: #8F8F8F;
+  --ds-gray-900: #A0A0A0;
+  --ds-gray-1000: #EDEDED;
+
+  --ds-background-100: #0A0A0A;
+  --ds-background-200: #000000;
+  --ds-focus-color: #3291ff;
+
+  --ds-shadow-small: 0px 2px 2px rgba(0,0,0,0.1);
+  --ds-shadow-medium: 0px 2px 2px rgba(0,0,0,0.1), 0px 8px 8px rgba(0,0,0,0.1);
+  --ds-shadow-large: 0px 2px 2px rgba(0,0,0,0.1), 0px 8px 16px rgba(0,0,0,0.1);
+  --ds-shadow-modal: 0 0 0 1px var(--ds-gray-400), 0px 8px 16px rgba(0,0,0,0.1), 0px 24px 32px rgba(0,0,0,0.1);
+
+  --background: var(--ds-background-200);
+  --foreground: var(--ds-gray-1000);
+  --muted: var(--ds-gray-100);
+  --muted-foreground: var(--ds-gray-600);
+  --border: var(--ds-gray-400);
+  --primary: var(--ds-gray-1000);
+  --primary-foreground: #000000;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  letter-spacing: -0.011rem;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+}
+
+h1 { font-size: 3rem; font-weight: 700; letter-spacing: -0.067rem; }
+h2 { font-size: 2.25rem; letter-spacing: -0.049rem; }
+h3 { font-size: 1.5rem; letter-spacing: -0.029rem; }
+h4 { font-size: 1.25rem; letter-spacing: -0.021rem; }
 
 html {
   scrollbar-gutter: stable;
@@ -75,10 +125,6 @@ html {
 
 *::-webkit-scrollbar-thumb:active {
   background: var(--foreground);
-}
-
-*::-webkit-scrollbar-corner {
-  background: transparent;
 }
 
 .scrollbar-shadcn {
@@ -119,3 +165,8 @@ html {
 .rounded-2xl { border-radius: 0.625rem; }
 .rounded-3xl { border-radius: 0.75rem; }
 .rounded-full { border-radius: 9999px; }
+
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
