@@ -195,7 +195,6 @@ export function HomeMainPanel({
                         )}
                       >
                         <div className="mb-2 flex items-center justify-between text-[11px] text-muted-foreground">
-                          <span>{message.role === "user" ? t.you : t.contextEngine}</span>
                           <div className="flex items-center gap-1.5">
                             <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
                               <button
@@ -232,7 +231,7 @@ export function HomeMainPanel({
                   const joinedText = group.items.map((item) => item.text).filter(Boolean).join("\n\n");
 
                   return (
-                    <div key={entry.id} className="group/card rounded-2xl border border-border/50 bg-background/85 p-3">
+                    <div key={entry.id} id={entry.id} className="group/card rounded-2xl border border-border/50 bg-background/85 p-3">
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex min-w-0 items-center gap-2">
                           <div className="shrink-0 text-muted-foreground">

@@ -107,6 +107,17 @@ export default function Home() {
     setActivity,
   });
 
+  const scrollToItem = React.useCallback(
+    (itemId: string) => {
+      const entry = timelineEntries.find(
+        (e) => e.type === "context" && e.group.items.some((i) => i.id === itemId)
+      );
+      if (!entry) return;
+      document.getElementById(entry.id)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    },
+    [timelineEntries]
+  );
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Mobile drawers — видны только на < xl */}
@@ -166,7 +177,6 @@ export default function Home() {
           selectedItems={selectedItems}
           skippedFiles={skippedFiles}
           selectedItemIds={selectedItemIds}
-          favoriteItemIds={favoriteItemIds}
           totalFiles={totalFiles}
           totalBytes={totalBytes}
           totalTokens={totalTokens}
@@ -190,13 +200,7 @@ export default function Home() {
           onQuickBuild={actions.quickBuild}
           onCopyDraft={actions.copyDraft}
           onToggleSelectItem={actions.toggleSelectItem}
-          onToggleFavoriteItem={actions.toggleFavoriteItem}
-          onPreviewItem={setActivePreview}
-          onCopyItemTxt={actions.copyItemTxt}
-          onCopyItemMd={actions.copyItemMd}
-          onDownloadItemTxt={actions.downloadItemTxt}
-          onEditItem={actions.editItem}
-          onRemoveItem={(item) => actions.removeContextItems([item.id], item.name)}
+          onScrollToItem={scrollToItem}
           onToggleAutoSave={() => setAutoSaveEnabled((value) => !value)}
           onToggleAnonymousMode={() => setAnonymousMode(!anonymousMode)}
           onSetIgnoredDirectories={actions.setIgnoredDirectories}
@@ -321,7 +325,6 @@ export default function Home() {
               selectedItems={selectedItems}
               skippedFiles={skippedFiles}
               selectedItemIds={selectedItemIds}
-              favoriteItemIds={favoriteItemIds}
               totalFiles={totalFiles}
               totalBytes={totalBytes}
               totalTokens={totalTokens}
@@ -345,13 +348,7 @@ export default function Home() {
               onQuickBuild={actions.quickBuild}
               onCopyDraft={actions.copyDraft}
               onToggleSelectItem={actions.toggleSelectItem}
-              onToggleFavoriteItem={actions.toggleFavoriteItem}
-              onPreviewItem={setActivePreview}
-              onCopyItemTxt={actions.copyItemTxt}
-              onCopyItemMd={actions.copyItemMd}
-              onDownloadItemTxt={actions.downloadItemTxt}
-              onEditItem={actions.editItem}
-              onRemoveItem={(item) => actions.removeContextItems([item.id], item.name)}
+              onScrollToItem={scrollToItem}
               onToggleAutoSave={() => setAutoSaveEnabled((value) => !value)}
               onToggleAnonymousMode={() => setAnonymousMode(!anonymousMode)}
               onSetIgnoredDirectories={actions.setIgnoredDirectories}

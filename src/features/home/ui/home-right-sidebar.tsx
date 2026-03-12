@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import {
-  ArrowDownToLine,
+  ArrowRight,
   CheckCheck,
   ChevronDown,
   ExternalLink,
-  Eye,
   Grid3X3,
   ChevronsUpDown,
   ListFilter,
@@ -16,8 +15,6 @@ import {
   Pencil,
   Plus,
   Search,
-  Shield,
-  Star,
   Trash2,
 } from "lucide-react";
 import * as Slider from "@radix-ui/react-slider";
@@ -39,7 +36,6 @@ type HomeRightSidebarProps = {
   selectedItems: ParsedItem[];
   skippedFiles: number;
   selectedItemIds: string[];
-  favoriteItemIds: string[];
   totalFiles: number;
   totalBytes: number;
   totalTokens: number;
@@ -69,13 +65,7 @@ type HomeRightSidebarProps = {
   onQuickBuild: () => Promise<void>;
   onCopyDraft: () => Promise<void>;
   onToggleSelectItem: (id: string) => void;
-  onToggleFavoriteItem: (id: string) => void;
-  onPreviewItem: (item: ParsedItem) => void;
-  onCopyItemTxt: (item: ParsedItem) => Promise<void>;
-  onCopyItemMd: (item: ParsedItem) => Promise<void>;
-  onDownloadItemTxt: (item: ParsedItem) => void;
-  onEditItem: (item: ParsedItem) => void;
-  onRemoveItem: (item: ParsedItem) => void;
+  onScrollToItem: (itemId: string) => void;
   onToggleAutoSave: () => void;
   onToggleAnonymousMode: () => void;
   onSetIgnoredDirectories: (value: string) => void;
@@ -103,7 +93,6 @@ export function HomeRightSidebar({
   selectedItems,
   skippedFiles,
   selectedItemIds,
-  favoriteItemIds,
   totalFiles,
   totalBytes,
   totalTokens,
@@ -130,13 +119,7 @@ export function HomeRightSidebar({
   onQuickBuild,
   onCopyDraft,
   onToggleSelectItem,
-  onToggleFavoriteItem,
-  onPreviewItem,
-  onCopyItemTxt,
-  onCopyItemMd,
-  onDownloadItemTxt,
-  onEditItem,
-  onRemoveItem,
+  onScrollToItem,
   onToggleAutoSave,
   onToggleAnonymousMode,
   onSetIgnoredDirectories,
@@ -184,21 +167,25 @@ export function HomeRightSidebar({
       </div>
 
       <div className={cn("space-y-3 overflow-auto p-3 pt-0", drawerMode ? "flex-1" : "h-[calc(100vh-6.75rem)]")}>
-        <div className="rounded-xl bg-muted/25 p-2.5">
-          <div className="mb-2 flex items-center justify-between">
-            <p className="text-[11px] font-semibold">{t.sysCommands}</p>
-            {!isAddingCommand && (
-              <button
-                type="button"
-                onClick={() => setIsAddingCommand(true)}
-                className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-border/60 bg-background/70 text-muted-foreground hover:bg-muted hover:text-foreground"
-                title={t.addCommand}
-              >
-                <Plus className="h-3 w-3" />
-              </button>
-            )}
-          </div>
+        <details className="group rounded-xl bg-muted/25 p-2.5" open>
+          <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] font-semibold">
+            {t.sysCommands}
+            <div className="flex items-center gap-1">
+              {!isAddingCommand && (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setIsAddingCommand(true); }}
+                  className="hidden group-open:inline-flex h-5 w-5 items-center justify-center rounded-md border border-border/60 bg-background/70 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  title={t.addCommand}
+                >
+                  <Plus className="h-3 w-3" />
+                </button>
+              )}
+              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-open:rotate-180" />
+            </div>
+          </summary>
 
+          <div className="mt-2">
           {isAddingCommand && (
             <div className="mb-2">
               <textarea
@@ -308,7 +295,8 @@ export function HomeRightSidebar({
               ))}
             </div>
           )}
-        </div>
+          </div>
+        </details>
 
         {(items.length > 0 || processing) && (
           <div className="rounded-xl bg-muted/25 p-2.5">
@@ -398,7 +386,6 @@ export function HomeRightSidebar({
             <div className={cn("max-h-60 overflow-auto", viewMode === "cards" ? "space-y-1.5" : "space-y-1")}>
               {visibleItems.map((item) => {
                 const isSelected = selectedItemIds.includes(item.id);
-                const isFavorite = favoriteItemIds.includes(item.id);
 
                 return (
                   <div
@@ -419,58 +406,11 @@ export function HomeRightSidebar({
                       <span className="text-[10px] text-muted-foreground">{item.tokenEstimate}</span>
                       <button
                         type="button"
-                        onClick={() => onToggleFavoriteItem(item.id)}
-                        className={cn("inline-flex h-5 w-5 items-center justify-center rounded", isFavorite && "bg-muted")}
+                        onClick={() => onScrollToItem(item.id)}
+                        className="inline-flex h-5 w-5 items-center justify-center rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+                        title={t.scrollToItem}
                       >
-                        <Star className="h-3 w-3" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onPreviewItem(item)}
-                        className="inline-flex h-5 w-5 items-center justify-center rounded hover:bg-muted"
-                      >
-                        <Eye className="h-3 w-3" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          await onCopyItemTxt(item);
-                        }}
-                        className="inline-flex h-5 items-center justify-center rounded px-1.5 text-[10px] hover:bg-muted"
-                      >
-                        TXT
-                      </button>
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          await onCopyItemMd(item);
-                        }}
-                        className="inline-flex h-5 items-center justify-center rounded px-1.5 text-[10px] hover:bg-muted"
-                      >
-                        MD
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onDownloadItemTxt(item)}
-                        className="inline-flex h-5 w-5 items-center justify-center rounded hover:bg-muted"
-                        title={`${t.download} TXT`}
-                      >
-                        <ArrowDownToLine className="h-3 w-3" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onEditItem(item)}
-                        className="inline-flex h-5 w-5 items-center justify-center rounded hover:bg-muted"
-                        title={t.edit}
-                      >
-                        <Pencil className="h-3 w-3" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onRemoveItem(item)}
-                        className="inline-flex h-5 w-5 items-center justify-center rounded text-red-500 hover:bg-muted"
-                      >
-                        <Trash2 className="h-3 w-3" />
+                        <ArrowRight className="h-3 w-3" />
                       </button>
                     </div>
                     {viewMode === "cards" && (
@@ -495,22 +435,12 @@ export function HomeRightSidebar({
           </div>
         )}
 
-        <div className="rounded-xl bg-muted/25 p-2.5">
-          <p className="mb-1 text-[11px] font-semibold">{t.workspace}</p>
-          <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-            <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.sources}: {items.length}</div>
-            <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.files}: {totalFiles}</div>
-            <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.size}: {onBytesToText(totalBytes)}</div>
-            <div className="rounded-md border border-border/50 bg-background/80 px-2 py-1.5">{t.tokens}: {totalTokens}</div>
-          </div>
-        </div>
-
-        <div className="rounded-xl bg-muted/25 p-2.5">
-          <div className="mb-2 flex items-center justify-between">
-            <p className="text-[11px] font-semibold">{t.privacy}</p>
-            <Shield className="h-3.5 w-3.5 text-muted-foreground" />
-          </div>
-          <div className="space-y-1.5">
+        <details className="group rounded-xl bg-muted/25 p-2.5" open>
+          <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] font-semibold">
+            {t.privacy}
+            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="mt-2 space-y-1.5">
             <button
               type="button"
               onClick={onToggleAutoSave}
@@ -571,7 +501,7 @@ export function HomeRightSidebar({
               <span className="sr-only">{t.anonymous}: {anonymousMode ? "ON" : "OFF"}</span>
             </button>
           </div>
-        </div>
+        </details>
 
         <details className="group rounded-xl bg-muted/25 p-2.5" open>
           <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] font-semibold">
