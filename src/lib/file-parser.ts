@@ -2,6 +2,7 @@ import JSZip from "jszip";
 import mammoth from "mammoth";
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
+import { createId } from "./utils";
 
 export type ParseSettings = {
   ignoredDirectories: string[];
@@ -94,7 +95,7 @@ export function isIgnoredPath(path: string, settings: ParseSettings) {
 }
 
 function toId() {
-  return crypto.randomUUID();
+  return createId();
 }
 
 function decorateForLlm(path: string, content: string) {

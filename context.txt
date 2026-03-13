@@ -1,0 +1,1994 @@
+```
+<div class="grid grid-cols-1 gap-12 md:grid-cols-4">
+  <div class="flex flex-col gap-5">
+    <div class="border-0 flex flex-col gap-3.5">
+      <div class="flex flex-col gap-2 min-w-0">
+        <div class="flex gap-2 items-start px-2 min-w-0">
+          <div class="flex flex-col min-w-0">
+            <div title="pavel lebedev" class="min-w-0">
+              <p
+                class="[&amp;_b]:md:font-semibold [&amp;_strong]:md:font-semibold text-base font-medium truncate"
+              >
+                pavel lebedev
+              </p>
+            </div>
+            <div
+              class="flex gap-1 items-center min-w-0"
+              title="Free Plan · pasha20051344@gmail.com"
+            >
+              <p
+                class="[&amp;_b]:md:font-semibold [&amp;_strong]:md:font-semibold flex-shrink-0 text-base text-secondary"
+              >
+                Free Plan
+              </p>
+              <span class="flex-shrink-0 text-secondary">·</span>
+              <p
+                class="[&amp;_b]:md:font-semibold [&amp;_strong]:md:font-semibold text-base truncate text-secondary"
+              >
+                pasha20051344@gmail.com
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col border-0 !bg-none p-0">
+      <nav class="flex flex-col gap-px">
+        <div>
+          <a
+            title="Overview"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-secondary hover:bg-quaternary"
+            href="/dashboard"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0">Overview</span></span
+            ></a
+          >
+        </div>
+        <div>
+          <a
+            title="Settings"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-primary bg-quaternary"
+            href="/dashboard?tab=settings"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0">Settings</span></span
+            ></a
+          >
+        </div>
+        <div class="my-3 border-t opacity-50 border-brand-borders"></div>
+        <div>
+          <a
+            title="Cloud Agents"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-secondary hover:bg-quaternary"
+            href="/dashboard?tab=cloud-agents"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0">Cloud Agents</span></span
+            ></a
+          >
+        </div>
+        <div>
+          <a
+            title="Bugbot"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-secondary hover:bg-quaternary"
+            href="/dashboard?tab=bugbot"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0">Bugbot</span></span
+            ></a
+          >
+        </div>
+        <div class="my-3 border-t opacity-50 border-brand-borders"></div>
+        <div>
+          <a
+            title="Plugins"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-secondary hover:bg-quaternary"
+            href="/dashboard?tab=plugins"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0">Plugins</span></span
+            ></a
+          >
+        </div>
+        <div>
+          <a
+            title="Tools &amp; MCP"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-secondary hover:bg-quaternary"
+            href="/dashboard?tab=integrations"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0">Tools &amp; MCP</span></span
+            ></a
+          >
+        </div>
+        <div class="my-3 border-t opacity-50 border-brand-borders"></div>
+        <div>
+          <a
+            title="Members"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-secondary hover:bg-quaternary"
+            href="/dashboard?tab=members"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0">Members</span></span
+            ></a
+          >
+        </div>
+        <div>
+          <a
+            title="Usage"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-secondary hover:bg-quaternary"
+            href="/dashboard?tab=usage"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0">Usage</span></span
+            ></a
+          >
+        </div>
+        <div>
+          <a
+            title="Spending"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-secondary hover:bg-quaternary"
+            href="/dashboard?tab=spending"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0">Spending</span></span
+            ></a
+          >
+        </div>
+        <div>
+          <a
+            title="Billing &amp; Invoices"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-secondary hover:bg-quaternary"
+            href="/dashboard?tab=billing"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0"
+                >Billing &amp; Invoices</span
+              ></span
+            ></a
+          >
+        </div>
+        <div class="my-3 border-t opacity-50 border-brand-borders"></div>
+        <div>
+          <a
+            title="Docs"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-secondary hover:bg-quaternary"
+            href="https://cursor.com/docs"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0">Docs</span></span
+            ></a
+          >
+        </div>
+        <div>
+          <a
+            title="Contact Us"
+            class="group flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-2.5 text-left text-base transition-colors text-secondary hover:bg-quaternary"
+            href="/dashboard?tab=contact"
+            ><span
+              class="flex flex-shrink-0 justify-center items-center w-5 h-5"
+              ><i
+                class="cursor-icon ui-icon"
+                aria-hidden="true"
+                style="--cursor-icon-content: &quot;&quot;; --icon-size: 16px"
+              ></i></span
+            ><span class="min-w-0 flex items-center gap-1.5"
+              ><span class="truncate min-w-0">Contact Us</span></span
+            ></a
+          >
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="md:col-span-3">
+    <div class="dashboard-settings-chunks pb-6">
+      <div class="dashboard-settings-chunk">
+        <div class="dashboard-tab-header">
+          <div class="dashboard-tab-header-content">
+            <div class="dashboard-tab-header-title-row">
+              <div class="text-xl dashboard-tab-header-title">Settings</div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-sections">
+          <div id="privacy-mode" class="">
+            <div class="dashboard-section">
+              <div class="dashboard-section-header" id="privacy">
+                <div
+                  class="dashboard-section-header-leading-items dashboard-section-header-leading-items-clickable"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Copy link to Privacy and scroll to section"
+                  title="Copy section link"
+                >
+                  <div class="dashboard-section-header-label">
+                    Privacy<span
+                      aria-hidden="true"
+                      class="dashboard-section-header-copy-icon"
+                      ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-copy size-3"
+                        aria-hidden="true"
+                      >
+                        <rect
+                          width="14"
+                          height="14"
+                          x="8"
+                          y="8"
+                          rx="2"
+                          ry="2"
+                        ></rect>
+                        <path
+                          d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+                        ></path></svg
+                    ></span>
+                  </div>
+                </div>
+                <div class="dashboard-section-header-trailing-items"></div>
+              </div>
+              <div class="dashboard-section-list">
+                <div class="dashboard-subSection">
+                  <div class="dashboard-subSection-list">
+                    <div class="dashboard-cell align-top">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-top">
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">
+                            Privacy Mode (Legacy)
+                            <div class="dashboard-badge">
+                              <div class="dashboard-badge-label">Active</div>
+                            </div>
+                          </div>
+                          <div class="dashboard-cell-description">
+                            Your code data will not be trained on or used to
+                            improve the product. We will not store your code.
+                            Cloud Agent and some features not available.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <button
+                          class="box-border relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md disabled:pointer-events-none disabled:opacity-50 selection:text-current transition-colors duration-150 focus:outline-none motion-reduce:transition-none [&amp;&gt;svg]:shrink-0 ring-1 ring-[var(--border-tertiary)] bg-transparent text-primary hover:bg-quaternary h-7 px-2 font-medium text-base [&amp;&gt;svg]:size-3"
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dashboard-subSection-trailing-caption">
+                    <a
+                      href="/privacy-overview"
+                      target="_blank"
+                      class="dashboard-text-ansi-blue"
+                      >Learn More</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="student-verification" class="">
+            <div class="dashboard-section">
+              <div class="dashboard-section-header" id="student-verification">
+                <div
+                  class="dashboard-section-header-leading-items dashboard-section-header-leading-items-clickable"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Copy link to Student Verification and scroll to section"
+                  title="Copy section link"
+                >
+                  <div class="dashboard-section-header-label">
+                    Student Verification<span
+                      aria-hidden="true"
+                      class="dashboard-section-header-copy-icon"
+                      ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-copy size-3"
+                        aria-hidden="true"
+                      >
+                        <rect
+                          width="14"
+                          height="14"
+                          x="8"
+                          y="8"
+                          rx="2"
+                          ry="2"
+                        ></rect>
+                        <path
+                          d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+                        ></path></svg
+                    ></span>
+                  </div>
+                </div>
+                <div class="dashboard-section-header-trailing-items"></div>
+              </div>
+              <div class="dashboard-section-list">
+                <div class="dashboard-subSection">
+                  <div class="dashboard-subSection-list">
+                    <div class="dashboard-cell align-top">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-top">
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">Student Status</div>
+                          <div class="dashboard-cell-description">
+                            Only .edu emails and specific educational domains
+                            are eligible for student verification.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <div class="flex items-center gap-2">
+                          <button
+                            aria-disabled="true"
+                            class="box-border relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md disabled:pointer-events-none disabled:opacity-50 selection:text-current transition-colors duration-150 focus:outline-none motion-reduce:transition-none [&amp;&gt;svg]:shrink-0 bg-neutral text-inverted hover:bg-neutral-hover h-7 px-2 font-medium text-base [&amp;&gt;svg]:size-3"
+                            disabled=""
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="translate-y-px"
+                            >
+                              <path
+                                d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"
+                              ></path>
+                              <path
+                                d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"
+                              ></path></svg
+                            >Not eligible
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="profile" class="">
+            <div class="dashboard-section">
+              <div class="dashboard-section-header" id="profile">
+                <div
+                  class="dashboard-section-header-leading-items dashboard-section-header-leading-items-clickable"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Copy link to Profile and scroll to section"
+                  title="Copy section link"
+                >
+                  <div class="dashboard-section-header-label">
+                    Profile<span
+                      aria-hidden="true"
+                      class="dashboard-section-header-copy-icon"
+                      ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-copy size-3"
+                        aria-hidden="true"
+                      >
+                        <rect
+                          width="14"
+                          height="14"
+                          x="8"
+                          y="8"
+                          rx="2"
+                          ry="2"
+                        ></rect>
+                        <path
+                          d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+                        ></path></svg
+                    ></span>
+                  </div>
+                </div>
+                <div class="dashboard-section-header-trailing-items"></div>
+              </div>
+              <div class="dashboard-section-list">
+                <div class="dashboard-subSection">
+                  <div class="dashboard-subSection-list">
+                    <div class="dashboard-cell align-center">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-center">
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">First Name</div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <input
+                          placeholder="First name"
+                          class="dashboard-cell-input"
+                          type="text"
+                          value="pavel"
+                        />
+                      </div>
+                    </div>
+                    <div class="dashboard-cell align-center">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-center">
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">Last Name</div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <input
+                          placeholder="Last name"
+                          class="dashboard-cell-input"
+                          type="text"
+                          value="lebedev"
+                        />
+                      </div>
+                    </div>
+                    <div class="flex justify-end px-4 py-2">
+                      <button
+                        aria-disabled="true"
+                        class="box-border relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md disabled:pointer-events-none disabled:opacity-50 selection:text-current transition-colors duration-150 focus:outline-none motion-reduce:transition-none [&amp;&gt;svg]:shrink-0 ring-1 ring-[var(--border-tertiary)] bg-transparent text-primary hover:bg-quaternary h-7 px-2 font-medium text-base [&amp;&gt;svg]:size-3"
+                        disabled=""
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="appearance" class="">
+            <div class="dashboard-section">
+              <div class="dashboard-section-header" id="appearance">
+                <div
+                  class="dashboard-section-header-leading-items dashboard-section-header-leading-items-clickable"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Copy link to Appearance and scroll to section"
+                  title="Copy section link"
+                >
+                  <div class="dashboard-section-header-label">
+                    Appearance<span
+                      aria-hidden="true"
+                      class="dashboard-section-header-copy-icon"
+                      ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-copy size-3"
+                        aria-hidden="true"
+                      >
+                        <rect
+                          width="14"
+                          height="14"
+                          x="8"
+                          y="8"
+                          rx="2"
+                          ry="2"
+                        ></rect>
+                        <path
+                          d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+                        ></path></svg
+                    ></span>
+                  </div>
+                </div>
+                <div class="dashboard-section-header-trailing-items"></div>
+              </div>
+              <div class="dashboard-section-list">
+                <div class="dashboard-subSection">
+                  <div class="dashboard-subSection-list">
+                    <div class="dashboard-cell align-center">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-center">
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">Theme</div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <div class="relative">
+                          <button
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            class="dashboard-outline-button dashboard-outline-button-md"
+                            type="button"
+                            id="radix-_r_2_"
+                            data-state="closed"
+                          >
+                            System<svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="h-3.5 w-3.5"
+                              style="color: var(--dashboard-icon-secondary)"
+                            >
+                              <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="active-sessions" class="">
+            <div class="dashboard-section">
+              <div class="dashboard-section-header" id="active-sessions">
+                <div
+                  class="dashboard-section-header-leading-items dashboard-section-header-leading-items-clickable"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Copy link to Active Sessions and scroll to section"
+                  title="Copy section link"
+                >
+                  <div class="dashboard-section-header-label">
+                    Active Sessions<span
+                      aria-hidden="true"
+                      class="dashboard-section-header-copy-icon"
+                      ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-copy size-3"
+                        aria-hidden="true"
+                      >
+                        <rect
+                          width="14"
+                          height="14"
+                          x="8"
+                          y="8"
+                          rx="2"
+                          ry="2"
+                        ></rect>
+                        <path
+                          d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+                        ></path></svg
+                    ></span>
+                  </div>
+                </div>
+                <div class="dashboard-section-header-trailing-items"></div>
+              </div>
+              <div class="dashboard-section-list">
+                <div class="dashboard-subSection">
+                  <div
+                    class="dashboard-subSection-list dashboard-subSection-list-hide-overflow"
+                  >
+                    <div class="dashboard-cell align-top">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-top">
+                        <div class="dashboard-cell-leading-icon">
+                          <div class="text-tertiary">
+                            <div
+                              class="text-tertiary flex h-5 items-center justify-center"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              >
+                                <rect
+                                  x="5"
+                                  y="2"
+                                  width="14"
+                                  height="20"
+                                  rx="2"
+                                  ry="2"
+                                ></rect>
+                                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">Web</div>
+                          <div class="dashboard-cell-description">
+                            Created 17 days ago
+                          </div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <button
+                          aria-disabled="false"
+                          class="box-border relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md disabled:pointer-events-none disabled:opacity-50 selection:text-current transition-colors duration-150 focus:outline-none motion-reduce:transition-none [&amp;&gt;svg]:shrink-0 ring-1 ring-[var(--border-tertiary)] bg-transparent text-primary hover:bg-quaternary h-7 px-2 font-medium text-base [&amp;&gt;svg]:size-3"
+                        >
+                          Revoke
+                        </button>
+                      </div>
+                    </div>
+                    <div class="dashboard-cell align-top">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-top">
+                        <div class="dashboard-cell-leading-icon">
+                          <div class="text-tertiary">
+                            <div
+                              class="text-tertiary flex h-5 items-center justify-center"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              >
+                                <rect
+                                  x="2"
+                                  y="3"
+                                  width="20"
+                                  height="14"
+                                  rx="2"
+                                  ry="2"
+                                ></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">Desktop App</div>
+                          <div class="dashboard-cell-description">
+                            Created 17 days ago
+                          </div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <button
+                          aria-disabled="false"
+                          class="box-border relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md disabled:pointer-events-none disabled:opacity-50 selection:text-current transition-colors duration-150 focus:outline-none motion-reduce:transition-none [&amp;&gt;svg]:shrink-0 ring-1 ring-[var(--border-tertiary)] bg-transparent text-primary hover:bg-quaternary h-7 px-2 font-medium text-base [&amp;&gt;svg]:size-3"
+                        >
+                          Revoke
+                        </button>
+                      </div>
+                    </div>
+                    <div class="dashboard-cell align-top">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-top">
+                        <div class="dashboard-cell-leading-icon">
+                          <div class="text-tertiary">
+                            <div
+                              class="text-tertiary flex h-5 items-center justify-center"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              >
+                                <rect
+                                  x="5"
+                                  y="2"
+                                  width="14"
+                                  height="20"
+                                  rx="2"
+                                  ry="2"
+                                ></rect>
+                                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">Web</div>
+                          <div class="dashboard-cell-description">
+                            Created about 4 hours ago
+                          </div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <button
+                          aria-disabled="false"
+                          class="box-border relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md disabled:pointer-events-none disabled:opacity-50 selection:text-current transition-colors duration-150 focus:outline-none motion-reduce:transition-none [&amp;&gt;svg]:shrink-0 ring-1 ring-[var(--border-tertiary)] bg-transparent text-primary hover:bg-quaternary h-7 px-2 font-medium text-base [&amp;&gt;svg]:size-3"
+                        >
+                          Revoke
+                        </button>
+                      </div>
+                    </div>
+                    <div class="dashboard-cell align-top">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-top">
+                        <div class="dashboard-cell-leading-icon">
+                          <div class="text-tertiary">
+                            <div
+                              class="text-tertiary flex h-5 items-center justify-center"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              >
+                                <rect
+                                  x="5"
+                                  y="2"
+                                  width="14"
+                                  height="20"
+                                  rx="2"
+                                  ry="2"
+                                ></rect>
+                                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">Web</div>
+                          <div class="dashboard-cell-description">
+                            Created 10 months ago
+                          </div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <button
+                          aria-disabled="false"
+                          class="box-border relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md disabled:pointer-events-none disabled:opacity-50 selection:text-current transition-colors duration-150 focus:outline-none motion-reduce:transition-none [&amp;&gt;svg]:shrink-0 ring-1 ring-[var(--border-tertiary)] bg-transparent text-primary hover:bg-quaternary h-7 px-2 font-medium text-base [&amp;&gt;svg]:size-3"
+                        >
+                          Revoke
+                        </button>
+                      </div>
+                    </div>
+                    <div class="dashboard-cell align-top">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-top">
+                        <div class="dashboard-cell-leading-icon">
+                          <div class="text-tertiary">
+                            <div
+                              class="text-tertiary flex h-5 items-center justify-center"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              >
+                                <rect
+                                  x="5"
+                                  y="2"
+                                  width="14"
+                                  height="20"
+                                  rx="2"
+                                  ry="2"
+                                ></rect>
+                                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">Web</div>
+                          <div class="dashboard-cell-description">
+                            Created 10 months ago
+                          </div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <button
+                          aria-disabled="false"
+                          class="box-border relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md disabled:pointer-events-none disabled:opacity-50 selection:text-current transition-colors duration-150 focus:outline-none motion-reduce:transition-none [&amp;&gt;svg]:shrink-0 ring-1 ring-[var(--border-tertiary)] bg-transparent text-primary hover:bg-quaternary h-7 px-2 font-medium text-base [&amp;&gt;svg]:size-3"
+                        >
+                          Revoke
+                        </button>
+                      </div>
+                    </div>
+                    <div
+                      class="dashboard-cell align-center dashboard-cell-clickable"
+                    >
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-center">
+                        <div class="dashboard-cell-leading-icon">
+                          <div
+                            class="text-tertiary flex h-5 items-center justify-center"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            >
+                              <circle cx="12" cy="12" r="1"></circle>
+                              <circle cx="19" cy="12" r="1"></circle>
+                              <circle cx="5" cy="12" r="1"></circle>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">See 3 more</div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items"></div>
+                    </div>
+                  </div>
+                  <div class="dashboard-subSection-trailing-caption">
+                    Session revocation may take up to 10 minutes to complete
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="more" class="">
+            <div class="dashboard-section">
+              <div class="dashboard-section-header" id="more">
+                <div
+                  class="dashboard-section-header-leading-items dashboard-section-header-leading-items-clickable"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Copy link to More and scroll to section"
+                  title="Copy section link"
+                >
+                  <div class="dashboard-section-header-label">
+                    More<span
+                      aria-hidden="true"
+                      class="dashboard-section-header-copy-icon"
+                      ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-copy size-3"
+                        aria-hidden="true"
+                      >
+                        <rect
+                          width="14"
+                          height="14"
+                          x="8"
+                          y="8"
+                          rx="2"
+                          ry="2"
+                        ></rect>
+                        <path
+                          d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+                        ></path></svg
+                    ></span>
+                  </div>
+                </div>
+                <div class="dashboard-section-header-trailing-items"></div>
+              </div>
+              <div class="dashboard-section-list">
+                <div class="dashboard-subSection">
+                  <div class="dashboard-subSection-list">
+                    <div class="dashboard-cell align-center">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-center">
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">Log Out</div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <button
+                          class="box-border relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md disabled:pointer-events-none disabled:opacity-50 selection:text-current transition-colors duration-150 focus:outline-none motion-reduce:transition-none [&amp;&gt;svg]:shrink-0 ring-1 ring-[var(--border-tertiary)] bg-transparent text-primary hover:bg-quaternary h-7 px-2 font-medium text-base [&amp;&gt;svg]:size-3"
+                        >
+                          Log Out
+                        </button>
+                      </div>
+                    </div>
+                    <div class="dashboard-cell align-center">
+                      <div class="dashboard-cell-divider"></div>
+                      <div class="dashboard-cell-leading-items align-center">
+                        <div class="dashboard-cell-content">
+                          <div class="dashboard-cell-label">Delete Account</div>
+                        </div>
+                      </div>
+                      <div class="dashboard-cell-trailing-items">
+                        <button
+                          class="box-border relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md disabled:pointer-events-none disabled:opacity-50 selection:text-current transition-colors duration-150 focus:outline-none motion-reduce:transition-none [&amp;&gt;svg]:shrink-0 bg-transparent h-7 px-2 font-medium text-base [&amp;&gt;svg]:size-3 ring-1 ring-[var(--border-danger-tertiary,rgb(239_68_68/0.4))] text-[var(--text-danger,#dc2626)] hover:ring-[var(--border-danger-secondary,#ef4444)] hover:bg-[var(--bg-danger-tertiary,rgb(239_68_68/0.1))]"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+
+```
+<div style="flex: 1 1 auto; min-width: 0px;">
+    <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-2">
+            <h3 class="text-heading-24 m-0 p-0">Notifications</h3>
+            <p class="text-label-14 m-0 p-0">Manage your personal notification settings for the wwew's projects team.
+            </p>
+        </div>
+        <div class="material-base flex flex-col gap-4 px-5 py-4">
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="flex flex-1 items-center gap-3"><span
+                            class="hidden size-[32px] items-center justify-center rounded-full border border-solid border-gray-alpha-400 bg-gray-100 p-1 @md-page:flex"><svg
+                                data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16"
+                                width="16" style="color: currentcolor;">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M7.9925 0C4.95079 0 2.485 2.46579 2.485 5.5075V8.22669C2.485 8.77318 2.21321 9.28388 1.75992 9.58912L1.33108 9.8779L1 10.1009V10.5V11.25V12H1.75H14.25H15V11.25V10.5V10.0986L14.666 9.87596L14.2306 9.58565C13.7741 9.28137 13.5 8.76913 13.5 8.22059V5.5075C13.5 2.46579 11.0342 0 7.9925 0ZM3.985 5.5075C3.985 3.29422 5.77922 1.5 7.9925 1.5C10.2058 1.5 12 3.29422 12 5.5075V8.22059C12 9.09029 12.36 9.91233 12.9801 10.5H3.01224C3.62799 9.91235 3.985 9.09303 3.985 8.22669V5.5075ZM10.7486 13.5H9.16778L9.16337 13.5133C9.09591 13.716 8.94546 13.9098 8.72067 14.0501C8.52343 14.1732 8.27577 14.25 8.00002 14.25C7.72426 14.25 7.47661 14.1732 7.27936 14.0501C7.05458 13.9098 6.90412 13.716 6.83666 13.5133L6.83225 13.5H5.25143L5.41335 13.9867C5.60126 14.5516 5.99263 15.0152 6.48523 15.3226C6.92164 15.5949 7.44461 15.75 8.00002 15.75C8.55542 15.75 9.07839 15.5949 9.5148 15.3226C10.0074 15.0152 10.3988 14.5516 10.5867 13.9867L10.7486 13.5Z"
+                                    fill="currentColor"></path>
+                            </svg></span>
+                        <div class="flex flex-col">
+                            <p class="text-label-14 m-0 p-0 font-medium">Web</p>
+                            <p class="text-copy-14 m-0 p-0">Receive notifications in the Vercel dashboard.</p>
+                        </div>
+                    </div>
+                    <div class="ml-auto flex items-center gap-2"><label
+                            class="toggle-module__fUrgQa__wrapper p-0 toggle-module__fUrgQa__large toggle-module__fUrgQa__titleCasing"
+                            data-version="v1"><input
+                                class="toggle-module__fUrgQa__input reset-module__ylizOa__visuallyHidden group"
+                                data-testid="toggle/input" type="checkbox" checked=""><span
+                                class="toggle-module__fUrgQa__toggle toggle-module__fUrgQa__checked">
+                                <div class="toggle-module__fUrgQa__thumb toggle-module__fUrgQa__checked"></div>
+                            </span></label></div>
+                </div>
+                <hr class="m-0 h-0 border-b border-t-0 border-gray-200 p-0">
+                <div class="flex items-center gap-4">
+                    <div class="flex min-w-0 items-center gap-3"><span
+                            class="hidden size-[32px] items-center justify-center rounded-full border border-solid border-gray-alpha-400 bg-gray-100 p-1 @md-page:flex"><svg
+                                data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16"
+                                width="16" style="color: currentcolor;">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M8 0C3.57757 0 0 3.61682 0 8.03093C0 12.411 3.54999 16 7.9384 16C9.42621 16 10.8841 15.5819 12.1457 14.7934L12.3975 14.636L11.6025 13.364L11.3507 13.5214C10.3275 14.1609 9.14508 14.5 7.9384 14.5C4.38672 14.5 1.5 11.5909 1.5 8.03093C1.5 4.43692 4.4143 1.5 8 1.5C11.5899 1.5 14.5 4.41015 14.5 8V8.60714C14.5 9.3764 13.8764 10 13.1071 10C12.2195 10 11.5 9.28046 11.5 8.39286V8V4.5H10V5.12734C9.43308 4.73191 8.74362 4.5 8 4.5C6.067 4.5 4.5 6.067 4.5 8C4.5 9.933 6.067 11.5 8 11.5C9.05713 11.5 10.0048 11.0313 10.6466 10.2904C11.2148 11.0262 12.1056 11.5 13.1071 11.5C14.7048 11.5 16 10.2048 16 8.60714V8C16 3.58172 12.4183 0 8 0ZM10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10C9.10457 10 10 9.10457 10 8Z"
+                                    fill="currentColor"></path>
+                            </svg></span>
+                        <div class="flex min-w-0 flex-col">
+                            <p class="text-label-14 m-0 p-0 font-medium">Email</p>pasha20051344@gmail.com
+                        </div>
+                    </div>
+                    <div class="ml-auto flex items-center gap-2"><a role="link" type="submit" tabindex="0"
+                            data-react-aria-pressable="true" aria-label="Edit email" data-zone="same"
+                            class="button-module__QyrFCa__base reset-module__ylizOa__reset button-module__QyrFCa__button reset-module__ylizOa__reset shrink-0 geist-new-themed geist-new-tertiary geist-new-tertiary-fill button-module__QyrFCa__tertiary button-module__QyrFCa__shape button-module__QyrFCa__small button-module__QyrFCa__invert"
+                            data-geist-button="" data-prefix="false" data-suffix="false" data-version="v1"
+                            href="/account/settings#email" style="--geist-icon-size: 16px;"><span
+                                class="button-module__QyrFCa__content button-module__QyrFCa__flex"><svg
+                                    data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16"
+                                    width="16" style="color: currentcolor;">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M7.70059 1.73618L7.74488 1.5H8.2551L8.29938 1.73618C8.4406 2.48936 8.98357 3.04807 9.63284 3.27226C9.82296 3.33791 10.008 3.41476 10.1871 3.50207C10.805 3.80328 11.5845 3.7922 12.2172 3.35933L12.4158 3.22342L12.7766 3.5842L12.6407 3.78284C12.2078 4.41549 12.1967 5.19496 12.4979 5.81292C12.5852 5.99203 12.6621 6.17703 12.7277 6.36714C12.9519 7.01642 13.5106 7.55938 14.2638 7.7006L14.5 7.74489V8.25511L14.2638 8.2994C13.5106 8.44062 12.9519 8.98359 12.7277 9.63286C12.6621 9.82298 12.5852 10.008 12.4979 10.1871C12.1967 10.805 12.2078 11.5845 12.6407 12.2172L12.7766 12.4158L12.4158 12.7766L12.2172 12.6407C11.5845 12.2078 10.805 12.1967 10.1871 12.4979C10.008 12.5852 9.82296 12.6621 9.63284 12.7277C8.98357 12.9519 8.4406 13.5106 8.29938 14.2638L8.2551 14.5H7.74488L7.70059 14.2638C7.55937 13.5106 7.0164 12.9519 6.36713 12.7277C6.17702 12.6621 5.99202 12.5852 5.8129 12.4979C5.19495 12.1967 4.41548 12.2078 3.78283 12.6407L3.5842 12.7766L3.22342 12.4158L3.35932 12.2172C3.79219 11.5845 3.80326 10.8051 3.50206 10.1871C3.41475 10.008 3.3379 9.82298 3.27225 9.63285C3.04806 8.98358 2.48935 8.44061 1.73616 8.29939L1.5 8.25511V7.74489L1.73616 7.70061C2.48935 7.55939 3.04806 7.01642 3.27225 6.36715C3.3379 6.17703 3.41475 5.99203 3.50205 5.81291C3.80326 5.19496 3.79218 4.41549 3.35931 3.78283L3.2234 3.5842L3.58418 3.22342L3.78282 3.35932C4.41547 3.79219 5.19494 3.80327 5.8129 3.50207C5.99201 3.41476 6.17701 3.33791 6.36713 3.27226C7.0164 3.04807 7.55937 2.48936 7.70059 1.73618ZM6.49999 0H9.49999L9.77369 1.45974C9.80837 1.64472 9.94454 1.79299 10.1224 1.85441C10.3702 1.93996 10.6111 2.04007 10.8443 2.15371C11.0135 2.2362 11.2148 2.22768 11.3701 2.12137L12.5962 1.28249L14.7175 3.40381L13.8786 4.62987C13.7723 4.78525 13.7638 4.98647 13.8463 5.1557C13.9599 5.38885 14.06 5.62981 14.1456 5.87756C14.207 6.05545 14.3553 6.19161 14.5402 6.2263L16 6.5V9.5L14.5402 9.7737C14.3553 9.80839 14.207 9.94455 14.1456 10.1224C14.06 10.3702 13.9599 10.6112 13.8463 10.8443C13.7638 11.0135 13.7723 11.2148 13.8786 11.3701L14.7175 12.5962L12.5962 14.7175L11.3701 13.8786C11.2147 13.7723 11.0135 13.7638 10.8443 13.8463C10.6111 13.9599 10.3702 14.06 10.1224 14.1456C9.94454 14.207 9.80837 14.3553 9.77369 14.5403L9.49999 16H6.49999L6.22628 14.5403C6.1916 14.3553 6.05544 14.207 5.87755 14.1456C5.6298 14.06 5.38884 13.9599 5.15569 13.8463C4.98645 13.7638 4.78523 13.7723 4.62985 13.8786L3.40381 14.7175L1.28249 12.5962L2.12136 11.3702C2.22767 11.2148 2.23619 11.0136 2.1537 10.8443C2.04006 10.6112 1.93995 10.3702 1.8544 10.1224C1.79297 9.94455 1.6447 9.80838 1.45973 9.7737L0 9.5V6.5L1.45973 6.2263C1.6447 6.19162 1.79297 6.05545 1.8544 5.87756C1.93995 5.62981 2.04005 5.38885 2.1537 5.15569C2.23619 4.98646 2.22766 4.78524 2.12135 4.62986L1.28247 3.40381L3.40379 1.28249L4.62984 2.12136C4.78522 2.22767 4.98644 2.2362 5.15568 2.15371C5.38883 2.04007 5.6298 1.93996 5.87755 1.85441C6.05544 1.79299 6.1916 1.64472 6.22628 1.45975L6.49999 0ZM9.49998 8C9.49998 8.82843 8.82841 9.5 7.99998 9.5C7.17156 9.5 6.49998 8.82843 6.49998 8C6.49998 7.17157 7.17156 6.5 7.99998 6.5C8.82841 6.5 9.49998 7.17157 9.49998 8ZM11 8C11 9.65685 9.65684 11 7.99998 11C6.34313 11 4.99998 9.65685 4.99998 8C4.99998 6.34315 6.34313 5 7.99998 5C9.65684 5 11 6.34315 11 8Z"
+                                        fill="currentColor"></path>
+                                </svg></span></a><label
+                            class="toggle-module__fUrgQa__wrapper p-0 toggle-module__fUrgQa__large toggle-module__fUrgQa__titleCasing"
+                            data-version="v1"><input
+                                class="toggle-module__fUrgQa__input reset-module__ylizOa__visuallyHidden group"
+                                data-testid="toggle/input" type="checkbox" checked=""><span
+                                class="toggle-module__fUrgQa__toggle toggle-module__fUrgQa__checked">
+                                <div class="toggle-module__fUrgQa__thumb toggle-module__fUrgQa__checked"></div>
+                            </span></label></div>
+                </div>
+                <hr class="m-0 h-0 border-b border-t-0 border-gray-200 p-0">
+                <div class="flex items-center gap-4">
+                    <div class="flex min-w-0 items-center gap-3"><span
+                            class="hidden size-[32px] items-center justify-center rounded-full border border-solid border-gray-alpha-400 bg-gray-100 p-1 @md-page:flex"><svg
+                                data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16"
+                                width="16" style="color: currentcolor;">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M14.5 3C14.5 3.82843 13.8284 4.5 13 4.5C12.1716 4.5 11.5 3.82843 11.5 3C11.5 2.17157 12.1716 1.5 13 1.5C13.8284 1.5 14.5 2.17157 14.5 3ZM13.5 5.95852C13.3374 5.9858 13.1704 6 13 6C11.3431 6 10 4.65685 10 3C10 2.82964 10.0142 2.6626 10.0415 2.5H4.75C3.50736 2.5 2.5 3.50736 2.5 4.75V11.25C2.5 12.4926 3.50736 13.5 4.75 13.5H11.25C12.4926 13.5 13.5 12.4926 13.5 11.25V5.95852ZM15 5.23611V11.25C15 13.3211 13.3211 15 11.25 15H4.75C2.67893 15 1 13.3211 1 11.25V4.75C1 2.67893 2.67893 1 4.75 1H10.7639C11.3132 0.386251 12.1115 0 13 0C14.6569 0 16 1.34315 16 3C16 3.8885 15.6137 4.68679 15 5.23611Z"
+                                    fill="currentColor"></path>
+                            </svg></span>
+                        <div class="flex min-w-0 flex-col">
+                            <p class="text-label-14 m-0 p-0 font-medium flex gap-1">Push<span
+                                    class="badge-module__TiDnQG__badge capitalize badge-module__TiDnQG__amber-subtle badge-module__TiDnQG__sm"
+                                    data-geist-badge="" data-version="v2"><span
+                                        class="badge-module__TiDnQG__contentContainer">Subscribe Device</span></span>
+                            </p>
+                            <p class="text-copy-14 m-0 p-0">Receive notifications on desktop or mobile.</p>
+                        </div>
+                    </div>
+                    <div class="ml-auto flex items-center gap-2">
+                        <div class="flex gap-2 items-center"><button type="submit" tabindex="0"
+                                data-react-aria-pressable="true" aria-haspopup="true" aria-expanded="false"
+                                aria-controls="menu-_r_it_" aria-label="Push notification settings"
+                                data-geist-menu-button="" data-is-open="false" id="menu-button-_r_iu_"
+                                class="button-module__QyrFCa__base reset-module__ylizOa__reset button-module__QyrFCa__button reset-module__ylizOa__reset relative geist-new-themed geist-new-tertiary geist-new-tertiary-fill button-module__QyrFCa__tertiary button-module__QyrFCa__shape button-module__QyrFCa__small button-module__QyrFCa__invert"
+                                data-geist-button="" data-prefix="false" data-suffix="false" data-version="v1"
+                                style="--geist-icon-size: 16px;"><span
+                                    class="button-module__QyrFCa__content button-module__QyrFCa__flex button-module__QyrFCa__center"><span
+                                        class="relative">
+                                        <div
+                                            class="absolute top-0 right-0 min-w-fit rounded-full size-1.5 border border-background-100 opacity-0 transition-opacity duration-1000 bg-amber-700 opacity-100">
+                                        </div><svg data-testid="geist-icon" height="16" stroke-linejoin="round"
+                                            viewBox="0 0 16 16" width="16" style="color: currentcolor;">
+                                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                                d="M7.70059 1.73618L7.74488 1.5H8.2551L8.29938 1.73618C8.4406 2.48936 8.98357 3.04807 9.63284 3.27226C9.82296 3.33791 10.008 3.41476 10.1871 3.50207C10.805 3.80328 11.5845 3.7922 12.2172 3.35933L12.4158 3.22342L12.7766 3.5842L12.6407 3.78284C12.2078 4.41549 12.1967 5.19496 12.4979 5.81292C12.5852 5.99203 12.6621 6.17703 12.7277 6.36714C12.9519 7.01642 13.5106 7.55938 14.2638 7.7006L14.5 7.74489V8.25511L14.2638 8.2994C13.5106 8.44062 12.9519 8.98359 12.7277 9.63286C12.6621 9.82298 12.5852 10.008 12.4979 10.1871C12.1967 10.805 12.2078 11.5845 12.6407 12.2172L12.7766 12.4158L12.4158 12.7766L12.2172 12.6407C11.5845 12.2078 10.805 12.1967 10.1871 12.4979C10.008 12.5852 9.82296 12.6621 9.63284 12.7277C8.98357 12.9519 8.4406 13.5106 8.29938 14.2638L8.2551 14.5H7.74488L7.70059 14.2638C7.55937 13.5106 7.0164 12.9519 6.36713 12.7277C6.17702 12.6621 5.99202 12.5852 5.8129 12.4979C5.19495 12.1967 4.41548 12.2078 3.78283 12.6407L3.5842 12.7766L3.22342 12.4158L3.35932 12.2172C3.79219 11.5845 3.80326 10.8051 3.50206 10.1871C3.41475 10.008 3.3379 9.82298 3.27225 9.63285C3.04806 8.98358 2.48935 8.44061 1.73616 8.29939L1.5 8.25511V7.74489L1.73616 7.70061C2.48935 7.55939 3.04806 7.01642 3.27225 6.36715C3.3379 6.17703 3.41475 5.99203 3.50205 5.81291C3.80326 5.19496 3.79218 4.41549 3.35931 3.78283L3.2234 3.5842L3.58418 3.22342L3.78282 3.35932C4.41547 3.79219 5.19494 3.80327 5.8129 3.50207C5.99201 3.41476 6.17701 3.33791 6.36713 3.27226C7.0164 3.04807 7.55937 2.48936 7.70059 1.73618ZM6.49999 0H9.49999L9.77369 1.45974C9.80837 1.64472 9.94454 1.79299 10.1224 1.85441C10.3702 1.93996 10.6111 2.04007 10.8443 2.15371C11.0135 2.2362 11.2148 2.22768 11.3701 2.12137L12.5962 1.28249L14.7175 3.40381L13.8786 4.62987C13.7723 4.78525 13.7638 4.98647 13.8463 5.1557C13.9599 5.38885 14.06 5.62981 14.1456 5.87756C14.207 6.05545 14.3553 6.19161 14.5402 6.2263L16 6.5V9.5L14.5402 9.7737C14.3553 9.80839 14.207 9.94455 14.1456 10.1224C14.06 10.3702 13.9599 10.6112 13.8463 10.8443C13.7638 11.0135 13.7723 11.2148 13.8786 11.3701L14.7175 12.5962L12.5962 14.7175L11.3701 13.8786C11.2147 13.7723 11.0135 13.7638 10.8443 13.8463C10.6111 13.9599 10.3702 14.06 10.1224 14.1456C9.94454 14.207 9.80837 14.3553 9.77369 14.5403L9.49999 16H6.49999L6.22628 14.5403C6.1916 14.3553 6.05544 14.207 5.87755 14.1456C5.6298 14.06 5.38884 13.9599 5.15569 13.8463C4.98645 13.7638 4.78523 13.7723 4.62985 13.8786L3.40381 14.7175L1.28249 12.5962L2.12136 11.3702C2.22767 11.2148 2.23619 11.0136 2.1537 10.8443C2.04006 10.6112 1.93995 10.3702 1.8544 10.1224C1.79297 9.94455 1.6447 9.80838 1.45973 9.7737L0 9.5V6.5L1.45973 6.2263C1.6447 6.19162 1.79297 6.05545 1.8544 5.87756C1.93995 5.62981 2.04005 5.38885 2.1537 5.15569C2.23619 4.98646 2.22766 4.78524 2.12135 4.62986L1.28247 3.40381L3.40379 1.28249L4.62984 2.12136C4.78522 2.22767 4.98644 2.2362 5.15568 2.15371C5.38883 2.04007 5.6298 1.93996 5.87755 1.85441C6.05544 1.79299 6.1916 1.64472 6.22628 1.45975L6.49999 0ZM9.49998 8C9.49998 8.82843 8.82841 9.5 7.99998 9.5C7.17156 9.5 6.49998 8.82843 6.49998 8C6.49998 7.17157 7.17156 6.5 7.99998 6.5C8.82841 6.5 9.49998 7.17157 9.49998 8ZM11 8C11 9.65685 9.65684 11 7.99998 11C6.34313 11 4.99998 9.65685 4.99998 8C4.99998 6.34315 6.34313 5 7.99998 5C9.65684 5 11 6.34315 11 8Z"
+                                                fill="currentColor"></path>
+                                        </svg>
+                                    </span></span></button><label
+                                class="toggle-module__fUrgQa__wrapper p-0 [&amp;_*]:!cursor-pointer toggle-module__fUrgQa__large toggle-module__fUrgQa__titleCasing"
+                                data-version="v1"><input
+                                    class="toggle-module__fUrgQa__input reset-module__ylizOa__visuallyHidden group"
+                                    data-testid="toggle/input" disabled="" type="checkbox"><span
+                                    class="toggle-module__fUrgQa__toggle toggle-module__fUrgQa__disabled">
+                                    <div class="toggle-module__fUrgQa__thumb"></div>
+                                </span></label></div>
+                    </div>
+                </div>
+                <hr class="m-0 h-0 border-b border-t-0 border-gray-200 p-0">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3"><span
+                            class="hidden size-[32px] items-center justify-center rounded-full border border-solid border-gray-alpha-400 bg-gray-100 p-1 @md-page:flex"><svg
+                                data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16"
+                                width="16" style="color: currentcolor;">
+                                <path
+                                    d="M5.5 1H2.87785C1.63626 1 0.694688 2.11946 0.907423 3.34268L1.14841 4.72836C1.96878 9.4455 5.51475 13.2235 10.1705 14.3409L12.5333 14.908C13.7909 15.2098 15 14.2566 15 12.9632V10.5L11.75 8.25L9.25 10.75L5.25 6.75L7.75 4.25L5.5 1Z"
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="transparent">
+                                </path>
+                            </svg></span>
+                        <div class="flex flex-col">
+                            <p class="text-label-14 m-0 p-0 font-medium">SMS</p>
+                            <div class="flex items-center gap-2">
+                                <p class="text-copy-14 m-0 p-0 text-gray-700">No phone number.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ml-auto flex items-center gap-2"><button type="submit" tabindex="0"
+                            data-react-aria-pressable="true" aria-label="Edit phone"
+                            class="button-module__QyrFCa__base reset-module__ylizOa__reset button-module__QyrFCa__button reset-module__ylizOa__reset shrink-0 geist-new-themed geist-new-tertiary geist-new-tertiary-fill button-module__QyrFCa__tertiary button-module__QyrFCa__shape button-module__QyrFCa__small button-module__QyrFCa__invert"
+                            data-geist-button="" data-prefix="false" data-suffix="false" data-version="v1"
+                            style="--geist-icon-size: 16px;"><span
+                                class="button-module__QyrFCa__content button-module__QyrFCa__flex"><svg
+                                    data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16"
+                                    width="16" style="color: currentcolor;">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M7.70059 1.73618L7.74488 1.5H8.2551L8.29938 1.73618C8.4406 2.48936 8.98357 3.04807 9.63284 3.27226C9.82296 3.33791 10.008 3.41476 10.1871 3.50207C10.805 3.80328 11.5845 3.7922 12.2172 3.35933L12.4158 3.22342L12.7766 3.5842L12.6407 3.78284C12.2078 4.41549 12.1967 5.19496 12.4979 5.81292C12.5852 5.99203 12.6621 6.17703 12.7277 6.36714C12.9519 7.01642 13.5106 7.55938 14.2638 7.7006L14.5 7.74489V8.25511L14.2638 8.2994C13.5106 8.44062 12.9519 8.98359 12.7277 9.63286C12.6621 9.82298 12.5852 10.008 12.4979 10.1871C12.1967 10.805 12.2078 11.5845 12.6407 12.2172L12.7766 12.4158L12.4158 12.7766L12.2172 12.6407C11.5845 12.2078 10.805 12.1967 10.1871 12.4979C10.008 12.5852 9.82296 12.6621 9.63284 12.7277C8.98357 12.9519 8.4406 13.5106 8.29938 14.2638L8.2551 14.5H7.74488L7.70059 14.2638C7.55937 13.5106 7.0164 12.9519 6.36713 12.7277C6.17702 12.6621 5.99202 12.5852 5.8129 12.4979C5.19495 12.1967 4.41548 12.2078 3.78283 12.6407L3.5842 12.7766L3.22342 12.4158L3.35932 12.2172C3.79219 11.5845 3.80326 10.8051 3.50206 10.1871C3.41475 10.008 3.3379 9.82298 3.27225 9.63285C3.04806 8.98358 2.48935 8.44061 1.73616 8.29939L1.5 8.25511V7.74489L1.73616 7.70061C2.48935 7.55939 3.04806 7.01642 3.27225 6.36715C3.3379 6.17703 3.41475 5.99203 3.50205 5.81291C3.80326 5.19496 3.79218 4.41549 3.35931 3.78283L3.2234 3.5842L3.58418 3.22342L3.78282 3.35932C4.41547 3.79219 5.19494 3.80327 5.8129 3.50207C5.99201 3.41476 6.17701 3.33791 6.36713 3.27226C7.0164 3.04807 7.55937 2.48936 7.70059 1.73618ZM6.49999 0H9.49999L9.77369 1.45974C9.80837 1.64472 9.94454 1.79299 10.1224 1.85441C10.3702 1.93996 10.6111 2.04007 10.8443 2.15371C11.0135 2.2362 11.2148 2.22768 11.3701 2.12137L12.5962 1.28249L14.7175 3.40381L13.8786 4.62987C13.7723 4.78525 13.7638 4.98647 13.8463 5.1557C13.9599 5.38885 14.06 5.62981 14.1456 5.87756C14.207 6.05545 14.3553 6.19161 14.5402 6.2263L16 6.5V9.5L14.5402 9.7737C14.3553 9.80839 14.207 9.94455 14.1456 10.1224C14.06 10.3702 13.9599 10.6112 13.8463 10.8443C13.7638 11.0135 13.7723 11.2148 13.8786 11.3701L14.7175 12.5962L12.5962 14.7175L11.3701 13.8786C11.2147 13.7723 11.0135 13.7638 10.8443 13.8463C10.6111 13.9599 10.3702 14.06 10.1224 14.1456C9.94454 14.207 9.80837 14.3553 9.77369 14.5403L9.49999 16H6.49999L6.22628 14.5403C6.1916 14.3553 6.05544 14.207 5.87755 14.1456C5.6298 14.06 5.38884 13.9599 5.15569 13.8463C4.98645 13.7638 4.78523 13.7723 4.62985 13.8786L3.40381 14.7175L1.28249 12.5962L2.12136 11.3702C2.22767 11.2148 2.23619 11.0136 2.1537 10.8443C2.04006 10.6112 1.93995 10.3702 1.8544 10.1224C1.79297 9.94455 1.6447 9.80838 1.45973 9.7737L0 9.5V6.5L1.45973 6.2263C1.6447 6.19162 1.79297 6.05545 1.8544 5.87756C1.93995 5.62981 2.04005 5.38885 2.1537 5.15569C2.23619 4.98646 2.22766 4.78524 2.12135 4.62986L1.28247 3.40381L3.40379 1.28249L4.62984 2.12136C4.78522 2.22767 4.98644 2.2362 5.15568 2.15371C5.38883 2.04007 5.6298 1.93996 5.87755 1.85441C6.05544 1.79299 6.1916 1.64472 6.22628 1.45975L6.49999 0ZM9.49998 8C9.49998 8.82843 8.82841 9.5 7.99998 9.5C7.17156 9.5 6.49998 8.82843 6.49998 8C6.49998 7.17157 7.17156 6.5 7.99998 6.5C8.82841 6.5 9.49998 7.17157 9.49998 8ZM11 8C11 9.65685 9.65684 11 7.99998 11C6.34313 11 4.99998 9.65685 4.99998 8C4.99998 6.34315 6.34313 5 7.99998 5C9.65684 5 11 6.34315 11 8Z"
+                                        fill="currentColor"></path>
+                                </svg></span></button><label
+                            class="toggle-module__fUrgQa__wrapper ml-auto p-0 toggle-module__fUrgQa__large toggle-module__fUrgQa__titleCasing"
+                            data-version="v1"><input
+                                class="toggle-module__fUrgQa__input reset-module__ylizOa__visuallyHidden group"
+                                data-testid="toggle/input" type="checkbox"><span class="toggle-module__fUrgQa__toggle">
+                                <div class="toggle-module__fUrgQa__thumb"></div>
+                            </span></label></div>
+                </div>
+            </div>
+            <div class="-mx-5 -mb-4 px-5 bg-background-200 py-4 rounded-b border-t">
+                <div class="flex items-center gap-4">
+                    <div class="flex min-w-0 items-center gap-3"><span
+                            class="hidden size-[32px] items-center justify-center rounded-full border border-solid border-gray-alpha-400 bg-gray-100 p-1 @md-page:flex"><svg
+                                data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16"
+                                width="16" style="color: currentcolor;">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M4.53698 3.47633L11.5607 10.5H12H12.98C12.36 9.91233 12 9.09029 12 8.22059V5.5075C12 3.29422 10.2058 1.5 7.99249 1.5C6.52159 1.5 5.23456 2.29232 4.53698 3.47633ZM13.0607 12L15.2803 14.2197L15.8107 14.75L14.75 15.8107L14.2197 15.2803L0.719661 1.78033L0.189331 1.25L1.24999 0.18934L1.78032 0.71967L3.45132 2.39067C4.44349 0.947794 6.10679 0 7.99249 0C11.0342 0 13.5 2.46579 13.5 5.5075V8.22059C13.5 8.76913 13.7741 9.28137 14.2305 9.58565L14.666 9.87596L15 10.0986V10.5V11.25V12H14.25H13.0607ZM3.98499 7.75V7H2.48499V7.75V8.22669C2.48499 8.77318 2.2132 9.28388 1.75991 9.58912L1.33107 9.8779L0.999991 10.1009V10.5V11.25V12H1.74999H6.74999H7.49999V10.5H6.74999H3.01223C3.62798 9.91235 3.98499 9.09303 3.98499 8.22669V7.75ZM9.16777 13.5H10.7486L10.5867 13.9867C10.3988 14.5516 10.0074 15.0152 9.5148 15.3226C9.07839 15.5949 8.55541 15.75 8.00001 15.75C7.4446 15.75 6.92163 15.5949 6.48522 15.3226C5.99262 15.0152 5.60125 14.5516 5.41334 13.9867L5.25143 13.5H6.83224L6.83665 13.5133C6.90411 13.716 7.05457 13.9098 7.27935 14.0501C7.4766 14.1732 7.72425 14.25 8.00001 14.25C8.27577 14.25 8.52342 14.1732 8.72066 14.0501C8.94545 13.9098 9.0959 13.716 9.16336 13.5133L9.16777 13.5Z"
+                                    fill="currentColor"></path>
+                            </svg></span>
+                        <div class="flex min-w-0 flex-col">
+                            <p class="text-label-14 m-0 p-0 font-medium">Mute</p>
+                            <p class="text-copy-14 m-0 p-0">Select projects to mute notifications for.</p>
+                        </div>
+                    </div>
+                    <div class="ml-auto flex items-center gap-2"><button type="submit" tabindex="0"
+                            data-react-aria-pressable="true" aria-haspopup="true" aria-expanded="false"
+                            aria-controls="menu-_r_iv_" aria-label="Push notification preferences"
+                            data-geist-menu-button="" data-is-open="false" id="menu-button-_r_j0_"
+                            class="button-module__QyrFCa__base reset-module__ylizOa__reset button-module__QyrFCa__button reset-module__ylizOa__reset !w-fit geist-new-themed geist-new-tertiary geist-new-tertiary-fill button-module__QyrFCa__tertiary button-module__QyrFCa__shape button-module__QyrFCa__small button-module__QyrFCa__invert"
+                            data-geist-button="" data-prefix="false" data-suffix="true" data-version="v1"
+                            style="--geist-icon-size: 16px;"><span
+                                class="button-module__QyrFCa__content button-module__QyrFCa__center">No
+                                projects</span><span class="button-module__QyrFCa__suffix"><svg data-testid="geist-icon"
+                                    height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16"
+                                    style="color: currentcolor;">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M8.7071 2.39644C8.31658 2.00592 7.68341 2.00592 7.29289 2.39644L4.46966 5.21966L3.93933 5.74999L4.99999 6.81065L5.53032 6.28032L7.99999 3.81065L10.4697 6.28032L11 6.81065L12.0607 5.74999L11.5303 5.21966L8.7071 2.39644ZM5.53032 9.71966L4.99999 9.18933L3.93933 10.25L4.46966 10.7803L7.29289 13.6035C7.68341 13.9941 8.31658 13.9941 8.7071 13.6035L11.5303 10.7803L12.0607 10.25L11 9.18933L10.4697 9.71966L7.99999 12.1893L5.53032 9.71966Z"
+                                        fill="currentColor"></path>
+                                </svg></span></button></div>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col gap-6">
+            <div class="tailwind-preflight">
+                <div class="relative w-full overflow-auto">
+                    <table
+                        class="w-full caption-bottom text-sm text-gray-1000 [&amp;_tbody[aria-hidden]]:hidden first:[&amp;_td]:pl-0 first:[&amp;_th]:pl-0">
+                        <colgroup>
+                            <col class="w-auto flex-1">
+                            <col class="w-[50px]">
+                            <col class="w-[50px]">
+                            <col class="w-[50px]">
+                        </colgroup>
+                        <thead class="[&amp;_th]:border-b">
+                            <tr class="transition-colors">
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Team</th>
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Push</th>
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Email</th>
+                                <th
+                                    class="text-muted-foreground h-10 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400 whitespace-nowrap px-0">
+                                    Web</th>
+                            </tr>
+                        </thead>
+                        <tbody aria-hidden="true" class="table-row h-3"></tbody>
+                        <tbody
+                            class="[&amp;_td:first-child]:rounded-l-sm [&amp;_td:last-child]:rounded-r-sm [&amp;_tr:not(:last-child)]:border-b">
+                            <tr class="transition-colors">
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex flex-col gap-1">Team join and role change requests</div>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0 checkbox-module__Em-o0q__disabled"
+                                        data-version="v1" for="checkbox-_r_h5_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input" disabled=""
+                                                id="checkbox-_r_h5_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon checkbox-module__Em-o0q__disabled"><svg
+                                                    fill="none" height="16" viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] !text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_h6_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_h6_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_h7_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_h7_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tailwind-preflight">
+                <div class="relative w-full overflow-auto">
+                    <table
+                        class="w-full caption-bottom text-sm text-gray-1000 [&amp;_tbody[aria-hidden]]:hidden first:[&amp;_td]:pl-0 first:[&amp;_th]:pl-0">
+                        <colgroup>
+                            <col class="w-auto flex-1">
+                            <col class="w-[50px]">
+                            <col class="w-[50px]">
+                            <col class="w-[50px]">
+                        </colgroup>
+                        <thead class="[&amp;_th]:border-b">
+                            <tr class="transition-colors">
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Deployments</th>
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Push</th>
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Email</th>
+                                <th
+                                    class="text-muted-foreground h-10 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400 whitespace-nowrap px-0">
+                                    Web</th>
+                            </tr>
+                        </thead>
+                        <tbody aria-hidden="true" class="table-row h-3"></tbody>
+                        <tbody
+                            class="[&amp;_td:first-child]:rounded-l-sm [&amp;_td:last-child]:rounded-r-sm [&amp;_tr:not(:last-child)]:border-b">
+                            <tr class="transition-colors">
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex flex-col gap-1">Deployment Access Requests</div>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0 checkbox-module__Em-o0q__disabled"
+                                        data-version="v1" for="checkbox-_r_h8_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input" disabled=""
+                                                id="checkbox-_r_h8_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon checkbox-module__Em-o0q__disabled"><svg
+                                                    fill="none" height="16" viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] !text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_h9_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_h9_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_ha_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_ha_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                            </tr>
+                            <tr class="transition-colors">
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex flex-col gap-1">Deployment Failures</div>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0 checkbox-module__Em-o0q__disabled"
+                                        data-version="v1" for="checkbox-_r_hb_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input" disabled=""
+                                                id="checkbox-_r_hb_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon checkbox-module__Em-o0q__disabled"><svg
+                                                    fill="none" height="16" viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] !text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hc_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hc_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hd_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hd_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                            </tr>
+                            <tr class="transition-colors">
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex flex-col gap-1">Deployment Promotions</div>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0 checkbox-module__Em-o0q__disabled"
+                                        data-version="v1" for="checkbox-_r_he_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input" disabled=""
+                                                id="checkbox-_r_he_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon checkbox-module__Em-o0q__disabled"><svg
+                                                    fill="none" height="16" viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] !text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hf_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hf_" type="checkbox"><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hg_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hg_" type="checkbox"><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tailwind-preflight">
+                <div class="relative w-full overflow-auto">
+                    <table
+                        class="w-full caption-bottom text-sm text-gray-1000 [&amp;_tbody[aria-hidden]]:hidden first:[&amp;_td]:pl-0 first:[&amp;_th]:pl-0">
+                        <colgroup>
+                            <col class="w-auto flex-1">
+                            <col class="w-[50px]">
+                            <col class="w-[50px]">
+                            <col class="w-[50px]">
+                        </colgroup>
+                        <thead class="[&amp;_th]:border-b">
+                            <tr class="transition-colors">
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Domains</th>
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Push</th>
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Email</th>
+                                <th
+                                    class="text-muted-foreground h-10 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400 whitespace-nowrap px-0">
+                                    Web</th>
+                            </tr>
+                        </thead>
+                        <tbody aria-hidden="true" class="table-row h-3"></tbody>
+                        <tbody
+                            class="[&amp;_td:first-child]:rounded-l-sm [&amp;_td:last-child]:rounded-r-sm [&amp;_tr:not(:last-child)]:border-b">
+                            <tr class="transition-colors">
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex flex-col gap-1">Configuration</div>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0 checkbox-module__Em-o0q__disabled"
+                                        data-version="v1" for="checkbox-_r_hh_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input" disabled=""
+                                                id="checkbox-_r_hh_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon checkbox-module__Em-o0q__disabled"><svg
+                                                    fill="none" height="16" viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] !text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hi_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hi_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hj_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hj_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                            </tr>
+                            <tr class="transition-colors">
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex flex-col gap-1">Renewals</div>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0 checkbox-module__Em-o0q__disabled"
+                                        data-version="v1" for="checkbox-_r_hk_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input" disabled=""
+                                                id="checkbox-_r_hk_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon checkbox-module__Em-o0q__disabled"><svg
+                                                    fill="none" height="16" viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] !text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hl_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hl_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hm_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hm_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                            </tr>
+                            <tr class="transition-colors">
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex flex-col gap-1">Transfers</div>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0 checkbox-module__Em-o0q__disabled"
+                                        data-version="v1" for="checkbox-_r_hn_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input" disabled=""
+                                                id="checkbox-_r_hn_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon checkbox-module__Em-o0q__disabled"><svg
+                                                    fill="none" height="16" viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] !text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_ho_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_ho_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hp_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hp_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tailwind-preflight">
+                <div class="relative w-full overflow-auto">
+                    <table
+                        class="w-full caption-bottom text-sm text-gray-1000 [&amp;_tbody[aria-hidden]]:hidden first:[&amp;_td]:pl-0 first:[&amp;_th]:pl-0">
+                        <colgroup>
+                            <col class="w-auto flex-1">
+                            <col class="w-[50px]">
+                            <col class="w-[50px]">
+                            <col class="w-[50px]">
+                        </colgroup>
+                        <thead class="[&amp;_th]:border-b">
+                            <tr class="transition-colors">
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Integrations</th>
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Push</th>
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Email</th>
+                                <th
+                                    class="text-muted-foreground h-10 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400 whitespace-nowrap px-0">
+                                    Web</th>
+                            </tr>
+                        </thead>
+                        <tbody aria-hidden="true" class="table-row h-3"></tbody>
+                        <tbody
+                            class="[&amp;_td:first-child]:rounded-l-sm [&amp;_td:last-child]:rounded-r-sm [&amp;_tr:not(:last-child)]:border-b">
+                            <tr class="transition-colors">
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex flex-col gap-1">Integration Updates</div>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0 checkbox-module__Em-o0q__disabled"
+                                        data-version="v1" for="checkbox-_r_hq_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input" disabled=""
+                                                id="checkbox-_r_hq_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon checkbox-module__Em-o0q__disabled"><svg
+                                                    fill="none" height="16" viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] !text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hr_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hr_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hs_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hs_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tailwind-preflight">
+                <div class="relative w-full overflow-auto">
+                    <table
+                        class="w-full caption-bottom text-sm text-gray-1000 [&amp;_tbody[aria-hidden]]:hidden first:[&amp;_td]:pl-0 first:[&amp;_th]:pl-0">
+                        <colgroup>
+                            <col class="w-auto flex-1">
+                            <col class="w-[50px]">
+                            <col class="w-[50px]">
+                            <col class="w-[50px]">
+                        </colgroup>
+                        <thead class="[&amp;_th]:border-b">
+                            <tr class="transition-colors">
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Edge Config</th>
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Push</th>
+                                <th
+                                    class="text-muted-foreground h-10 px-2 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400">
+                                    Email</th>
+                                <th
+                                    class="text-muted-foreground h-10 text-left align-middle font-medium last:text-right [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] border-gray-400 whitespace-nowrap px-0">
+                                    Web</th>
+                            </tr>
+                        </thead>
+                        <tbody aria-hidden="true" class="table-row h-3"></tbody>
+                        <tbody
+                            class="[&amp;_td:first-child]:rounded-l-sm [&amp;_td:last-child]:rounded-r-sm [&amp;_tr:not(:last-child)]:border-b">
+                            <tr class="transition-colors">
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex flex-col gap-1">Schema Validation Errors</div>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0 checkbox-module__Em-o0q__disabled"
+                                        data-version="v1" for="checkbox-_r_ht_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input" disabled=""
+                                                id="checkbox-_r_ht_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon checkbox-module__Em-o0q__disabled"><svg
+                                                    fill="none" height="16" viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] !text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hu_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hu_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_hv_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_hv_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                            </tr>
+                            <tr class="transition-colors">
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex flex-col gap-1">Size Limit Alerts</div>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0 checkbox-module__Em-o0q__disabled"
+                                        data-version="v1" for="checkbox-_r_i0_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input" disabled=""
+                                                id="checkbox-_r_i0_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon checkbox-module__Em-o0q__disabled"><svg
+                                                    fill="none" height="16" viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] !text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_i1_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_i1_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                                <td
+                                    class="px-2 py-2.5 align-middle last:text-right [&amp;:has([data-cell-link=true])]:p-0 [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px] text-center">
+                                    <label
+                                        class="checkbox-module__Em-o0q__container flex items-center justify-center p-0"
+                                        data-version="v1" for="checkbox-_r_i2_"><span
+                                            class="checkbox-module__Em-o0q__check"><input
+                                                class="geist-sr-only checkbox-module__Em-o0q__input"
+                                                id="checkbox-_r_i2_" type="checkbox" checked=""><span aria-hidden="true"
+                                                class="checkbox-module__Em-o0q__icon"><svg fill="none" height="16"
+                                                    viewBox="0 0 20 20" width="16">
+                                                    <path d="M14 7L8.5 12.5L6 10" stroke="var(--geist-background)"
+                                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                    </path>
+                                                    <line stroke="var(--checkbox-color)" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" x1="5" x2="15" y1="10"
+                                                        y2="10"></line>
+                                                </svg></span></span></label></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="note-module__Y57kBW__note geist-secondary geist-secondary-fill v3-colors" data-geist-note=""
+            data-version="v1">
+            <div class="note-module__Y57kBW__content" style="gap: 12px;"><span style="display: flex; height: 16px;"><svg
+                        data-testid="geist-icon" height="16" stroke-linejoin="round" viewBox="0 0 16 16" width="16"
+                        style="color: currentcolor;">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8 14.5C11.5899 14.5 14.5 11.5899 14.5 8C14.5 4.41015 11.5899 1.5 8 1.5C4.41015 1.5 1.5 4.41015 1.5 8C1.5 11.5899 4.41015 14.5 8 14.5ZM8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM6.25 7H7H7.74999C8.30227 7 8.74999 7.44772 8.74999 8V11.5V12.25H7.24999V11.5V8.5H7H6.25V7ZM8 6C8.55229 6 9 5.55228 9 5C9 4.44772 8.55229 4 8 4C7.44772 4 7 4.44772 7 5C7 5.55228 7.44772 6 8 6Z"
+                            fill="currentColor"></path>
+                    </svg></span><span>Comment notifications are managed per deployment, change your preference via the
+                    toolbar menu. <a
+                        href="https://vercel.com/docs/workflow-collaboration/comments/using-comments#manage-notifications"
+                        rel="noopener" target="_blank" data-zone="null" class="link-module__Q1NRQq__link">Learn More
+                        →</a></span></div>
+        </div>
+    </div>
+</div>
+```
+
+

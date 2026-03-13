@@ -3,20 +3,20 @@
 import * as React from "react";
 import {
   Archive,
-  ArrowDownToLine,
+  ArrowUp,
   Code2,
   Copy,
   Eye,
+  FileDown,
   Files,
+  FolderOpen,
   Menu,
   PanelLeftOpen,
   PanelRightOpen,
   Paperclip,
   Pencil,
-  SendHorizontal,
   Settings,
   Trash2,
-  Upload,
 } from "lucide-react";
 
 import { cn, type ParsedItem } from "@/lib";
@@ -58,6 +58,8 @@ type HomeMainPanelProps = {
   onPromptChange: (value: string) => void;
   onSendPrompt: () => void;
   onExportTxt: () => void;
+  scrollOnSend: boolean;
+  sendKey: 'enter' | 'shift+enter';
 };
 
 
@@ -95,7 +97,22 @@ export function HomeMainPanel({
   onPromptChange,
   onSendPrompt,
   onExportTxt,
+  scrollOnSend,
+  sendKey,
 }: HomeMainPanelProps) {
+  const scrollRef = React.useRef<HTMLDivElement | null>(null);
+
+  const handleSend = React.useCallback(() => {
+    onSendPrompt();
+    if (scrollOnSend) {
+      requestAnimationFrame(() => {
+        if (scrollRef.current) {
+          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+      });
+    }
+  }, [onSendPrompt, scrollOnSend]);
+
   return (
     <main className="flex h-screen min-h-screen flex-col overflow-hidden">
       {/* Desktop expand buttons */}
@@ -173,7 +190,7 @@ export function HomeMainPanel({
           className="min-h-0 flex-1 overflow-hidden rounded-2xl bg-muted/15"
         >
           <div className="flex h-full flex-col">
-            <div className="min-h-0 flex-1 overflow-y-auto p-4">
+            <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto p-4">
               <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
                 {timelineEntries.length === 0 && (
                   <div className="rounded-2xl border border-dashed border-border/60 bg-background/70 px-4 py-6 text-center text-sm text-muted-foreground">
@@ -277,7 +294,7 @@ export function HomeMainPanel({
                             className="inline-flex h-7 w-7 items-center justify-center rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"
                             title={t.download}
                           >
-                            <ArrowDownToLine className="h-3.5 w-3.5" />
+                            <FileDown className="h-3.5 w-3.5" />
                           </button>
                           <button
                             type="button"
@@ -322,15 +339,9 @@ export function HomeMainPanel({
               </div>
             </div>
 
-            <div className="border-t border-border/40 bg-background/90 p-3 md:p-4">
-              <div className="mx-auto flex w-full max-w-3xl items-end gap-2 rounded-2xl border border-border/50 bg-background px-3 py-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  onChange={onFilePick}
-                  className="hidden"
-                />
+            <div className="px-3 pb-4 pt-2 md:px-6 md:pb-5">
+              <div className="mx-auto w-full max-w-3xl">
+                <input ref={fileInputRef} type="file" multiple onChange={onFilePick} className="hidden" />
                 <input
                   ref={folderInputRef}
                   type="file"
@@ -339,59 +350,70 @@ export function HomeMainPanel({
                   className="hidden"
                   {...({ webkitdirectory: "", directory: "" } as React.InputHTMLAttributes<HTMLInputElement>)}
                 />
-
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border/70 hover:bg-muted"
-                  title={t.uploadFiles}
-                >
-                  <Paperclip className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => folderInputRef.current?.click()}
-                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border/70 hover:bg-muted"
-                  title={t.uploadFolder}
-                >
-                  <Upload className="h-4 w-4" />
-                </button>
-
-                <textarea
-                  ref={composerRef}
-                  value={prompt}
-                  onChange={(event) => onPromptChange(event.target.value)}
-                  placeholder={t.typingPlaceholder}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" && !event.shiftKey) {
-                      event.preventDefault();
-                      onSendPrompt();
-                    }
-                  }}
-                  className="max-h-56 min-h-14 w-full resize-none overflow-y-auto rounded-xl border border-border/60 bg-background px-3 py-2 text-sm outline-none"
-                />
-
-                <div className="flex shrink-0 items-center gap-2 pb-1">
-                  <button
-                    type="button"
-                    onClick={onExportTxt}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/70 hover:bg-muted"
-                    title={t.downloadTxt}
-                  >
-                    <ArrowDownToLine className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={onSendPrompt}
-                    disabled={!prompt.trim()}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary disabled:opacity-40"
-                    title={t.send}
-                  >
-                    <SendHorizontal className="h-4 w-4" />
-                  </button>
+                <div className="rounded-xl border border-border bg-card ring-0">
+                  <textarea
+                    ref={composerRef}
+                    value={prompt}
+                    onChange={(event) => onPromptChange(event.target.value)}
+                    placeholder={t.typingPlaceholder}
+                    onKeyDown={(event) => {
+                      const shouldSend =
+                        sendKey === 'enter'
+                          ? event.key === 'Enter' && !event.shiftKey
+                          : event.key === 'Enter' && event.shiftKey;
+                      if (shouldSend) {
+                        event.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                    className="min-h-16 max-h-52 w-full resize-none overflow-y-auto bg-transparent px-3.5 pt-3.5 pb-2 text-sm leading-relaxed outline-none [box-shadow:none] placeholder:text-muted-foreground/40"
+                  />
+                  <div className="flex items-center px-2 pb-2">
+                    <div className="flex items-center gap-0.5">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        title={t.uploadFiles}
+                      >
+                        <Paperclip className="h-3.5 w-3.5" />
+                        {l("Файлы", "Files")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => folderInputRef.current?.click()}
+                        className="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        title={t.uploadFolder}
+                      >
+                        <FolderOpen className="h-3.5 w-3.5" />
+                        {l("Папка", "Folder")}
+                      </button>
+                    </div>
+                    <div className="flex-1" />
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={onExportTxt}
+                        className="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        title={t.downloadTxt}
+                      >
+                        <FileDown className="h-3.5 w-3.5" />
+                        {l("Экспорт", "Export")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSend}
+                        disabled={!prompt.trim()}
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-foreground text-background transition-opacity hover:opacity-75 disabled:opacity-30"
+                        title={t.send}
+                      >
+                        <ArrowUp className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
+                {isParsing && <p className="mt-2 text-xs text-muted-foreground/70">{t.parsing}</p>}
               </div>
-              {isParsing && <p className="mx-auto mt-2 w-full max-w-3xl text-xs text-muted-foreground">{t.parsing}</p>}
             </div>
           </div>
         </div>

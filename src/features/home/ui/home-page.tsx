@@ -53,6 +53,12 @@ export default function Home() {
   const setCompactMode = useUIStore((state) => state.setCompactMode);
   const fontSizeOffset = useUIStore((state) => state.fontSizeOffset);
   const setFontSizeOffset = useUIStore((state) => state.setFontSizeOffset);
+  const fontSizeScope = useUIStore((state) => state.fontSizeScope);
+  const setFontSizeScope = useUIStore((state) => state.setFontSizeScope);
+  const scrollOnSend = useUIStore((state) => state.scrollOnSend);
+  const setScrollOnSend = useUIStore((state) => state.setScrollOnSend);
+  const sendKey = useUIStore((state) => state.sendKey);
+  const setSendKey = useUIStore((state) => state.setSendKey);
 
   const prompt = useChatStore((state) => state.prompt);
   const setPrompt = useChatStore((state) => state.setPrompt);
@@ -155,6 +161,8 @@ export default function Home() {
             actions.deleteHistoryItem(id);
             setOpenHistoryMenuId(null);
           }}
+          fontSizeOffset={fontSizeOffset}
+          fontSizeScope={fontSizeScope}
           drawerMode
         />
       </MobileDrawer>
@@ -211,9 +219,15 @@ export default function Home() {
           uiScale={uiScale}
           compactMode={compactMode}
           fontSizeOffset={fontSizeOffset}
+          fontSizeScope={fontSizeScope}
           onSetUiScale={setUiScale}
           onSetCompactMode={setCompactMode}
           onSetFontSizeOffset={setFontSizeOffset}
+          onSetFontSizeScope={setFontSizeScope}
+          scrollOnSend={scrollOnSend}
+          sendKey={sendKey}
+          onSetScrollOnSend={setScrollOnSend}
+          onSetSendKey={setSendKey}
           drawerMode
         />
       </MobileDrawer>
@@ -261,6 +275,8 @@ export default function Home() {
               actions.deleteHistoryItem(id);
               setOpenHistoryMenuId(null);
             }}
+            fontSizeOffset={fontSizeOffset}
+            fontSizeScope={fontSizeScope}
           />
         )}
 
@@ -299,6 +315,8 @@ export default function Home() {
           onPromptChange={setPrompt}
           onSendPrompt={actions.sendPrompt}
           onExportTxt={actions.exportTxt}
+          scrollOnSend={scrollOnSend}
+          sendKey={sendKey}
         />
 
         {rightSidebarOpen && (
@@ -359,9 +377,15 @@ export default function Home() {
               uiScale={uiScale}
               compactMode={compactMode}
               fontSizeOffset={fontSizeOffset}
+              fontSizeScope={fontSizeScope}
               onSetUiScale={setUiScale}
               onSetCompactMode={setCompactMode}
               onSetFontSizeOffset={setFontSizeOffset}
+              onSetFontSizeScope={setFontSizeScope}
+              scrollOnSend={scrollOnSend}
+              sendKey={sendKey}
+              onSetScrollOnSend={setScrollOnSend}
+              onSetSendKey={setSendKey}
             />
           </>
         )}

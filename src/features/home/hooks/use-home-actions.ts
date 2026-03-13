@@ -4,6 +4,7 @@ import * as React from "react";
 
 import {
   combineToFinalTxt,
+  createId,
   estimateTokens,
   parseFileWithPath,
   type ParsedItem,
@@ -97,7 +98,7 @@ export function useHomeActions() {
       const hasCurrentContent = prompt.trim().length > 0 || items.length > 0 || chatMessages.length > 0;
       if (!hasCurrentContent && !force) return;
 
-      const id = currentChatId ?? crypto.randomUUID();
+      const id = currentChatId ?? createId();
       const existingEntry = currentChatId ? history.find((entry) => entry.id === currentChatId) ?? null : null;
       const entry: HistoryItem = {
         id,
@@ -256,7 +257,7 @@ export function useHomeActions() {
       const group = editDialog.group;
       const ids = group.items.map((entry) => entry.id);
       const idSet = new Set(ids);
-      const primaryId = ids[0] ?? crypto.randomUUID();
+      const primaryId = ids[0] ?? createId();
       const replacement: ParsedItem = {
         id: primaryId,
         name: group.label,
@@ -347,7 +348,7 @@ export function useHomeActions() {
     if (!target) return;
     const duplicate: HistoryItem = {
       ...target,
-      id: crypto.randomUUID(),
+      id: createId(),
       title: `${target.title} (copy)`.slice(0, 80),
       updatedAt: new Date().toISOString(),
       items: [...target.items],
@@ -423,7 +424,7 @@ export function useHomeActions() {
     setChatMessages((prev) => {
       return [
         ...prev,
-        { id: crypto.randomUUID(), role: "user", content: trimmed, createdAt: now },
+        { id: createId(), role: "user", content: trimmed, createdAt: now },
       ];
     });
     pushActivity(l("Prompt отправлен в контекстную ленту", "Prompt sent to context timeline"));

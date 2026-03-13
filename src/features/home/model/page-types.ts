@@ -58,6 +58,7 @@ export type SortMode = "latest" | "name" | "tokens" | "size";
 export type ViewMode = "cards" | "compact";
 export type Language = "ru" | "en";
 export type ActiveMode = "chat" | "stream" | "realtime";
+export type FontSizeScope = "center" | "all";
 
 export type TimelineEntry =
   | {

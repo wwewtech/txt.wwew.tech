@@ -21,7 +21,7 @@ import * as Slider from "@radix-ui/react-slider";
 
 import { cn, type ParsedItem } from "@/lib";
 import type { I18nDict } from "../model/page-constants";
-import type { ActivityItem, SortMode, ViewMode } from "../model/page-types";
+import type { ActivityItem, FontSizeScope, SortMode, ViewMode } from "../model/page-types";
 
 type HomeRightSidebarProps = {
   t: I18nDict;
@@ -51,6 +51,7 @@ type HomeRightSidebarProps = {
   uiScale?: number;
   compactMode?: boolean;
   fontSizeOffset?: number;
+  fontSizeScope?: FontSizeScope;
   onCloseRight: () => void;
   onSetBundleFilter: (value: string) => void;
   onSetSortMode: (value: SortMode) => void;
@@ -76,6 +77,11 @@ type HomeRightSidebarProps = {
   onSetUiScale?: (value: number) => void;
   onSetCompactMode?: (value: boolean) => void;
   onSetFontSizeOffset?: (value: number) => void;
+  onSetFontSizeScope?: (value: FontSizeScope) => void;
+  scrollOnSend?: boolean;
+  sendKey?: "enter" | "shift+enter";
+  onSetScrollOnSend?: (value: boolean) => void;
+  onSetSendKey?: (value: "enter" | "shift+enter") => void;
   /** Когда компонент рендерится в мобильном drawer'е */
   drawerMode?: boolean;
 };
@@ -105,6 +111,7 @@ export function HomeRightSidebar({
   uiScale = 100,
   compactMode = false,
   fontSizeOffset = 0,
+  fontSizeScope = "center",
   onCloseRight,
   onSetBundleFilter,
   onSetSortMode,
@@ -130,12 +137,32 @@ export function HomeRightSidebar({
   onSetUiScale,
   onSetCompactMode,
   onSetFontSizeOffset,
+  onSetFontSizeScope,
   drawerMode = false,
 }: HomeRightSidebarProps) {
   const [isAddingCommand, setIsAddingCommand] = React.useState(false);
   const [newCommandText, setNewCommandText] = React.useState("");
   const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
   const [editingText, setEditingText] = React.useState("");
+  const [draftUiScale, setDraftUiScale] = React.useState(uiScale);
+  const [draftCompactMode, setDraftCompactMode] = React.useState(compactMode);
+  const [draftFontSizeOffset, setDraftFontSizeOffset] = React.useState(fontSizeOffset);
+  const [draftFontSizeScope, setDraftFontSizeScope] = React.useState<FontSizeScope>(fontSizeScope);
+
+  React.useEffect(() => {
+    setDraftUiScale(uiScale);
+    setDraftCompactMode(compactMode);
+    setDraftFontSizeOffset(fontSizeOffset);
+    setDraftFontSizeScope(fontSizeScope);
+  }, [uiScale, compactMode, fontSizeOffset, fontSizeScope]);
+
+  const sidebarTextStyle =
+    fontSizeScope === "all"
+      ? ({ fontSize: `calc(1rem + ${fontSizeOffset}px)` } as React.CSSProperties)
+      : undefined;
+  const asideStyle = drawerMode
+    ? sidebarTextStyle
+    : ({ width: `${rightSidebarWidth}px`, ...sidebarTextStyle } as React.CSSProperties);
 
   return (
     <aside
@@ -145,7 +172,7 @@ export function HomeRightSidebar({
           ? "flex h-full flex-col"
           : "hidden h-screen xl:sticky xl:top-0 xl:block"
       )}
-      style={drawerMode ? undefined : { width: `${rightSidebarWidth}px` }}
+      style={asideStyle}
     >
       <div className="p-3 pb-0">
         <div className="mb-3 border-b border-border/40 pb-3">
@@ -440,66 +467,45 @@ export function HomeRightSidebar({
             {t.privacy}
             <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-open:rotate-180" />
           </summary>
-          <div className="mt-2 space-y-1.5">
-            <button
-              type="button"
-              onClick={onToggleAutoSave}
-              className={cn(
-                "flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-[10px] transition-colors",
-                autoSaveEnabled ? "border-primary/50 bg-primary/10" : "border-border/70 hover:bg-muted"
-              )}
-              aria-pressed={autoSaveEnabled}
-            >
-              <span className="inline-flex items-center gap-1.5">
-                <span
-                  className={cn(
-                    "h-1.5 w-1.5 rounded-full",
-                    autoSaveEnabled ? "bg-primary" : "bg-muted-foreground/60"
-                  )}
-                  aria-hidden="true"
-                />
-                {t.autosave}
-              </span>
-              <span
+          <div className="mt-2 space-y-px">
+            <div className="flex items-center justify-between rounded-md px-1 py-1.5 transition-colors hover:bg-muted/60">
+              <span className="select-none text-[10px] text-muted-foreground">{t.autosave}</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={autoSaveEnabled}
+                aria-label={t.autosave}
+                onClick={onToggleAutoSave}
                 className={cn(
-                  "rounded-full border px-1.5 py-0.5 text-[9px] font-semibold leading-none",
-                  autoSaveEnabled ? "border-primary/40 bg-primary/15 text-primary" : "border-border/70 text-muted-foreground"
+                  "inline-flex h-4.5 w-8 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/60",
+                  autoSaveEnabled ? "bg-primary" : "bg-muted-foreground/30"
                 )}
               >
-                {autoSaveEnabled ? "ON" : "OFF"}
-              </span>
-              <span className="sr-only">{t.autosave}: {autoSaveEnabled ? "ON" : "OFF"}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onToggleAnonymousMode}
-              className={cn(
-                "flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-[10px] transition-colors",
-                anonymousMode ? "border-primary/50 bg-primary/10" : "border-border/70 hover:bg-muted"
-              )}
-              aria-pressed={anonymousMode}
-            >
-              <span className="inline-flex items-center gap-1.5">
-                <span
-                  className={cn(
-                    "h-1.5 w-1.5 rounded-full",
-                    anonymousMode ? "bg-primary" : "bg-muted-foreground/60"
-                  )}
-                  aria-hidden="true"
-                />
-                {t.anonymous}
-              </span>
-              <span
+                <span className={cn(
+                  "pointer-events-none block h-3.5 w-3.5 rounded-full bg-background shadow-sm ring-1 ring-black/5 transition-[transform] duration-200",
+                  autoSaveEnabled ? "translate-x-3.5" : "translate-x-0"
+                )} />
+              </button>
+            </div>
+            <div className="flex items-center justify-between rounded-md px-1 py-1.5 transition-colors hover:bg-muted/60">
+              <span className="select-none text-[10px] text-muted-foreground">{t.anonymous}</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={anonymousMode}
+                aria-label={t.anonymous}
+                onClick={onToggleAnonymousMode}
                 className={cn(
-                  "rounded-full border px-1.5 py-0.5 text-[9px] font-semibold leading-none",
-                  anonymousMode ? "border-primary/40 bg-primary/15 text-primary" : "border-border/70 text-muted-foreground"
+                  "inline-flex h-4.5 w-8 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/60",
+                  anonymousMode ? "bg-primary" : "bg-muted-foreground/30"
                 )}
               >
-                {anonymousMode ? "ON" : "OFF"}
-              </span>
-              <span className="sr-only">{t.anonymous}: {anonymousMode ? "ON" : "OFF"}</span>
-            </button>
+                <span className={cn(
+                  "pointer-events-none block h-3.5 w-3.5 rounded-full bg-background shadow-sm ring-1 ring-black/5 transition-[transform] duration-200",
+                  anonymousMode ? "translate-x-3.5" : "translate-x-0"
+                )} />
+              </button>
+            </div>
           </div>
         </details>
 
@@ -508,23 +514,45 @@ export function HomeRightSidebar({
             {t.output}
             <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-open:rotate-180" />
           </summary>
-          <div className="mt-2 space-y-1.5 text-[10px]">
-            <label className="flex items-center justify-between rounded-md border border-border/60 bg-background/80 px-2 py-1.5">
-              {t.includePrompt}
-              <input
-                type="checkbox"
-                checked={includePromptInResult}
-                onChange={(event) => onSetIncludePromptInResult(event.target.checked)}
-              />
-            </label>
-            <label className="flex items-center justify-between rounded-md border border-border/60 bg-background/80 px-2 py-1.5">
-              {t.showSkipped}
-              <input
-                type="checkbox"
-                checked={showSkippedFiles}
-                onChange={(event) => onSetShowSkippedFiles(event.target.checked)}
-              />
-            </label>
+          <div className="mt-2 space-y-px">
+            <div className="flex items-center justify-between rounded-md px-1 py-1.5 transition-colors hover:bg-muted/60">
+              <span className="select-none text-[10px] text-muted-foreground">{t.includePrompt}</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={includePromptInResult}
+                aria-label={t.includePrompt}
+                onClick={() => onSetIncludePromptInResult(!includePromptInResult)}
+                className={cn(
+                  "inline-flex h-4.5 w-8 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/60",
+                  includePromptInResult ? "bg-primary" : "bg-muted-foreground/30"
+                )}
+              >
+                <span className={cn(
+                  "pointer-events-none block h-3.5 w-3.5 rounded-full bg-background shadow-sm ring-1 ring-black/5 transition-[transform] duration-200",
+                  includePromptInResult ? "translate-x-3.5" : "translate-x-0"
+                )} />
+              </button>
+            </div>
+            <div className="flex items-center justify-between rounded-md px-1 py-1.5 transition-colors hover:bg-muted/60">
+              <span className="select-none text-[10px] text-muted-foreground">{t.showSkipped}</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={showSkippedFiles}
+                aria-label={t.showSkipped}
+                onClick={() => onSetShowSkippedFiles(!showSkippedFiles)}
+                className={cn(
+                  "inline-flex h-4.5 w-8 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/60",
+                  showSkippedFiles ? "bg-primary" : "bg-muted-foreground/30"
+                )}
+              >
+                <span className={cn(
+                  "pointer-events-none block h-3.5 w-3.5 rounded-full bg-background shadow-sm ring-1 ring-black/5 transition-[transform] duration-200",
+                  showSkippedFiles ? "translate-x-3.5" : "translate-x-0"
+                )} />
+              </button>
+            </div>
           </div>
         </details>
 
@@ -559,13 +587,13 @@ export function HomeRightSidebar({
             <div>
               <div className="mb-1 flex items-center justify-between text-[10px] text-muted-foreground">
                 <span>{t.uiScale}</span>
-                <span className="font-semibold text-foreground">{uiScale}%</span>
+                <span className="font-semibold text-foreground">{draftUiScale}%</span>
               </div>
               {onSetUiScale && (
                 <Slider.Root
                   className="relative flex h-5 w-full touch-none select-none items-center"
-                  value={[uiScale]}
-                  onValueChange={([v]) => { if (v !== undefined) onSetUiScale(v); }}
+                  value={[draftUiScale]}
+                  onValueChange={([v]) => { if (v !== undefined) setDraftUiScale(v); }}
                   min={75}
                   max={150}
                   step={5}
@@ -585,10 +613,10 @@ export function HomeRightSidebar({
                   <button
                     key={value}
                     type="button"
-                    onClick={() => onSetUiScale?.(value)}
+                    onClick={() => setDraftUiScale(value)}
                     className={cn(
                       "flex-1 rounded-md border px-1.5 py-1 text-[10px] transition-colors",
-                      uiScale === value ? "border-primary/50 bg-primary/10" : "border-border/60 hover:bg-muted"
+                      draftUiScale === value ? "border-primary/50 bg-primary/10" : "border-border/60 hover:bg-muted"
                     )}
                   >
                     {label}
@@ -600,39 +628,80 @@ export function HomeRightSidebar({
             <div>
               <div className="mb-1 flex items-center justify-between text-[10px] text-muted-foreground">
                 <span>{t.fontSizeLabel}</span>
-                <span className="font-semibold text-foreground">{fontSizeOffset > 0 ? `+${fontSizeOffset}` : fontSizeOffset}</span>
+                <span className="font-semibold text-foreground">{draftFontSizeOffset > 0 ? `+${draftFontSizeOffset}` : draftFontSizeOffset}</span>
               </div>
               <div className="flex items-center gap-1">
                 <button
                   type="button"
-                  onClick={() => onSetFontSizeOffset?.(Math.max(-2, fontSizeOffset - 1))}
+                  onClick={() => {
+                    const next = Math.max(-2, draftFontSizeOffset - 1);
+                    setDraftFontSizeOffset(next);
+                  }}
                   className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-border/60 text-sm hover:bg-muted"
                 >−</button>
-                <div className="flex-1 text-center text-[11px]">{fontSizeOffset === 0 ? "Base" : `${fontSizeOffset > 0 ? "+" : ""}${fontSizeOffset}`}</div>
+                <div className="flex-1 text-center text-[11px]">{draftFontSizeOffset === 0 ? "Base" : `${draftFontSizeOffset > 0 ? "+" : ""}${draftFontSizeOffset}`}</div>
                 <button
                   type="button"
-                  onClick={() => onSetFontSizeOffset?.(Math.min(4, fontSizeOffset + 1))}
+                  onClick={() => {
+                    const next = Math.min(4, draftFontSizeOffset + 1);
+                    setDraftFontSizeOffset(next);
+                  }}
                   className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-border/60 text-sm hover:bg-muted"
                 >+</button>
+              </div>
+              <div className="mt-1.5">
+                <div className="mb-1 flex items-center justify-between text-[10px] text-muted-foreground">
+                  <span>{t.fontSizeTargetLabel}</span>
+                  <span className="font-semibold text-foreground">{draftFontSizeScope === "all" ? t.fontSizeTargetAll : t.fontSizeTargetCenter}</span>
+                </div>
+                <div className="flex gap-1">
+                  {[{ label: t.fontSizeTargetCenter, value: "center" as const }, { label: t.fontSizeTargetAll, value: "all" as const }].map(({ label, value }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setDraftFontSizeScope(value)}
+                      className={cn(
+                        "flex-1 rounded-md border px-1.5 py-1 text-[10px] transition-colors",
+                        draftFontSizeScope === value ? "border-primary/50 bg-primary/10" : "border-border/60 hover:bg-muted"
+                      )}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
             {/* Compact mode */}
             <button
               type="button"
-              onClick={() => onSetCompactMode?.(!compactMode)}
+              onClick={() => setDraftCompactMode(!draftCompactMode)}
               className={cn(
                 "flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-[10px] transition-colors",
-                compactMode ? "border-primary/50 bg-primary/10" : "border-border/70 hover:bg-muted"
+                draftCompactMode ? "border-primary/50 bg-primary/10" : "border-border/70 hover:bg-muted"
               )}
-              aria-pressed={compactMode}
+              aria-pressed={draftCompactMode}
             >
               <span className="inline-flex items-center gap-1.5">
-                <span className={cn("h-1.5 w-1.5 rounded-full", compactMode ? "bg-primary" : "bg-muted-foreground/60")} />
+                <span className={cn("h-1.5 w-1.5 rounded-full", draftCompactMode ? "bg-primary" : "bg-muted-foreground/60")} />
                 {t.compactModeLabel}
               </span>
-              <span className={cn("rounded-full border px-1.5 py-0.5 text-[9px] font-semibold leading-none", compactMode ? "border-primary/40 bg-primary/15 text-primary" : "border-border/70 text-muted-foreground")}>
-                {compactMode ? "ON" : "OFF"}
+              <span className={cn("rounded-full border px-1.5 py-0.5 text-[9px] font-semibold leading-none", draftCompactMode ? "border-primary/40 bg-primary/15 text-primary" : "border-border/70 text-muted-foreground")}>
+                {draftCompactMode ? "ON" : "OFF"}
               </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                onSetUiScale?.(draftUiScale);
+                onSetFontSizeOffset?.(draftFontSizeOffset);
+                onSetFontSizeScope?.(draftFontSizeScope);
+                onSetCompactMode?.(draftCompactMode);
+                window.location.reload();
+              }}
+              className="inline-flex h-7 w-full items-center justify-center rounded-md border border-primary/50 bg-primary/10 px-2 text-[10px] font-semibold text-primary transition-colors hover:bg-primary/20"
+            >
+              {t.applyAndRefresh}
             </button>
           </div>
         </details>

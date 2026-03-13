@@ -64,7 +64,7 @@ export function HomePreviewModal({
             </button>
           </div>
         </div>
-        <div className="preview-scroll min-h-0 flex-1 overflow-auto p-4">
+        <div className="preview-scroll content-text min-h-0 flex-1 overflow-auto p-4">
           <div className="space-y-2">{renderMessageBody(previewText || t.noData)}</div>
         </div>
         <div className="border-t border-border/70 p-3">

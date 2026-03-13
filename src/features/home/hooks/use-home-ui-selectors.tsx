@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
-import { estimateTokens, type ParsedItem } from "@/lib";
+import { createId, estimateTokens, type ParsedItem } from "@/lib";
 import { i18n } from "../model/page-constants";
 import { buildContextGroups, buildTimelineEntries } from "../model/home-logic";
 import type { ActivityItem, ChatMessage, Language, SortMode } from "../model/page-types";
@@ -82,6 +82,7 @@ export function useHomeUiSelectors({
   );
 
   const systemCommands = useUIStore((state) => state.systemCommands);
+  const fontSizeOffset = useUIStore((state) => state.fontSizeOffset);
 
   const visibleItems = React.useMemo(() => {
     const filter = bundleFilter.trim().toLowerCase();
@@ -130,7 +131,7 @@ export function useHomeUiSelectors({
   }, []);
 
   const pushActivity = React.useCallback((label: string) => {
-    setActivity((prev) => [{ id: crypto.randomUUID(), label, at: new Date().toISOString() }, ...prev].slice(0, 12));
+    setActivity((prev) => [{ id: createId(), label, at: new Date().toISOString() }, ...prev].slice(0, 12));
   }, [setActivity]);
 
   const renderMessageBody = React.useCallback(
@@ -140,24 +141,40 @@ export function useHomeUiSelectors({
       );
 
       if (!markdownEnabled) {
-        return <pre className="whitespace-pre-wrap wrap-anywhere font-mono text-xs leading-5">{content}</pre>;
+        return (
+          <pre
+            className="whitespace-pre-wrap wrap-anywhere font-mono text-xs leading-5"
+            style={{ fontSize: `calc(0.75rem + ${fontSizeOffset}px)` }}
+          >
+            {content}
+          </pre>
+        );
       }
 
       if (!hasMarkdownSyntax) {
-        return <pre className="whitespace-pre-wrap wrap-anywhere text-sm leading-6 font-sans">{content}</pre>;
+        return (
+          <pre
+            className="whitespace-pre-wrap wrap-anywhere text-sm leading-6 font-sans"
+            style={{ fontSize: `calc(0.875rem + ${fontSizeOffset}px)` }}
+          >
+            {content}
+          </pre>
+        );
       }
 
       return (
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm, remarkMath]}
-          rehypePlugins={[rehypeKatex]}
-          components={markdownComponents}
-        >
-          {content}
-        </ReactMarkdown>
+        <div style={{ fontSize: `calc(0.875rem + ${fontSizeOffset}px)` }}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeKatex]}
+            components={markdownComponents}
+          >
+            {content}
+          </ReactMarkdown>
+        </div>
       );
     },
-    [markdownEnabled]
+    [fontSizeOffset, markdownEnabled]
   );
 
   return {

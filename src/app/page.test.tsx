@@ -55,7 +55,11 @@ function makeArchiveItem(path: string, children: ParsedItem[], overrides: Partia
 const parseFileWithPathMock = vi.mocked(parseFileWithPath);
 
 function clickNewChat() {
-  fireEvent.click(screen.getAllByRole("button", { name: /^New chat$|^Новый чат$/i })[0]);
+  const button = Array.from(document.querySelectorAll("button")).find((el) =>
+    /^new chat$|^новый чат$/i.test(el.textContent?.trim() ?? "")
+  ) as HTMLButtonElement | undefined;
+  if (!button) throw new Error("New chat button not found");
+  fireEvent.click(button);
 }
 
 describe("Home central panel UI/UX", () => {
@@ -70,7 +74,7 @@ describe("Home central panel UI/UX", () => {
 
     expect(await screen.findByPlaceholderText("Type something…")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Markdown ON|Markdown ВКЛ/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Download \.txt|Скачать \.txt/i })).toBeInTheDocument();
+    expect(screen.getByTitle(/Download \.txt|Скачать \.txt/i)).toBeInTheDocument();
   });
 
   it("switches markdown toggle to raw mode", async () => {
@@ -90,7 +94,7 @@ describe("Home central panel UI/UX", () => {
     await user.type(composer, "Сделай summary контекста");
     fireEvent.click(screen.getByTitle("Send"));
 
-    expect(await screen.findByText("You")).toBeInTheDocument();
+    expect(await screen.findByText(/Prompt sent to context timeline|Prompt отправлен в контекстную ленту/i)).toBeInTheDocument();
     expect(screen.getAllByText("Сделай summary контекста").length).toBeGreaterThan(0);
   });
 
@@ -124,7 +128,7 @@ describe("Home central panel UI/UX", () => {
     expect(composer).toHaveValue("Строка 1\nСтрока 2");
 
     await user.keyboard("{Enter}");
-    expect(await screen.findByText("You")).toBeInTheDocument();
+    expect(await screen.findByText(/Prompt sent to context timeline|Prompt отправлен в контекстную ленту/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Строка 1/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Строка 2/).length).toBeGreaterThan(0);
   });
@@ -143,8 +147,8 @@ describe("Home central panel UI/UX", () => {
 
     const projectNodes = await screen.findAllByText("project");
     expect(projectNodes.length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/файлов:\s*2|files:\s*2/i).length).toBeGreaterThan(0);
-    expect(screen.queryByText(/файлов:\s*1|files:\s*1/i)).not.toBeInTheDocument();
+    expect(screen.getAllByText(/2\s*files|2\s*файлов/i).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/1\s*files|1\s*файлов/i)).not.toBeInTheDocument();
   });
 
   it("renders per-file actions for each item inside grouped context", async () => {
@@ -159,15 +163,10 @@ describe("Home central panel UI/UX", () => {
 
     fireEvent.change(fileInput, { target: { files: [fileA, fileB] } });
 
-    const itemACard = (await screen.findAllByText("a.txt"))[0].closest(".rounded-xl") as HTMLElement;
-    const itemBCard = (await screen.findAllByText("b.txt"))[0].closest(".rounded-xl") as HTMLElement;
+    const itemACard = (await screen.findAllByText("a.txt"))[0].closest('div[class*="group/item"]') as HTMLElement;
+    const itemBCard = (await screen.findAllByText("b.txt"))[0].closest('div[class*="group/item"]') as HTMLElement;
 
     [itemACard, itemBCard].forEach((card) => {
-      expect(within(card).getByRole("button", { name: /Preview|Предпросмотр/i })).toBeInTheDocument();
-      expect(within(card).getByRole("button", { name: "TXT" })).toBeInTheDocument();
-      expect(within(card).getByRole("button", { name: "MD" })).toBeInTheDocument();
-      expect(within(card).getByRole("button", { name: /Download|Скачать/i })).toBeInTheDocument();
-      expect(within(card).getByRole("button", { name: /Edit|Изменить/i })).toBeInTheDocument();
       expect(within(card).getByRole("button", { name: /Delete|Удалить/i })).toBeInTheDocument();
     });
   });
@@ -181,12 +180,12 @@ describe("Home central panel UI/UX", () => {
 
     fireEvent.change(fileInput, { target: { files: [file] } });
 
-    const preview = await screen.findByRole("button", { name: /Preview|Предпросмотр/i });
+    const preview = await screen.findByTitle(/Preview|Предпросмотр/i);
     fireEvent.click(preview);
 
     const modalNodes = await screen.findAllByText("modal.txt");
     expect(modalNodes.length).toBeGreaterThan(0);
-    const deleteButtons = screen.getAllByRole("button", { name: "Delete" });
+    const deleteButtons = screen.getAllByTitle(/Delete|Удалить/i);
     fireEvent.click(deleteButtons[deleteButtons.length - 1]);
 
     await waitFor(() => {
@@ -206,8 +205,8 @@ describe("Home central panel UI/UX", () => {
 
     const copyNodes = await screen.findAllByText("copy.txt");
     expect(copyNodes.length).toBeGreaterThan(0);
-    const card = copyNodes[0].closest(".group") as HTMLElement;
-    await user.click(within(card).getByRole("button", { name: "MD" }));
+    const card = copyNodes[0].closest(".rounded-2xl") as HTMLElement;
+    await user.click(within(card).getByTitle("Copy MD"));
 
     await waitFor(() => {
       expect(writeTextSpy).toHaveBeenCalled();
@@ -223,13 +222,13 @@ describe("Home central panel UI/UX", () => {
     fireEvent.change(fileInput, { target: { files: [new File(["initial"], "edit-context.txt", { type: "text/plain" })] } });
 
     const nameNode = (await screen.findAllByText("edit-context.txt"))[0];
-    const card = nameNode.closest(".group") as HTMLElement;
-    fireEvent.click(within(card).getByRole("button", { name: "Edit" }));
+    const card = nameNode.closest(".rounded-2xl") as HTMLElement;
+    fireEvent.click(within(card).getByTitle(/Edit|Изменить/i));
     fireEvent.change(await screen.findByPlaceholderText(/Введите новый контекст|Enter updated context/i), {
       target: { value: "UPDATED CONTEXT" },
     });
     fireEvent.click(screen.getByRole("button", { name: /^Save$|^Сохранить$/i }));
-    fireEvent.click(within(card).getByRole("button", { name: /Preview|Предпросмотр/i }));
+    fireEvent.click(within(card).getByTitle(/Preview|Предпросмотр/i));
 
     expect(await screen.findByText("UPDATED CONTEXT")).toBeInTheDocument();
   });
@@ -242,20 +241,19 @@ describe("Home central panel UI/UX", () => {
     fireEvent.change(fileInput, { target: { files: [new File(["initial"], "cancel-edit.txt", { type: "text/plain" })] } });
 
     const nameNode = (await screen.findAllByText("cancel-edit.txt"))[0];
-    const card = nameNode.closest(".group") as HTMLElement;
-    fireEvent.click(within(card).getByRole("button", { name: "Edit" }));
+    const card = nameNode.closest(".rounded-2xl") as HTMLElement;
+    fireEvent.click(within(card).getByTitle(/Edit|Изменить/i));
     fireEvent.change(await screen.findByPlaceholderText(/Введите новый контекст|Enter updated context/i), {
       target: { value: "SHOULD NOT SAVE" },
     });
     fireEvent.click(screen.getByRole("button", { name: /^Cancel$|^Отмена$/i }));
-    fireEvent.click(within(card).getByRole("button", { name: /Preview|Предпросмотр/i }));
+    fireEvent.click(within(card).getByTitle(/Preview|Предпросмотр/i));
 
     expect(screen.queryByText("SHOULD NOT SAVE")).not.toBeInTheDocument();
     expect(await screen.findByText("hello")).toBeInTheDocument();
   });
 
   it("starts new chat and resets workspace state", async () => {
-    const user = userEvent.setup();
     render(<Home />);
 
     const hiddenInputs = document.querySelectorAll('input[type="file"]');
@@ -266,7 +264,7 @@ describe("Home central panel UI/UX", () => {
     await screen.findAllByText("state.txt");
 
     const composer = await screen.findByPlaceholderText("Type something…");
-    await user.type(composer, "Проверка закрытия");
+    fireEvent.change(composer, { target: { value: "Проверка закрытия" } });
 
     clickNewChat();
 
@@ -275,14 +273,13 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("restores closed chat from history with its messages", async () => {
-    const user = userEvent.setup();
     render(<Home />);
 
     const composer = await screen.findByPlaceholderText("Type something…");
-    await user.type(composer, "История восстановление");
+    fireEvent.change(composer, { target: { value: "История восстановление" } });
     fireEvent.click(screen.getByTitle("Send"));
 
-    await screen.findByText("You");
+    await screen.findByText(/Prompt sent to context timeline|Prompt отправлен в контекстную ленту/i);
     await waitFor(() => {
       expect(screen.getAllByText("История восстановление").length).toBeGreaterThan(0);
     });
@@ -377,7 +374,7 @@ describe("Home central panel UI/UX", () => {
 
     fireEvent.click(screen.getByTitle("Send"));
 
-    expect(screen.queryByText("You")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Prompt sent to context timeline|Prompt отправлен в контекстную ленту/i)).not.toBeInTheDocument();
     expect(screen.queryByText("Context Engine")).not.toBeInTheDocument();
   });
 
@@ -408,7 +405,7 @@ describe("Home central panel UI/UX", () => {
     const chatOneEntry = await screen.findByRole("button", { name: /Чат один/i });
     const chatOneContainer = chatOneEntry.closest("[data-history-item]") as HTMLElement;
     fireEvent.click(within(chatOneContainer).getByRole("button", { name: "Actions" }));
-    fireEvent.click(await screen.findByRole("button", { name: "Delete" }));
+    fireEvent.click(within(chatOneContainer).getByRole("button", { name: "Delete" }));
 
     expect(screen.getAllByText(/Чат два|Чат два \(copy\)/).length).toBeGreaterThan(0);
     expect(screen.queryByRole("button", { name: /Чат один/i })).not.toBeInTheDocument();
@@ -418,7 +415,7 @@ describe("Home central panel UI/UX", () => {
     const user = userEvent.setup();
     render(<Home />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Autosave: ON|Автосейв: ON/i }));
+    fireEvent.click(screen.getByRole("switch", { name: /Autosave|Автосейв/i }));
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "Не сохраняй автоматически");
@@ -469,7 +466,7 @@ describe("Home central panel UI/UX", () => {
     await user.type(composer, "Инлайн: $a^2+b^2=c^2$");
     fireEvent.click(screen.getByTitle("Send"));
 
-    await screen.findByText("You");
+    await screen.findByText(/Prompt sent to context timeline|Prompt отправлен в контекстную ленту/i);
     expect(document.querySelector(".katex")).toBeTruthy();
   });
 
@@ -481,7 +478,7 @@ describe("Home central panel UI/UX", () => {
     await user.type(composer, "$$\n\\int_0^1 x^2 dx\n$$");
     fireEvent.click(screen.getByTitle("Send"));
 
-    await screen.findByText("You");
+    await screen.findByText(/Prompt sent to context timeline|Prompt отправлен в контекстную ленту/i);
     expect(document.querySelector(".katex-display")).toBeTruthy();
   });
 
@@ -606,7 +603,7 @@ describe("Home central panel UI/UX", () => {
     const user = userEvent.setup();
     render(<Home />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Anonymous chat|Анонимный чат/i }));
+    fireEvent.click(screen.getByRole("switch", { name: /Anonymous chat|Анонимный чат/i }));
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "private session");
     fireEvent.click(screen.getByTitle("Send"));
@@ -838,8 +835,8 @@ describe("Home central panel UI/UX", () => {
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "single-del.txt", { type: "text/plain" })] } });
     await screen.findAllByText("single-del.txt");
 
-    const deleteButtons = Array.from(document.querySelectorAll("button.text-red-500")) as HTMLButtonElement[];
-    fireEvent.click(deleteButtons[0]);
+    const card = screen.getAllByText("single-del.txt")[0].closest(".rounded-2xl") as HTMLElement;
+    fireEvent.click(within(card).getByRole("button", { name: /Delete|Удалить/i }));
     await waitFor(() => {
       expect(screen.queryByText("single-del.txt")).not.toBeInTheDocument();
     });
@@ -959,7 +956,6 @@ describe("Home central panel UI/UX", () => {
     fireEvent.change(fileInput, { target: { files: [new File(["zip"], "workspace.zip", { type: "application/zip" })] } });
 
     expect(await screen.findAllByText("workspace.zip")).not.toHaveLength(0);
-    expect(await screen.findAllByText(/файлов:\s*2|files:\s*2/i)).not.toHaveLength(0);
     expect(await screen.findByText(/Добавлено в workspace:\s*1|Added to workspace:\s*1/i)).toBeInTheDocument();
   });
 

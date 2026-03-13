@@ -6,6 +6,17 @@ import { useTheme } from "next-themes";
 
 import { cn } from "@/lib";
 
+const contentFont = {
+  body: { fontSize: "calc(0.875rem + var(--font-size-offset, 0) * 1px)" },
+  h1: { fontSize: "calc(1.125rem + var(--font-size-offset, 0) * 1px)" },
+  h2: { fontSize: "calc(1rem + var(--font-size-offset, 0) * 1px)" },
+  h3: { fontSize: "calc(0.875rem + var(--font-size-offset, 0) * 1px)" },
+  table: { fontSize: "calc(0.75rem + var(--font-size-offset, 0) * 1px)" },
+  inlineCode: { fontSize: "calc(11px + var(--font-size-offset, 0) * 1px)" },
+  code: { fontSize: "calc(13px + var(--font-size-offset, 0) * 1px)" },
+  codeUi: { fontSize: "calc(11px + var(--font-size-offset, 0) * 1px)" },
+} as const;
+
 // ── Shiki singleton (lazy, loads all bundled languages once) ─────────────────
 type ShikiHighlighter = Awaited<ReturnType<typeof import("shiki")["createHighlighter"]>>;
 
@@ -44,7 +55,7 @@ function HighlightedCode({ code, lang }: { code: string; lang: string }) {
 
   if (!html) {
     return (
-      <pre className="overflow-x-auto bg-muted/40 p-4 font-mono text-[13px] leading-relaxed">
+      <pre className="overflow-x-auto bg-muted/40 p-4 font-mono text-[13px] leading-relaxed" style={contentFont.code}>
         <code>{code}</code>
       </pre>
     );
@@ -52,7 +63,8 @@ function HighlightedCode({ code, lang }: { code: string; lang: string }) {
 
   return (
     <div
-      className="[&>pre]:overflow-x-auto [&>pre]:p-4 [&>pre]:font-mono [&>pre]:text-[13px] [&>pre]:leading-relaxed [&>pre]:rounded-none! [&>pre]:bg-transparent!"
+      className="[&>pre]:overflow-x-auto [&>pre]:p-4 [&>pre]:font-mono [&>pre]:text-(length:--content-code-size) [&>pre]:leading-relaxed [&>pre]:rounded-none! [&>pre]:bg-transparent!"
+      style={{ ["--content-code-size" as const]: "calc(13px + var(--font-size-offset, 0) * 1px)" } as React.CSSProperties}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
@@ -116,6 +128,7 @@ export function CollapsibleMarkdownPre({ children }: { children: React.ReactNode
           type="button"
           onClick={() => setCollapsed((value) => !value)}
           className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-muted-foreground transition-colors hover:bg-background/70 hover:text-foreground"
+          style={contentFont.codeUi}
           aria-label={preT.toggle}
         >
           <span>{collapsed ? preT.expand : preT.collapse}</span>
@@ -123,7 +136,7 @@ export function CollapsibleMarkdownPre({ children }: { children: React.ReactNode
         </button>
       </div>
       {collapsed ? (
-        <div className="bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">{preT.hidden} • {lineCount} {preT.lines}</div>
+        <div className="bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground" style={contentFont.codeUi}>{preT.hidden} • {lineCount} {preT.lines}</div>
       ) : (
         <HighlightedCode code={textContent} lang={lang} />
       )}
@@ -132,18 +145,18 @@ export function CollapsibleMarkdownPre({ children }: { children: React.ReactNode
 }
 
 export const markdownComponents = {
-  h1: ({ children }: { children?: React.ReactNode }) => <p className="text-lg font-semibold">{children}</p>,
-  h2: ({ children }: { children?: React.ReactNode }) => <p className="text-base font-semibold">{children}</p>,
-  h3: ({ children }: { children?: React.ReactNode }) => <p className="text-sm font-semibold">{children}</p>,
+  h1: ({ children }: { children?: React.ReactNode }) => <p className="text-lg font-semibold" style={contentFont.h1}>{children}</p>,
+  h2: ({ children }: { children?: React.ReactNode }) => <p className="text-base font-semibold" style={contentFont.h2}>{children}</p>,
+  h3: ({ children }: { children?: React.ReactNode }) => <p className="text-sm font-semibold" style={contentFont.h3}>{children}</p>,
   p: ({ children }: { children?: React.ReactNode }) => (
-    <p className="whitespace-pre-wrap text-sm leading-6 wrap-anywhere">{children}</p>
+    <p className="whitespace-pre-wrap text-sm leading-6 wrap-anywhere" style={contentFont.body}>{children}</p>
   ),
-  ul: ({ children }: { children?: React.ReactNode }) => <ul className="list-disc space-y-1 pl-5 text-sm">{children}</ul>,
-  ol: ({ children }: { children?: React.ReactNode }) => <ol className="list-decimal space-y-1 pl-5 text-sm">{children}</ol>,
+  ul: ({ children }: { children?: React.ReactNode }) => <ul className="list-disc space-y-1 pl-5 text-sm" style={contentFont.body}>{children}</ul>,
+  ol: ({ children }: { children?: React.ReactNode }) => <ol className="list-decimal space-y-1 pl-5 text-sm" style={contentFont.body}>{children}</ol>,
   li: ({ children }: { children?: React.ReactNode }) => <li>{children}</li>,
   table: ({ children }: { children?: React.ReactNode }) => (
     <div className="overflow-x-auto rounded-xl border border-border/60 bg-background">
-      <table className="w-full border-collapse text-xs">{children}</table>
+      <table className="w-full border-collapse text-xs" style={contentFont.table}>{children}</table>
     </div>
   ),
   th: ({ children }: { children?: React.ReactNode }) => (
@@ -157,6 +170,6 @@ export const markdownComponents = {
     // Block code is handled entirely by CollapsibleMarkdownPre via Shiki.
     // This component is only ever visible for inline code (inside paragraphs).
     if (className?.includes("language-")) return <code className={className}>{children}</code>;
-    return <code className="rounded border border-border/60 bg-muted/40 px-1 py-0.5 font-mono text-[11px]">{children}</code>;
+    return <code className="rounded border border-border/60 bg-muted/40 px-1 py-0.5 font-mono text-[11px]" style={contentFont.inlineCode}>{children}</code>;
   },
 };

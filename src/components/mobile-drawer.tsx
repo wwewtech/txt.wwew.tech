@@ -38,6 +38,10 @@ export function MobileDrawer({
             className
           )}
         >
+          <Drawer.Title className="sr-only">Navigation</Drawer.Title>
+          <Drawer.Description className="sr-only">
+            Side navigation panel
+          </Drawer.Description>
           {direction === "bottom" && (
             <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full bg-muted-foreground/30" />
           )}

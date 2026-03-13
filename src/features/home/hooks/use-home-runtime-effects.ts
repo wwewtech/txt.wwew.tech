@@ -3,7 +3,7 @@
 import * as React from "react";
 
 import { UI_PREFS_KEY, defaultSettings } from "../model/page-constants";
-import type { Language, SortMode, ViewMode } from "../model/page-types";
+import type { FontSizeScope, Language, SortMode, ViewMode } from "../model/page-types";
 import { loadHistoryStorage, saveHistoryStorage } from "../store/history-storage";
 import { useFilesStore } from "../store/use-files-store";
 import { useUIStore } from "../store/use-ui-store";
@@ -37,6 +37,8 @@ export function useHomeRuntimeEffects({ composerRef, prompt }: UseHomeRuntimeEff
   const setCompactMode = useUIStore((state) => state.setCompactMode);
   const fontSizeOffset = useUIStore((state) => state.fontSizeOffset);
   const setFontSizeOffset = useUIStore((state) => state.setFontSizeOffset);
+  const fontSizeScope = useUIStore((state) => state.fontSizeScope);
+  const setFontSizeScope = useUIStore((state) => state.setFontSizeScope);
   const settings = useUIStore((state) => state.settings);
   const setSettings = useUIStore((state) => state.setSettings);
   const systemCommands = useUIStore((state) => state.systemCommands);
@@ -88,6 +90,7 @@ export function useHomeRuntimeEffects({ composerRef, prompt }: UseHomeRuntimeEff
         uiScale?: number;
         compactMode?: boolean;
         fontSizeOffset?: number;
+        fontSizeScope?: FontSizeScope;
         viewMode?: ViewMode;
         sortMode?: SortMode;
         settings?: typeof defaultSettings;
@@ -115,6 +118,9 @@ export function useHomeRuntimeEffects({ composerRef, prompt }: UseHomeRuntimeEff
       if (typeof parsed.fontSizeOffset === "number") {
         setFontSizeOffset(Math.min(4, Math.max(-2, parsed.fontSizeOffset)));
       }
+      if (parsed.fontSizeScope === "center" || parsed.fontSizeScope === "all") {
+        setFontSizeScope(parsed.fontSizeScope);
+      }
       if (parsed.viewMode === "cards" || parsed.viewMode === "compact") {
         setViewMode(parsed.viewMode);
       }
@@ -131,7 +137,7 @@ export function useHomeRuntimeEffects({ composerRef, prompt }: UseHomeRuntimeEff
       const detected = navigator.language.toLowerCase().startsWith("ru") ? "ru" : "en";
       setLanguage(detected);
     }
-  }, [setAutoSaveEnabled, setLanguage, setRightSidebarWidth, setMarkdownEnabled, setAnonymousMode, setUiScale, setCompactMode, setFontSizeOffset, setViewMode, setSortMode, setSettings]);
+  }, [setAutoSaveEnabled, setLanguage, setRightSidebarWidth, setMarkdownEnabled, setAnonymousMode, setUiScale, setCompactMode, setFontSizeOffset, setFontSizeScope, setViewMode, setSortMode, setSettings, setSystemCommands]);
 
   React.useEffect(() => {
     if (anonymousMode) return;
@@ -141,14 +147,28 @@ export function useHomeRuntimeEffects({ composerRef, prompt }: UseHomeRuntimeEff
   React.useEffect(() => {
     window.localStorage.setItem(
       UI_PREFS_KEY,
-      JSON.stringify({ language, rightSidebarWidth, autoSaveEnabled, markdownEnabled, anonymousMode, uiScale, compactMode, fontSizeOffset, viewMode, sortMode, settings, systemCommands })
+      JSON.stringify({ language, rightSidebarWidth, autoSaveEnabled, markdownEnabled, anonymousMode, uiScale, compactMode, fontSizeOffset, fontSizeScope, viewMode, sortMode, settings, systemCommands })
     );
-  }, [language, rightSidebarWidth, autoSaveEnabled, markdownEnabled, anonymousMode, uiScale, compactMode, fontSizeOffset, viewMode, sortMode, settings, systemCommands]);
+  }, [language, rightSidebarWidth, autoSaveEnabled, markdownEnabled, anonymousMode, uiScale, compactMode, fontSizeOffset, fontSizeScope, viewMode, sortMode, settings, systemCommands]);
 
   // Apply UI scale as CSS custom property
   React.useEffect(() => {
     document.documentElement.style.setProperty("--ui-scale", String(uiScale / 100));
   }, [uiScale]);
+
+  // Apply font size offset as CSS custom property
+  React.useEffect(() => {
+    document.documentElement.style.setProperty("--font-size-offset", String(fontSizeOffset));
+    if (process.env.NODE_ENV !== "production") {
+      // Debug: verify offset is actually applied at runtime
+      // eslint-disable-next-line no-console
+      console.debug("[ui] fontSizeOffset applied", {
+        fontSizeOffset,
+        fontSizeScope,
+        cssVar: document.documentElement.style.getPropertyValue("--font-size-offset"),
+      });
+    }
+  }, [fontSizeOffset, fontSizeScope]);
 
   // Compact mode class
   React.useEffect(() => {

@@ -30,10 +30,16 @@
   --primary-foreground: var(--ds-background-100);
 
   --ui-scale: 1;
+  --font-size-offset: 0;
 }
 
 html {
   font-size: calc(16px * var(--ui-scale, 1));
+}
+
+/* Font size offset affects only content text, not entire UI */
+.content-text {
+  font-size: calc(1em + var(--font-size-offset, 0) * 1px);
 }
 
 @theme inline {
@@ -169,4 +175,8 @@ html {
 *:focus-visible {
   outline: none;
   box-shadow: var(--ds-focus-ring);
+}
+
+textarea:focus-visible {
+  box-shadow: none;
 }

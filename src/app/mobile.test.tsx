@@ -57,6 +57,10 @@ async function openDisplaySection() {
   }
 }
 
+async function applyDisplayChanges() {
+  fireEvent.click(await screen.findByRole("button", { name: /apply and refresh|применить и обновить/i }));
+}
+
 // ─── beforeEach ────────────────────────────────────────────────────────────
 beforeEach(() => {
   document.documentElement.style.removeProperty("--ui-scale");
@@ -164,6 +168,7 @@ describe("Display section", () => {
     await openDisplaySection();
 
     fireEvent.click(await screen.findByRole("button", { name: /^large$|^крупный$/i }));
+    await applyDisplayChanges();
     await waitFor(() => {
       expect(document.documentElement.style.getPropertyValue("--ui-scale")).toBe("1.15");
     });
@@ -199,6 +204,7 @@ describe("Display section", () => {
 
     const toggle = await screen.findByRole("button", { name: /compact mode|компактный режим/i });
     fireEvent.click(toggle);
+    await applyDisplayChanges();
     await waitFor(() => expect(document.documentElement.classList.contains("compact")).toBe(true));
   });
 
@@ -303,6 +309,7 @@ describe("localStorage persistence", () => {
     render(<Home />);
     await openDisplaySection();
     fireEvent.click(await screen.findByRole("button", { name: /^large$|^крупный$/i }));
+    await applyDisplayChanges();
 
     await waitFor(() => {
       const s = JSON.parse(window.localStorage.getItem(UI_PREFS_KEY) ?? "null");
@@ -314,6 +321,7 @@ describe("localStorage persistence", () => {
     render(<Home />);
     await openDisplaySection();
     fireEvent.click(await screen.findByRole("button", { name: /compact mode|компактный режим/i }));
+    await applyDisplayChanges();
 
     await waitFor(() => {
       const s = JSON.parse(window.localStorage.getItem(UI_PREFS_KEY) ?? "null");
@@ -330,6 +338,7 @@ describe("localStorage persistence", () => {
       baseEl.closest("div.flex")!.querySelectorAll<HTMLButtonElement>("button")
     ).at(-1)!;
     fireEvent.click(plusBtn);
+    await applyDisplayChanges();
 
     await waitFor(() => {
       const s = JSON.parse(window.localStorage.getItem(UI_PREFS_KEY) ?? "null");

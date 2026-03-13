@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { defaultSettings } from '../model/page-constants';
-import type { EditDialogState, Language, ActivityItem, HistoryItem } from '../model/page-types';
+import type { EditDialogState, Language, ActivityItem, HistoryItem, FontSizeScope } from '../model/page-types';
 
 interface UIState {
   leftCollapsed: boolean;
@@ -15,6 +15,8 @@ interface UIState {
   setCompactMode: (compact: boolean) => void;
   fontSizeOffset: number;
   setFontSizeOffset: (offset: number) => void;
+  fontSizeScope: FontSizeScope;
+  setFontSizeScope: (scope: FontSizeScope) => void;
   anonymousMode: boolean;
   setAnonymousMode: (anonymous: boolean) => void;
   history: HistoryItem[];
@@ -43,6 +45,10 @@ interface UIState {
   setEditDialog: (dialog: EditDialogState | null | ((prev: EditDialogState | null) => EditDialogState | null)) => void;
   systemCommands: string[];
   setSystemCommands: (commands: string[] | ((prev: string[]) => string[])) => void;
+  scrollOnSend: boolean;
+  setScrollOnSend: (val: boolean) => void;
+  sendKey: 'enter' | 'shift+enter';
+  setSendKey: (val: 'enter' | 'shift+enter') => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -58,6 +64,8 @@ export const useUIStore = create<UIState>((set) => ({
   setCompactMode: (compactMode) => set({ compactMode }),
   fontSizeOffset: 0,
   setFontSizeOffset: (fontSizeOffset) => set({ fontSizeOffset }),
+  fontSizeScope: 'center',
+  setFontSizeScope: (fontSizeScope) => set({ fontSizeScope }),
   anonymousMode: false,
   setAnonymousMode: (anonymousMode) => set({ anonymousMode }),
   history: [],
@@ -90,6 +98,10 @@ export const useUIStore = create<UIState>((set) => ({
   })),
   systemCommands: [],
   setSystemCommands: (val) => set((s) => ({ systemCommands: typeof val === 'function' ? val(s.systemCommands) : val })),
+  scrollOnSend: true,
+  setScrollOnSend: (scrollOnSend) => set({ scrollOnSend }),
+  sendKey: 'enter' as const,
+  setSendKey: (sendKey) => set({ sendKey }),
 }));
 
 export function resetUIStore() {
@@ -100,6 +112,7 @@ export function resetUIStore() {
     uiScale: 100,
     compactMode: false,
     fontSizeOffset: 0,
+    fontSizeScope: 'center',
     anonymousMode: false,
     history: [],
     openHistoryMenuId: null,
@@ -114,5 +127,7 @@ export function resetUIStore() {
     autoSaveEnabled: true,
     editDialog: null,
     systemCommands: [],
+    scrollOnSend: true,
+    sendKey: 'enter',
   });
 }

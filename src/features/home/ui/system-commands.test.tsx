@@ -25,12 +25,7 @@ import { resetHomeStores } from "@/features/home/store/reset-home-stores";
 const UI_PREFS_KEY = "txt-wwew-tech-ui-prefs";
 
 async function waitForSidebar() {
-  await waitFor(() => {
-    const heading = Array.from(document.querySelectorAll("p")).find(
-      (p) => /^системные команды$|^system commands$/i.test(p.textContent?.trim() ?? "")
-    );
-    expect(heading).toBeTruthy();
-  });
+  await screen.findByText(/^системные команды$|^system commands$/i);
 }
 
 function clickAddButton() {

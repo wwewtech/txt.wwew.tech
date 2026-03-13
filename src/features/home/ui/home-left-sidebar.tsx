@@ -21,7 +21,7 @@ import {
 import { DragSegmented, ThemeToggle } from "@/components";
 import { cn } from "@/lib";
 import type { I18nDict } from "../model/page-constants";
-import type { HistoryItem, Language } from "../model/page-types";
+import type { FontSizeScope, HistoryItem, Language } from "../model/page-types";
 
 type HomeLeftSidebarProps = {
   t: I18nDict;
@@ -40,6 +40,8 @@ type HomeLeftSidebarProps = {
   onCopyHistoryPrompt: (id: string) => Promise<void>;
   onCopyHistoryFinal: (id: string) => Promise<void>;
   onDeleteHistoryItem: (id: string) => void;
+  fontSizeOffset?: number;
+  fontSizeScope?: FontSizeScope;
   /** Когда компонент рендерится в мобильном drawer'е */
   drawerMode?: boolean;
 };
@@ -61,8 +63,15 @@ export function HomeLeftSidebar({
   onCopyHistoryPrompt,
   onCopyHistoryFinal,
   onDeleteHistoryItem,
+  fontSizeOffset = 0,
+  fontSizeScope = "center",
   drawerMode = false,
 }: HomeLeftSidebarProps) {
+  const sidebarTextStyle =
+    fontSizeScope === "all"
+      ? ({ fontSize: `calc(1rem + ${fontSizeOffset}px)` } as React.CSSProperties)
+      : undefined;
+
   return (
     <aside
       className={cn(
@@ -71,6 +80,7 @@ export function HomeLeftSidebar({
           ? "flex h-full flex-col"
           : "hidden h-screen xl:sticky xl:top-0 xl:flex xl:flex-col"
       )}
+      style={sidebarTextStyle}
     >
       <div className="mb-3 border-b border-border/40 pb-3">
         <div className="flex items-start justify-between gap-2">
@@ -201,49 +211,71 @@ export function HomeLeftSidebar({
       </div>
 
       <div className="mt-3 border-t border-border/40 pt-3">
-        <p className="mb-2 text-xs text-muted-foreground">{t.theme}</p>
-        <ThemeToggle />
+        <div className="flex flex-col gap-3">
+          <div>
+            <p className="mb-2 text-xs text-muted-foreground">
+              {t.theme}
+            </p>
+            <ThemeToggle />
+          </div>
 
-        <DragSegmented
-          className="mt-2"
-          value={language}
-          onValueChange={onLanguageChange}
-          options={[
-            {
-              value: "ru",
-              label: "Русский",
-              content: (
-                <span className="inline-flex items-center gap-1 text-[10px]">
-                  <Languages className="h-3.5 w-3.5" /> RU
-                </span>
-              ),
-            },
-            {
-              value: "en",
-              label: "English",
-              content: (
-                <span className="inline-flex items-center gap-1 text-[10px]">
-                  <Languages className="h-3.5 w-3.5" /> EN
-                </span>
-              ),
-            },
-          ]}
-          buttonClassName="h-7 px-2"
-        />
+          <div>
+            <DragSegmented
+              value={language}
+              onValueChange={onLanguageChange}
+              options={[
+                {
+                  value: "ru",
+                  label: "Русский",
+                  content: (
+                    <span className="inline-flex items-center gap-1 text-[10px]">
+                      <Languages className="h-3.5 w-3.5" /> RU
+                    </span>
+                  ),
+                },
+                {
+                  value: "en",
+                  label: "English",
+                  content: (
+                    <span className="inline-flex items-center gap-1 text-[10px]">
+                      <Languages className="h-3.5 w-3.5" /> EN
+                    </span>
+                  ),
+                },
+              ]}
+              buttonClassName="h-7 px-2"
+            />
+          </div>
 
-        <div className="mt-3 flex items-center gap-3 text-muted-foreground">
-          <a href="https://wwew.tech" target="_blank" rel="noreferrer" className="hover:text-foreground">
-            <User className="h-4 w-4" />
-          </a>
-          <a href="https://openspacedev.ru" target="_blank" rel="noreferrer" className="hover:text-foreground">
-            <LinkIcon className="h-4 w-4" />
-          </a>
-          <a href="https://github.com/wwewtech/txt.wwew.tech" target="_blank" rel="noreferrer" className="hover:text-foreground">
-            <Github className="h-4 w-4" />
-          </a>
-          <Link href="/terms" className="text-[11px] hover:text-foreground">
-            {t.terms}
-          </Link>
+          <div className="flex items-center gap-3 text-muted-foreground">
+            <a
+              href="https://wwew.tech"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-foreground"
+            >
+              <User className="h-4 w-4" />
+            </a>
+            <a
+              href="https://openspacedev.ru"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-foreground"
+            >
+              <LinkIcon className="h-4 w-4" />
+            </a>
+            <a
+              href="https://github.com/wwewtech/txt.wwew.tech"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-foreground"
+            >
+              <Github className="h-4 w-4" />
+            </a>
+            <Link href="/terms" className="text-[11px] hover:text-foreground">
+              {t.terms}
+            </Link>
+          </div>
         </div>
       </div>
     </aside>
