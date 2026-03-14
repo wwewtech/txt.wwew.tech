@@ -215,6 +215,7 @@ export default function Home() {
           onSetExcludedExtensions={actions.setExcludedExtensions}
           onSetIncludePromptInResult={setIncludePromptInResult}
           onSetShowSkippedFiles={setShowSkippedFiles}
+          onManualSave={actions.manualSave}
           onBytesToText={bytesToText}
           uiScale={uiScale}
           compactMode={compactMode}
@@ -373,6 +374,7 @@ export default function Home() {
               onSetExcludedExtensions={actions.setExcludedExtensions}
               onSetIncludePromptInResult={setIncludePromptInResult}
               onSetShowSkippedFiles={setShowSkippedFiles}
+              onManualSave={actions.manualSave}
               onBytesToText={bytesToText}
               uiScale={uiScale}
               compactMode={compactMode}

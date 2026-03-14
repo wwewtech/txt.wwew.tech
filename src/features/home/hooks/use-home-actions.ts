@@ -17,6 +17,7 @@ import {
 } from "../model/home-actions-logic";
 import { buildNextUntitledTitle, deriveHistoryTitle } from "../model/home-logic";
 import type { ContextGroup, HistoryItem } from "../model/page-types";
+import { saveHistoryStorage } from "../store/history-storage";
 import { useChatStore } from "../store/use-chat-store";
 import { useFilesStore } from "../store/use-files-store";
 import { useUIStore } from "../store/use-ui-store";
@@ -57,6 +58,7 @@ export function useHomeActions() {
   const setActivity = useUIStore((state) => state.setActivity);
 
   const {
+    t,
     l,
     pushActivity,
     totalTokens,
@@ -556,6 +558,21 @@ export function useHomeActions() {
     }));
   }, [setSettings]);
 
+  const manualSave = React.useCallback(
+    async () => {
+      if (anonymousMode) {
+        pushActivity(t.manualSaveSkipHistoryAnonymous);
+        return;
+      }
+
+      saveToHistory(true);
+      const nextHistory = useUIStore.getState().history;
+      await saveHistoryStorage(nextHistory);
+      pushActivity(t.manualSaveDoneHistoryOnly);
+    },
+    [anonymousMode, pushActivity, saveToHistory, t.manualSaveDoneHistoryOnly, t.manualSaveSkipHistoryAnonymous]
+  );
+
   return {
     onCopy,
     handleFiles,
@@ -597,5 +614,6 @@ export function useHomeActions() {
     copyHistoryFinal,
     setIgnoredDirectories,
     setExcludedExtensions,
+    manualSave,
   };
 }

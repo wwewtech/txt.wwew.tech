@@ -126,6 +126,12 @@ export const i18n = {
     sendKeyLabel: "Клавиша отправки",
     sendKeyEnter: "Enter — отправить, Shift+Enter — перенос",
     sendKeyShiftEnter: "Shift+Enter — отправить, Enter — перенос",
+    manualSaveChatNow: "Сохранить чат",
+    manualSaveDone: "Сохранено",
+    manualSaveDoneHistoryOnly: "Сохранена история",
+    manualSaveDonePrefsOnly: "Сохранены настройки",
+    manualSaveDoneBoth: "Сохранены история и настройки",
+    manualSaveSkipHistoryAnonymous: "История не сохранена в анонимном режиме",
   },
   en: {
     settings: "Settings",
@@ -243,6 +249,12 @@ export const i18n = {
     sendKeyLabel: "Send shortcut",
     sendKeyEnter: "Enter — send, Shift+Enter — newline",
     sendKeyShiftEnter: "Shift+Enter — send, Enter — newline",
+    manualSaveChatNow: "Save chat",
+    manualSaveDone: "Saved",
+    manualSaveDoneHistoryOnly: "History saved",
+    manualSaveDonePrefsOnly: "Settings saved",
+    manualSaveDoneBoth: "History and settings saved",
+    manualSaveSkipHistoryAnonymous: "History is not saved in anonymous mode",
   },
 } as const;
 

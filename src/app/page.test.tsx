@@ -425,6 +425,22 @@ describe("Home central panel UI/UX", () => {
     expect(screen.getByText(/No entries yet|Записей пока нет/)).toBeInTheDocument();
   });
 
+  it("saves current chat manually when autosave is off", async () => {
+    const user = userEvent.setup();
+    render(<Home />);
+
+    fireEvent.click(screen.getByRole("switch", { name: /Autosave|Автосейв/i }));
+
+    const composer = await screen.findByPlaceholderText("Type something…");
+    await user.type(composer, "Ручное сохранение");
+    fireEvent.click(screen.getByTitle("Send"));
+
+    fireEvent.click(screen.getByRole("button", { name: /Save chat|Сохранить чат/i }));
+    clickNewChat();
+
+    expect(await screen.findByRole("button", { name: /Ручное сохранение/i })).toBeInTheDocument();
+  });
+
   it("restores file context cards after reopening saved chat", async () => {
     render(<Home />);
 
