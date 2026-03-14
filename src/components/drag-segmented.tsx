@@ -11,7 +11,7 @@ type Option<T extends string> = {
 };
 
 type DragSegmentedProps<T extends string> = {
-  options: Option<T>[];
+  options: readonly Option<T>[];
   value: T;
   onValueChange: (value: T) => void;
   className?: string;

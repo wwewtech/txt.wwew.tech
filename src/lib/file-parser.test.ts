@@ -14,8 +14,8 @@ vi.mock("pdfjs-dist/legacy/build/pdf.mjs", () => ({
 
 vi.mock("mammoth", () => ({
   default: {
-    convertToHtml: vi.fn().mockResolvedValue({ value: "<p>DOCX CONTENT</p>" }),
-    extractRawText: vi.fn().mockResolvedValue({ value: "DOCX CONTENT" }),
+    convertToHtml: vi.fn().mockResolvedValue({ value: "<p>DOCX CONTENT</p>", messages: [] }),
+    extractRawText: vi.fn().mockResolvedValue({ value: "DOCX CONTENT", messages: [] }),
   },
 }));
 
@@ -35,13 +35,25 @@ const settings = {
   excludedExtensions: ["lock", "exe"],
 };
 
+function toBlobPart(bytes: number[]) {
+  return Uint8Array.from(bytes).buffer;
+}
+
+function toBlobPartFromUint8(data: Uint8Array<ArrayBufferLike>) {
+  return Uint8Array.from(data).buffer;
+}
+
+function mammothResult(value: string) {
+  return { value, messages: [] };
+}
+
 async function buildZip(entries: Array<{ path: string; content: string }>) {
   const zip = new JSZip();
   entries.forEach((entry) => {
     zip.file(entry.path, entry.content);
   });
   const data = await zip.generateAsync({ type: "uint8array" });
-  return new File([data], "bundle.zip", { type: "application/zip" });
+  return new File([toBlobPartFromUint8(data)], "bundle.zip", { type: "application/zip" });
 }
 
 function mockPdfPages(pages: Array<Array<Record<string, unknown>>>) {
@@ -65,8 +77,8 @@ describe("file-parser business logic", () => {
     pdfMocks.getTextContent.mockReset();
     vi.mocked(mammoth.convertToHtml).mockReset();
     vi.mocked(mammoth.extractRawText).mockReset();
-    vi.mocked(mammoth.convertToHtml).mockResolvedValue({ value: "<p>DOCX CONTENT</p>" });
-    vi.mocked(mammoth.extractRawText).mockResolvedValue({ value: "DOCX CONTENT" });
+    vi.mocked(mammoth.convertToHtml).mockResolvedValue(mammothResult("<p>DOCX CONTENT</p>"));
+    vi.mocked(mammoth.extractRawText).mockResolvedValue(mammothResult("DOCX CONTENT"));
   });
 
   it("estimateTokens returns at least 1", () => {
@@ -185,7 +197,7 @@ describe("file-parser business logic", () => {
   });
 
   it("returns unsupported format for unknown binary", async () => {
-    const file = new File([new Uint8Array([1, 2, 3])], "bin.data", {
+    const file = new File([toBlobPart([1, 2, 3])], "bin.data", {
       type: "application/octet-stream",
     });
     const result = await parseFileWithPath(file, "bin.data", settings);
@@ -195,7 +207,7 @@ describe("file-parser business logic", () => {
   });
 
   it("parses docx via mammoth extractor", async () => {
-    const file = new File([new Uint8Array([1, 2, 3])], "doc.docx", {
+    const file = new File([toBlobPart([1, 2, 3])], "doc.docx", {
       type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     });
     const result = await parseFileWithPath(file, "docs/doc.docx", settings);
@@ -206,11 +218,9 @@ describe("file-parser business logic", () => {
   });
 
   it("converts docx html output into markdown", async () => {
-    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce({
-      value: "<h1>Title</h1><p>Body</p><ul><li>First</li><li>Second</li></ul>",
-    });
+    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce(mammothResult("<h1>Title</h1><p>Body</p><ul><li>First</li><li>Second</li></ul>"));
 
-    const file = new File([new Uint8Array([1, 2, 3])], "rich.docx", {
+    const file = new File([toBlobPart([1, 2, 3])], "rich.docx", {
       type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     });
     const result = await parseFileWithPath(file, "docs/rich.docx", settings);
@@ -223,10 +233,10 @@ describe("file-parser business logic", () => {
   });
 
   it("falls back to mammoth raw text when docx html output is empty", async () => {
-    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce({ value: "" });
-    vi.mocked(mammoth.extractRawText).mockResolvedValueOnce({ value: "RAW DOCX CONTENT" });
+    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce(mammothResult(""));
+    vi.mocked(mammoth.extractRawText).mockResolvedValueOnce(mammothResult("RAW DOCX CONTENT"));
 
-    const file = new File([new Uint8Array([1, 2, 3])], "fallback.docx", {
+    const file = new File([toBlobPart([1, 2, 3])], "fallback.docx", {
       type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     });
     const result = await parseFileWithPath(file, "docs/fallback.docx", settings);
@@ -237,10 +247,10 @@ describe("file-parser business logic", () => {
   });
 
   it("keeps a valid llm block for an empty docx result", async () => {
-    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce({ value: "" });
-    vi.mocked(mammoth.extractRawText).mockResolvedValueOnce({ value: "" });
+    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce(mammothResult(""));
+    vi.mocked(mammoth.extractRawText).mockResolvedValueOnce(mammothResult(""));
 
-    const file = new File([new Uint8Array([1, 2, 3])], "empty.docx", {
+    const file = new File([toBlobPart([1, 2, 3])], "empty.docx", {
       type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     });
     const result = await parseFileWithPath(file, "docs/empty.docx", settings);
@@ -280,7 +290,7 @@ describe("file-parser business logic", () => {
       }),
     });
 
-    const file = new File([new Uint8Array([37, 80, 68, 70])], "layout.pdf", {
+    const file = new File([toBlobPart([37, 80, 68, 70])], "layout.pdf", {
       type: "application/pdf",
     });
     const result = await parseFileWithPath(file, "docs/layout.pdf", settings);
@@ -311,7 +321,7 @@ describe("file-parser business logic", () => {
       ],
     ]);
 
-    const file = new File([new Uint8Array([37, 80, 68, 70])], "paragraphs.pdf", {
+    const file = new File([toBlobPart([37, 80, 68, 70])], "paragraphs.pdf", {
       type: "application/pdf",
     });
     const result = await parseFileWithPath(file, "docs/paragraphs.pdf", settings);
@@ -333,7 +343,7 @@ describe("file-parser business logic", () => {
       ],
     ]);
 
-    const file = new File([new Uint8Array([37, 80, 68, 70])], "punctuation.pdf", {
+    const file = new File([toBlobPart([37, 80, 68, 70])], "punctuation.pdf", {
       type: "application/pdf",
     });
     const result = await parseFileWithPath(file, "docs/punctuation.pdf", settings);
@@ -358,7 +368,7 @@ describe("file-parser business logic", () => {
       ],
     ]);
 
-    const file = new File([new Uint8Array([37, 80, 68, 70])], "pages.pdf", {
+    const file = new File([toBlobPart([37, 80, 68, 70])], "pages.pdf", {
       type: "application/pdf",
     });
     const result = await parseFileWithPath(file, "docs/pages.pdf", settings);
@@ -382,7 +392,7 @@ describe("file-parser business logic", () => {
       ],
     ]);
 
-    const file = new File([new Uint8Array([37, 80, 68, 70])], "list.pdf", {
+    const file = new File([toBlobPart([37, 80, 68, 70])], "list.pdf", {
       type: "application/pdf",
     });
     const result = await parseFileWithPath(file, "docs/list.pdf", settings);
@@ -404,7 +414,7 @@ describe("file-parser business logic", () => {
     const zip = new JSZip();
     zip.file("docs/report.pdf", new Uint8Array([37, 80, 68, 70]));
     const data = await zip.generateAsync({ type: "uint8array" });
-    const file = new File([data], "pdf-bundle.zip", { type: "application/zip" });
+    const file = new File([toBlobPartFromUint8(data)], "pdf-bundle.zip", { type: "application/zip" });
 
     const result = await parseFileWithPath(file, "pdf-bundle.zip", settings);
 
@@ -421,16 +431,14 @@ describe("file-parser business logic", () => {
         { str: "section", transform: [1, 0, 0, 1, 42, 700], height: 12, width: 44 },
       ],
     ]);
-    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce({
-      value: "<h2>Docx title</h2><p>Docx body</p>",
-    });
+    vi.mocked(mammoth.convertToHtml).mockResolvedValueOnce(mammothResult("<h2>Docx title</h2><p>Docx body</p>"));
 
     const zip = new JSZip();
     zip.file("notes/readme.txt", "hello zip");
     zip.file("docs/guide.docx", new Uint8Array([1, 2, 3]));
     zip.file("docs/source.pdf", new Uint8Array([37, 80, 68, 70]));
     const data = await zip.generateAsync({ type: "uint8array" });
-    const file = new File([data], "mixed-assets.zip", { type: "application/zip" });
+    const file = new File([toBlobPartFromUint8(data)], "mixed-assets.zip", { type: "application/zip" });
 
     const result = await parseFileWithPath(file, "mixed-assets.zip", settings);
 
@@ -450,7 +458,7 @@ describe("file-parser business logic", () => {
     zip.file("docs/broken.docx", new Uint8Array([1, 2, 3]));
     zip.file("notes/ok.txt", "still here");
     const data = await zip.generateAsync({ type: "uint8array" });
-    const file = new File([data], "broken-docx.zip", { type: "application/zip" });
+    const file = new File([toBlobPartFromUint8(data)], "broken-docx.zip", { type: "application/zip" });
 
     const result = await parseFileWithPath(file, "broken-docx.zip", settings);
 
@@ -476,7 +484,7 @@ describe("file-parser business logic", () => {
       ],
     ]);
 
-    const file = new File([new Uint8Array([37, 80, 68, 70])], "threshold.pdf", {
+    const file = new File([toBlobPart([37, 80, 68, 70])], "threshold.pdf", {
       type: "application/pdf",
     });
     const result = await parseFileWithPath(file, "docs/threshold.pdf", settings);
@@ -487,7 +495,7 @@ describe("file-parser business logic", () => {
   });
 
   it("parses DOCX extension case-insensitively", async () => {
-    const file = new File([new Uint8Array([1, 2])], "Caps.DOCX", {
+    const file = new File([toBlobPart([1, 2])], "Caps.DOCX", {
       type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     });
     const result = await parseFileWithPath(file, "docs/Caps.DOCX", settings);
@@ -512,7 +520,7 @@ describe("file-parser business logic", () => {
     zip.file("src/main.ts", "console.log('ok');");
     zip.file("src/readme.lock", "filtered");
     const data = await zip.generateAsync({ type: "uint8array" });
-    const file = new File([data], "bundle.zip", { type: "application/zip" });
+    const file = new File([toBlobPartFromUint8(data)], "bundle.zip", { type: "application/zip" });
 
     const result = await parseFileWithPath(file, "bundle.zip", settings);
 
@@ -556,7 +564,7 @@ describe("file-parser business logic", () => {
     zip.file("src/main.ts", "const ok = true");
     zip.file("assets/image.bin", new Uint8Array([1, 2, 3]));
     const data = await zip.generateAsync({ type: "uint8array" });
-    const file = new File([data], "mix.zip", { type: "application/zip" });
+    const file = new File([toBlobPartFromUint8(data)], "mix.zip", { type: "application/zip" });
 
     const result = await parseFileWithPath(file, "mix.zip", settings);
 
@@ -568,7 +576,7 @@ describe("file-parser business logic", () => {
   it("returns archive with token estimate 1 for empty zip", async () => {
     const zip = new JSZip();
     const data = await zip.generateAsync({ type: "uint8array" });
-    const file = new File([data], "empty.zip", { type: "application/zip" });
+    const file = new File([toBlobPartFromUint8(data)], "empty.zip", { type: "application/zip" });
 
     const result = await parseFileWithPath(file, "empty.zip", settings);
 
@@ -788,3 +796,4 @@ describe("file-parser business logic", () => {
     expect(output).not.toContain("\n\n\n\n\n");
   });
 });
+

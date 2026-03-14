@@ -7,7 +7,7 @@ import { HomeEditDialog } from "./home-edit-dialog";
 import { HomeLeftSidebar } from "./home-left-sidebar";
 import { HomeMainPanel } from "./home-main-panel";
 import { HomePreviewModal } from "./home-preview-modal";
-import { HomeRightSidebar } from "./home-right-sidebar";
+import { HomeRightSidebar } from "@/features/home/ui/home-right-sidebar";
 import { useHomeActions } from "../hooks/use-home-actions";
 import { useHomeRuntimeEffects } from "../hooks/use-home-runtime-effects";
 import { useHomeUiSelectors } from "../hooks/use-home-ui-selectors";

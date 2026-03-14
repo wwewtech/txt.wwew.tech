@@ -2,7 +2,7 @@
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib", async (importOriginal) => {
+vi.mock("@/lib", async (importOriginal: () => Promise<typeof import("@/lib")>) => {
   const actual = await importOriginal();
   return {
     ...actual,
@@ -28,6 +28,11 @@ async function waitForSidebar() {
   await screen.findByText(/^системные команды$|^system commands$/i);
 }
 
+function must<T>(value: T | null | undefined, message: string): T {
+  if (value == null) throw new Error(message);
+  return value;
+}
+
 function clickAddButton() {
   const addBtn = Array.from(document.querySelectorAll("button")).find(
     (b) => /^новая$|^new$/i.test(b.title?.trim() ?? "")
@@ -36,7 +41,7 @@ function clickAddButton() {
   fireEvent.click(addBtn);
 }
 
-async function addCommand(text) {
+async function addCommand(text: string) {
   clickAddButton();
   const textarea = await waitFor(() => {
     const el = Array.from(document.querySelectorAll("textarea")).find(
@@ -104,7 +109,7 @@ describe("System commands panel", () => {
       (b) => /^сохранить$|^save$/i.test(b.textContent?.trim() ?? "")
     );
     expect(saveBtn).toBeDefined();
-    expect(saveBtn.disabled).toBe(true);
+    expect(must(saveBtn, "Save button not found").disabled).toBe(true);
   });
 
   it("closes add-form on Cancel without adding a command", async () => {
@@ -122,7 +127,7 @@ describe("System commands panel", () => {
       (b) => /^отмена$|^cancel$/i.test(b.textContent?.trim() ?? "")
     );
     expect(cancelBtn).toBeDefined();
-    fireEvent.click(cancelBtn);
+    fireEvent.click(must(cancelBtn, "Cancel button not found"));
     await waitFor(() => {
       const el = Array.from(document.querySelectorAll("textarea")).find(
         (ta) => /команду|command/i.test(ta.placeholder)
@@ -171,7 +176,7 @@ describe("System commands panel", () => {
       (b) => /^изменить$|^edit$/i.test(b.title?.trim() ?? "")
     );
     expect(editBtn).toBeDefined();
-    fireEvent.click(editBtn);
+    fireEvent.click(must(editBtn, "Edit button not found"));
     const editTA = Array.from(document.querySelectorAll("textarea")).find(
       (t) => !t.placeholder
     );
@@ -186,15 +191,15 @@ describe("System commands panel", () => {
     const editBtn = Array.from(document.querySelectorAll("button")).find(
       (b) => /^изменить$|^edit$/i.test(b.title?.trim() ?? "")
     );
-    fireEvent.click(editBtn);
+    fireEvent.click(must(editBtn, "Edit button not found"));
     const editTA = Array.from(document.querySelectorAll("textarea")).find(
       (t) => !t.placeholder
     );
-    fireEvent.change(editTA, { target: { value: "After edit" } });
+    fireEvent.change(must(editTA, "Edit textarea not found"), { target: { value: "After edit" } });
     const saveBtn = Array.from(document.querySelectorAll("button")).find(
       (b) => /^сохранить$|^save$/i.test(b.textContent?.trim() ?? "")
     );
-    fireEvent.click(saveBtn);
+    fireEvent.click(must(saveBtn, "Save button not found"));
     expect(await screen.findByText("After edit")).toBeInTheDocument();
     expect(screen.queryByText("Before edit")).not.toBeInTheDocument();
   });
@@ -206,15 +211,15 @@ describe("System commands panel", () => {
     const editBtn = Array.from(document.querySelectorAll("button")).find(
       (b) => /^изменить$|^edit$/i.test(b.title?.trim() ?? "")
     );
-    fireEvent.click(editBtn);
+    fireEvent.click(must(editBtn, "Edit button not found"));
     const editTA = Array.from(document.querySelectorAll("textarea")).find(
       (t) => !t.placeholder
     );
-    fireEvent.change(editTA, { target: { value: "Discarded change" } });
+    fireEvent.change(must(editTA, "Edit textarea not found"), { target: { value: "Discarded change" } });
     const cancelBtn = Array.from(document.querySelectorAll("button")).find(
       (b) => /^отмена$|^cancel$/i.test(b.textContent?.trim() ?? "")
     );
-    fireEvent.click(cancelBtn);
+    fireEvent.click(must(cancelBtn, "Cancel button not found"));
     expect(await screen.findByText("Stable text")).toBeInTheDocument();
     expect(screen.queryByText("Discarded change")).not.toBeInTheDocument();
   });
@@ -227,7 +232,7 @@ describe("System commands panel", () => {
       (b) => /^удалить$|^delete$/i.test(b.title?.trim() ?? "")
     );
     expect(deleteBtn).toBeDefined();
-    fireEvent.click(deleteBtn);
+    fireEvent.click(must(deleteBtn, "Delete button not found"));
     await waitFor(() =>
       expect(screen.queryByText("Command to delete")).not.toBeInTheDocument()
     );
@@ -244,7 +249,7 @@ describe("System commands panel", () => {
     await waitFor(() => {
       const raw = window.localStorage.getItem(UI_PREFS_KEY);
       expect(raw).not.toBeNull();
-      const prefs = JSON.parse(raw);
+      const prefs = JSON.parse(must(raw, "UI prefs not found in localStorage"));
       expect(prefs.systemCommands).toEqual(["Persistent cmd"]);
     });
   });
