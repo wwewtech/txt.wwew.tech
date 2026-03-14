@@ -16,6 +16,9 @@ type DragSegmentedProps<T extends string> = {
   onValueChange: (value: T) => void;
   className?: string;
   buttonClassName?: string;
+  activeButtonClassName?: string;
+  indicatorClassName?: string;
+  trackClassName?: string;
 };
 
 export function DragSegmented<T extends string>({
@@ -24,6 +27,9 @@ export function DragSegmented<T extends string>({
   onValueChange,
   className,
   buttonClassName,
+  activeButtonClassName,
+  indicatorClassName,
+  trackClassName,
 }: DragSegmentedProps<T>) {
   const trackRef = React.useRef<HTMLDivElement | null>(null);
   const pointerIdRef = React.useRef<number | null>(null);
@@ -79,7 +85,7 @@ export function DragSegmented<T extends string>({
     <div className={cn("inline-flex rounded-xl border border-border/70 bg-muted/20 p-1", className)}>
       <div
         ref={trackRef}
-        className="relative inline-grid touch-none select-none"
+        className={cn("relative inline-grid touch-none select-none", trackClassName)}
         style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
         onPointerDown={(event) => {
           pointerIdRef.current = event.pointerId;
@@ -121,7 +127,8 @@ export function DragSegmented<T extends string>({
         <div
           className={cn(
             "pointer-events-none absolute inset-y-0 left-0 rounded-lg bg-primary",
-            dragging ? "transition-none" : "transition-transform duration-200 ease-out"
+            dragging ? "transition-none" : "transition-transform duration-200 ease-out",
+            indicatorClassName
           )}
           style={{
             width: `${100 / options.length}%`,
@@ -146,7 +153,7 @@ export function DragSegmented<T extends string>({
               }}
               className={cn(
                 "relative z-10 inline-flex h-7 items-center justify-center rounded-lg px-2 text-muted-foreground transition-colors",
-                active && "text-primary-foreground",
+                active && (activeButtonClassName ?? "text-primary-foreground"),
                 buttonClassName
               )}
             >
