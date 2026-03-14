@@ -276,7 +276,7 @@ export function HomeLeftSidebar({
                 options={themeOptions}
                 className="rounded-md border-0 bg-background/60 p-0.5"
                 trackClassName="gap-0"
-                buttonClassName="h-6 w-7 rounded-sm px-0 text-muted-foreground"
+                buttonClassName="h-6 w-7 rounded-sm px-0 text-muted-foreground transition-colors hover:text-foreground"
                 activeButtonClassName="text-white"
                 indicatorClassName="bg-neutral-900"
               />
@@ -290,7 +290,7 @@ export function HomeLeftSidebar({
                 options={languageOptions}
                 className="rounded-md border-0 bg-background/60 p-0.5"
                 trackClassName="gap-0"
-                buttonClassName="h-6 rounded-sm px-2 text-muted-foreground"
+                buttonClassName="h-6 rounded-sm px-2 text-muted-foreground transition-colors hover:text-foreground"
                 activeButtonClassName="text-white"
                 indicatorClassName="bg-neutral-900"
               />
