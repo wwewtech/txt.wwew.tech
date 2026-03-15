@@ -18,10 +18,14 @@ export type HistoryItem = {
   chatMessages: ChatMessage[];
 };
 
+export type ActivityStatus = "success" | "error" | "warning" | "pending" | "info";
+
 export type ActivityItem = {
   id: string;
   label: string;
   at: string;
+  status?: ActivityStatus;
+  error?: string;
 };
 
 export type ContextGroup = {

@@ -9,7 +9,7 @@ import rehypeKatex from "rehype-katex";
 import { createId, estimateTokens, type ParsedItem } from "@/lib";
 import { i18n } from "../model/page-constants";
 import { buildContextGroups, buildTimelineEntries } from "../model/home-logic";
-import type { ActivityItem, ChatMessage, Language, SortMode } from "../model/page-types";
+import type { ActivityItem, ActivityStatus, ChatMessage, Language, SortMode } from "../model/page-types";
 import { markdownComponents } from "../ui/markdown-components";
 import { useUIStore } from "../store/use-ui-store";
 
@@ -130,8 +130,17 @@ export function useHomeUiSelectors({
     return `${(value / (1024 * 1024)).toFixed(1)} MB`;
   }, []);
 
-  const pushActivity = React.useCallback((label: string) => {
-    setActivity((prev) => [{ id: createId(), label, at: new Date().toISOString() }, ...prev].slice(0, 12));
+  type PushActivityInput =
+    | string
+    | { label: string; status?: ActivityStatus; error?: string };
+
+  const pushActivity = React.useCallback((input: PushActivityInput) => {
+    const { label, status = "success", error } =
+      typeof input === "string" ? { label: input, status: "success", error: undefined } : input;
+
+    setActivity((prev) =>
+      [{ id: createId(), label, at: new Date().toISOString(), status, error }, ...prev].slice(0, 12)
+    );
   }, [setActivity]);
 
   const renderMessageBody = React.useCallback(

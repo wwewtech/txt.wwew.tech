@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
+import { act, render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -919,6 +919,44 @@ describe("Home central panel UI/UX", () => {
 
     expect(await screen.findByText(/Ошибки парсинга:\s*1|Parse failed:\s*1/i)).toBeInTheDocument();
     expect(await screen.findByText(/Добавлено в workspace:\s*0|Added to workspace:\s*0/i)).toBeInTheDocument();
+
+    // Expand activity panel and assert error row renders status + error details
+    fireEvent.click(await screen.findByRole("button", { name: /Activity|Активность/i }));
+    const errorRow = (await screen.findByText(/Parse failed: 1/i)).closest("div[class*='grid-cols']");
+    expect(errorRow).toBeTruthy();
+    expect(within(errorRow as HTMLElement).getByText(/Error|Ошибка/i)).toBeInTheDocument();
+    expect(within(errorRow as HTMLElement).getByText(/PDF worker unavailable/i)).toBeInTheDocument();
+  });
+
+  it("[extra 29.5] activity log displays all status types", async () => {
+    act(() => {
+      useUIStore.getState().setLanguage("en");
+      useUIStore.getState().setActivity([
+        { id: "a1", label: "Pending action", at: "2026-01-01T00:00:00.000Z", status: "pending" },
+        { id: "a2", label: "Warning action", at: "2026-01-01T00:00:01.000Z", status: "warning" },
+        { id: "a3", label: "Success action", at: "2026-01-01T00:00:02.000Z", status: "success" },
+        { id: "a4", label: "Error action", at: "2026-01-01T00:00:03.000Z", status: "error", error: "some problem" },
+      ]);
+    });
+
+    render(<Home />);
+
+    // Open activity panel
+    fireEvent.click(await screen.findByRole("button", { name: /Activity|Активность/i }));
+
+    const assertRow = (label: string, status: RegExp, errorText?: RegExp) => {
+      const row = screen.getByText(label).closest("div[class*='grid-cols']");
+      expect(row).toBeTruthy();
+      expect(within(row as HTMLElement).getByText(status)).toBeInTheDocument();
+      if (errorText) {
+        expect(within(row as HTMLElement).getByText(errorText)).toBeInTheDocument();
+      }
+    };
+
+    assertRow("Pending action", /Pending/i);
+    assertRow("Warning action", /Warning/i);
+    assertRow("Success action", /Success/i);
+    assertRow("Error action", /Error/i, /some problem/i);
   });
 
   it("[extra 29.2] partial upload keeps successful items and reports failed ones", async () => {

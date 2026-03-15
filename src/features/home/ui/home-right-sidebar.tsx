@@ -4,10 +4,12 @@ import * as React from "react";
 import {
   ArrowRight,
   CheckCheck,
+  CheckCircle,
   ChevronDown,
   ExternalLink,
   Grid3X3,
   ChevronsUpDown,
+  Info,
   ListFilter,
   Loader2,
   Monitor,
@@ -16,6 +18,7 @@ import {
   Plus,
   Search,
   Trash2,
+  XCircle,
 } from "lucide-react";
 import * as Slider from "@radix-ui/react-slider";
 
@@ -724,20 +727,65 @@ export function HomeRightSidebar({
                 {t.source} <ExternalLink className="h-3 w-3" />
               </a>
             </div>
-            <div className="space-y-1">
-              {activity.length === 0 && (
-                <p className="rounded-md border border-dashed border-border/60 px-2 py-1.5 text-muted-foreground">
-                  {t.noActions}
-                </p>
-              )}
-              {activity.map((item) => (
-                <div key={item.id} className="rounded-md border border-border/60 bg-background/80 px-2 py-1.5">
-                  <p>{item.label}</p>
-                  <p className="mt-0.5 text-[9px] text-muted-foreground">
-                    {new Date(item.at).toLocaleTimeString()}
-                  </p>
-                </div>
-              ))}
+            <div className="overflow-hidden rounded-md border border-border/60 bg-background/80">
+              <div className="grid grid-cols-[3fr_1fr_1.25fr_2fr] gap-2 border-b border-border/60 bg-muted/30 px-2 py-1 text-[10px] font-semibold text-muted-foreground">
+                <div>{t.activityMessage}</div>
+                <div className="text-center">{t.activityStatus}</div>
+                <div className="text-center">{t.activityTime}</div>
+                <div className="text-center">{t.activityError}</div>
+              </div>
+              <div className="max-h-52 overflow-y-auto">
+                {activity.length === 0 ? (
+                  <div className="px-2 py-2 text-[10px] text-muted-foreground">{t.noActions}</div>
+                ) : (
+                  activity.map((item) => {
+                    const time = new Date(item.at).toLocaleString(undefined, {
+                      year: "2-digit",
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
+                    const status = item.status ?? "success";
+
+                    const statusIcon =
+                      status === "success" ? (
+                        <CheckCircle className="h-3.5 w-3.5 text-emerald-500" />
+                      ) : status === "error" ? (
+                        <XCircle className="h-3.5 w-3.5 text-rose-500" />
+                      ) : status === "warning" ? (
+                        <Info className="h-3.5 w-3.5 text-amber-500" />
+                      ) : status === "pending" ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin text-sky-500" />
+                      ) : (
+                        <Info className="h-3.5 w-3.5 text-sky-500" />
+                      );
+
+                    const statusLabel =
+                      status === "success"
+                        ? t.activityStatusSuccess
+                        : status === "error"
+                        ? t.activityStatusError
+                        : status === "warning"
+                        ? t.activityStatusWarning
+                        : status === "pending"
+                        ? t.activityStatusPending
+                        : t.activityStatusInfo;
+
+                    return (
+                      <div key={item.id} className="grid grid-cols-[3fr_1fr_1.25fr_2fr] gap-2 px-2 py-2 text-[10px] odd:bg-muted/10">
+                        <div className="break-words">{item.label}</div>
+                        <div className="flex items-center justify-center gap-1 text-[10px] font-medium text-muted-foreground">
+                          {statusIcon}
+                          <span className="capitalize">{statusLabel}</span>
+                        </div>
+                        <div className="text-center text-muted-foreground">{time}</div>
+                        <div className="text-right text-muted-foreground">{item.error ?? "—"}</div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
           </div>
         </details>

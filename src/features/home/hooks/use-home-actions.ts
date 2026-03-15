@@ -170,12 +170,14 @@ export function useHomeActions() {
             .slice(0, 3)
             .map((item) => `${item.name}: ${item.error}`)
             .join("; ");
-          pushActivity(
-            l(
+          pushActivity({
+            label: l(
               `Ошибки парсинга: ${failed.length}${preview ? ` (${preview})` : ""}`,
               `Parse failed: ${failed.length}${preview ? ` (${preview})` : ""}`
-            )
-          );
+            ),
+            status: "error",
+            error: preview || undefined,
+          });
         }
       } finally {
         setIsParsing(false);
