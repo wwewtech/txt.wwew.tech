@@ -216,18 +216,6 @@ export function HomeMainPanel({
               <button type="button" onClick={handleManualSave} className="sr-only">
                 {t.manualSaveChatNow}
               </button>
-              <button
-                type="button"
-                onClick={onToggleMarkdown}
-                aria-label={markdownEnabled ? t.markdownOn : t.markdownOFF}
-                title={markdownEnabled ? t.markdownOn : t.markdownOFF}
-                className={cn(
-                  "inline-flex h-8 w-8 items-center justify-center rounded-md border border-border/70 bg-background hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary/60",
-                  markdownEnabled && "border-primary/60 bg-primary/10"
-                )}
-              >
-                <Code2 className="h-4 w-4" />
-              </button>
 
               <div className="relative">
                 <button

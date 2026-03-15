@@ -22,6 +22,7 @@ vi.mock("@/lib", async (importOriginal) => {
 
 import Home from "@/app/page";
 import { parseFileWithPath, type ParsedItem } from "@/lib";
+import { resetUIStore } from "@/features/home/store/use-ui-store";
 
 function makeParsedItem(path: string, overrides: Partial<ParsedItem> = {}): ParsedItem {
   return {
@@ -65,6 +66,7 @@ function clickNewChat() {
 describe("Home central panel UI/UX", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    resetUIStore();
     vi.clearAllMocks();
     parseFileWithPathMock.mockImplementation(async (_file: File, path: string) => makeParsedItem(path));
   });
@@ -73,17 +75,18 @@ describe("Home central panel UI/UX", () => {
     render(<Home />);
 
     expect(await screen.findByPlaceholderText("Type something…")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Markdown ON|Markdown ВКЛ/i })).toBeInTheDocument();
     expect(screen.getByTitle(/Download \.txt|Скачать \.txt/i)).toBeInTheDocument();
   });
 
   it("switches markdown toggle to raw mode", async () => {
     render(<Home />);
 
-    const toggle = await screen.findByRole("button", { name: /Markdown ON|Markdown ВКЛ/i });
-    fireEvent.click(toggle);
+    expect(useUIStore.getState().markdownEnabled).toBe(true);
 
-    expect(screen.getByRole("button", { name: /Markdown OFF|Markdown ВЫКЛ/i })).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole("button", { name: /Actions|Действия/i }));
+    fireEvent.click(await screen.findByRole("button", { name: /Markdown ON|Markdown ВКЛ/i }));
+
+    expect(useUIStore.getState().markdownEnabled).toBe(false);
   });
 
   it("sends prompt and appends user bubble", async () => {
@@ -502,7 +505,10 @@ describe("Home central panel UI/UX", () => {
     const user = userEvent.setup();
     render(<Home />);
 
-    fireEvent.click(await screen.findByRole("button", { name: /Markdown ON|Raw/i }));
+    const actionsButton = await screen.findByRole("button", { name: /Actions|Действия/i });
+    fireEvent.click(actionsButton);
+    fireEvent.click(await screen.findByRole("button", { name: /Markdown ON|Markdown ВКЛ/i }));
+
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "| a | b |\n| - | - |\n| 1 | 2 |");
     fireEvent.click(screen.getByTitle("Send"));
@@ -874,11 +880,17 @@ describe("Home central panel UI/UX", () => {
   it("[extra 28] markdown toggle can be switched back and forth", async () => {
     render(<Home />);
 
-    const toggle = await screen.findByRole("button", { name: /Markdown ON|Markdown ВКЛ/i });
-    fireEvent.click(toggle);
-    expect(screen.getByRole("button", { name: /Markdown OFF|Markdown ВЫКЛ/i })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /Markdown OFF|Markdown ВЫКЛ/i }));
-    expect(screen.getByRole("button", { name: /Markdown ON|Markdown ВКЛ/i })).toBeInTheDocument();
+    expect(useUIStore.getState().markdownEnabled).toBe(true);
+
+    fireEvent.click(await screen.findByRole("button", { name: /Actions|Действия/i }));
+    fireEvent.click(await screen.findByRole("button", { name: /Markdown ON|Markdown ВКЛ/i }));
+
+    expect(useUIStore.getState().markdownEnabled).toBe(false);
+
+    fireEvent.click(await screen.findByRole("button", { name: /Actions|Действия/i }));
+    fireEvent.click(await screen.findByRole("button", { name: /Markdown OFF|Markdown ВЫКЛ/i }));
+
+    expect(useUIStore.getState().markdownEnabled).toBe(true);
   });
 
   it("[extra 29] activity log records file upload", async () => {
