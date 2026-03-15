@@ -215,7 +215,6 @@ export default function Home() {
           onSetExcludedExtensions={actions.setExcludedExtensions}
           onSetIncludePromptInResult={setIncludePromptInResult}
           onSetShowSkippedFiles={setShowSkippedFiles}
-          onManualSave={actions.manualSave}
           onBytesToText={bytesToText}
           uiScale={uiScale}
           compactMode={compactMode}
@@ -316,6 +315,10 @@ export default function Home() {
           onPromptChange={setPrompt}
           onSendPrompt={actions.sendPrompt}
           onExportTxt={actions.exportTxt}
+          onManualSave={actions.manualSave}
+          onSelectHistory={actions.selectHistory}
+          history={history}
+          currentChatId={currentChatId}
           scrollOnSend={scrollOnSend}
           sendKey={sendKey}
         />
@@ -374,7 +377,6 @@ export default function Home() {
               onSetExcludedExtensions={actions.setExcludedExtensions}
               onSetIncludePromptInResult={setIncludePromptInResult}
               onSetShowSkippedFiles={setShowSkippedFiles}
-              onManualSave={actions.manualSave}
               onBytesToText={bytesToText}
               uiScale={uiScale}
               compactMode={compactMode}

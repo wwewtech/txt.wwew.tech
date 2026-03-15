@@ -184,7 +184,9 @@ export function HomeLeftSidebar({
                   className="min-w-0 flex-1 text-left"
                 >
                   <p className="truncate text-[13px] font-medium text-foreground">{entry.title}</p>
-                  <p className="text-[11px] text-muted-foreground">{entry.tokenEstimate} {t.tokenSuffix}</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {entry.tokenEstimate} {t.tokenSuffix} · {new Date(entry.updatedAt).toLocaleTimeString()}
+                  </p>
                 </button>
 
                 <div className="flex items-center gap-1">

@@ -73,7 +73,6 @@ type HomeRightSidebarProps = {
   onSetExcludedExtensions: (value: string) => void;
   onSetIncludePromptInResult: (value: boolean) => void;
   onSetShowSkippedFiles: (value: boolean) => void;
-  onManualSave: () => Promise<void>;
   onBytesToText: (value: number) => string;
   onSetUiScale?: (value: number) => void;
   onSetCompactMode?: (value: boolean) => void;
@@ -134,7 +133,6 @@ export function HomeRightSidebar({
   onSetExcludedExtensions,
   onSetIncludePromptInResult,
   onSetShowSkippedFiles,
-  onManualSave,
   onBytesToText,
   onSetUiScale,
   onSetCompactMode,
@@ -150,7 +148,6 @@ export function HomeRightSidebar({
   const [draftCompactMode, setDraftCompactMode] = React.useState(compactMode);
   const [draftFontSizeOffset, setDraftFontSizeOffset] = React.useState(fontSizeOffset);
   const [draftFontSizeScope, setDraftFontSizeScope] = React.useState<FontSizeScope>(fontSizeScope);
-  const [savingNow, setSavingNow] = React.useState(false);
 
   React.useEffect(() => {
     setDraftUiScale(uiScale);
@@ -510,23 +507,6 @@ export function HomeRightSidebar({
               </button>
             </div>
 
-            <div className="mt-2 rounded-md border border-border/60 bg-background/60 px-2 py-2">
-              <button
-                type="button"
-                disabled={savingNow}
-                onClick={async () => {
-                  setSavingNow(true);
-                  try {
-                    await onManualSave();
-                  } finally {
-                    setSavingNow(false);
-                  }
-                }}
-                className="inline-flex h-7 w-full items-center justify-center rounded-md border border-border/60 bg-background/80 px-2 text-[10px] hover:bg-muted disabled:opacity-40"
-              >
-                {savingNow ? t.processing : t.manualSaveChatNow}
-              </button>
-            </div>
           </div>
         </details>
 

@@ -11,17 +11,19 @@ import {
   Files,
   FolderOpen,
   Menu,
+  MoreVertical,
   PanelLeftOpen,
   PanelRightOpen,
   Paperclip,
   Pencil,
+  Save,
   Settings,
   Trash2,
 } from "lucide-react";
 
 import { cn, type ParsedItem } from "@/lib";
 import type { I18nDict } from "../model/page-constants";
-import type { ContextGroup, TimelineEntry } from "../model/page-types";
+import type { ContextGroup, HistoryItem, TimelineEntry } from "../model/page-types";
 
 type HomeMainPanelProps = {
   t: I18nDict;
@@ -30,6 +32,8 @@ type HomeMainPanelProps = {
   totalTokens: number;
   markdownEnabled: boolean;
   timelineEntries: TimelineEntry[];
+  history: HistoryItem[];
+  currentChatId: string | null;
   prompt: string;
   isParsing: boolean;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
@@ -58,6 +62,8 @@ type HomeMainPanelProps = {
   onPromptChange: (value: string) => void;
   onSendPrompt: () => void;
   onExportTxt: () => void;
+  onManualSave: () => Promise<void>;
+  onSelectHistory: (entry: HistoryItem) => void;
   scrollOnSend: boolean;
   sendKey: 'enter' | 'shift+enter';
 };
@@ -97,10 +103,49 @@ export function HomeMainPanel({
   onPromptChange,
   onSendPrompt,
   onExportTxt,
+  onManualSave,
+  onSelectHistory,
+  history,
+  currentChatId,
   scrollOnSend,
   sendKey,
 }: HomeMainPanelProps) {
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
+  const menuButtonRef = React.useRef<HTMLButtonElement | null>(null);
+  const menuRef = React.useRef<HTMLDivElement | null>(null);
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [lastSavedAt, setLastSavedAt] = React.useState<string | null>(null);
+
+  const currentHistoryEntry = React.useMemo(
+    () => history.find((entry) => entry.id === currentChatId),
+    [history, currentChatId]
+  );
+
+  React.useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (menuRef.current?.contains(target) || menuButtonRef.current?.contains(target)) {
+        return;
+      }
+      setMenuOpen(false);
+    };
+
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuOpen]);
+
+  const handleManualSave = React.useCallback(async () => {
+    setIsSaving(true);
+    try {
+      await onManualSave();
+      setLastSavedAt(new Date().toLocaleTimeString());
+    } finally {
+      setIsSaving(false);
+    }
+  }, [onManualSave]);
 
   const handleSend = React.useCallback(() => {
     onSendPrompt();
@@ -159,27 +204,122 @@ export function HomeMainPanel({
 
       <div className="mx-auto flex h-full w-full max-w-4xl flex-1 flex-col overflow-hidden px-3 py-3 md:px-6 md:py-6">
         <div className="mb-3 border-b border-border/40 px-1 pb-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold tracking-tight"></span>
-                <span className="rounded-full border border-border/70 px-2 py-0.5 text-[11px] text-muted-foreground">
-                  {totalTokens} {t.tokenSuffix}
-                </span>
-              </div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold tracking-tight">{t.builderTitle}</span>
+              <span className="rounded-full border border-border/70 bg-background px-2 py-0.5 text-[11px] text-muted-foreground">
+                {totalTokens} {t.tokenSuffix}
+              </span>
             </div>
-            <div className="flex items-center gap-1.5">
+
+            <div className="flex items-center gap-1">
+              <button type="button" onClick={handleManualSave} className="sr-only">
+                {t.manualSaveChatNow}
+              </button>
               <button
                 type="button"
                 onClick={onToggleMarkdown}
+                aria-label={markdownEnabled ? t.markdownOn : t.markdownOFF}
+                title={markdownEnabled ? t.markdownOn : t.markdownOFF}
                 className={cn(
-                  "inline-flex h-8 items-center gap-1 rounded-lg border px-2 text-xs",
-                  markdownEnabled ? "border-primary/40 bg-primary/10" : "border-border/70 bg-background"
+                  "inline-flex h-8 w-8 items-center justify-center rounded-md border border-border/70 bg-background hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary/60",
+                  markdownEnabled && "border-primary/60 bg-primary/10"
                 )}
               >
-                <Code2 className="h-3.5 w-3.5" />
-                {markdownEnabled ? t.markdownOn : t.markdownOFF}
+                <Code2 className="h-4 w-4" />
               </button>
+
+              <div className="relative">
+                <button
+                  ref={menuButtonRef}
+                  type="button"
+                  onClick={() => setMenuOpen((prev) => !prev)}
+                  className={cn(
+                    "inline-flex h-8 w-8 items-center justify-center rounded-md border border-border/70 bg-background hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary/60",
+                    menuOpen && "border-primary/60 bg-primary/10"
+                  )}
+                  title={t.actions}
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </button>
+
+                {menuOpen && (
+                  <div
+                    ref={menuRef}
+                    className="absolute right-0 top-full z-50 mt-2 w-64 rounded-lg border border-border/70 bg-background shadow-lg"
+                  >
+                    <div className="border-b border-border/50 px-3 py-2 text-xs font-semibold text-muted-foreground">
+                      {t.actions}
+                    </div>
+                    <div className="flex flex-col gap-px">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleManualSave();
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[11px] hover:bg-muted"
+                      >
+                        <Save className="h-4 w-4" />
+                        <span>{t.save}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onToggleMarkdown();
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[11px] hover:bg-muted"
+                      >
+                        <Code2 className="h-4 w-4" />
+                        <span>{markdownEnabled ? t.markdownOn : t.markdownOFF}</span>
+                      </button>
+                      <div className="border-t border-border/50" />
+                      <div className="px-3 py-1 text-[10px] font-semibold text-muted-foreground">
+                        {t.history}
+                      </div>
+                      {history.length === 0 ? (
+                        <div className="px-3 py-2 text-[11px] text-muted-foreground">{t.noEntries}</div>
+                      ) : (
+                        history.slice(0, 5).map((entry) => (
+                          <button
+                            key={entry.id}
+                            type="button"
+                            onClick={() => {
+                              onSelectHistory(entry);
+                              setMenuOpen(false);
+                            }}
+                            className="flex w-full items-center justify-between gap-2 border-t border-border/50 px-3 py-2 text-left text-[11px] hover:bg-muted"
+                          >
+                            <span className="truncate font-medium text-foreground">{entry.title}</span>
+                            <span className="shrink-0 text-[10px] text-muted-foreground">
+                              {new Date(entry.updatedAt).toLocaleTimeString()}
+                            </span>
+                          </button>
+                        ))
+                      )}
+                      <div className="border-t border-border/50" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onExpandLeft();
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[11px] hover:bg-muted"
+                      >
+                        <Archive className="h-4 w-4" />
+                        <span>{t.history}</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                {lastSavedAt && (
+                  <span className="text-[10px] text-muted-foreground">{t.savedAt}: {lastSavedAt}</span>
+                )}
+              </div>
             </div>
           </div>
         </div>

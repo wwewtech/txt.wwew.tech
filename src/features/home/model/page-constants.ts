@@ -132,6 +132,7 @@ export const i18n = {
     manualSaveDonePrefsOnly: "Сохранены настройки",
     manualSaveDoneBoth: "Сохранены история и настройки",
     manualSaveSkipHistoryAnonymous: "История не сохранена в анонимном режиме",
+    savedAt: "Сохранено в",
   },
   en: {
     settings: "Settings",
@@ -255,6 +256,8 @@ export const i18n = {
     manualSaveDonePrefsOnly: "Settings saved",
     manualSaveDoneBoth: "History and settings saved",
     manualSaveSkipHistoryAnonymous: "History is not saved in anonymous mode",
+    savedAt: "Saved at",
+    savedAt: "Saved at",
   },
 } as const;
 
