@@ -257,7 +257,6 @@ export const i18n = {
     manualSaveDoneBoth: "History and settings saved",
     manualSaveSkipHistoryAnonymous: "History is not saved in anonymous mode",
     savedAt: "Saved at",
-    savedAt: "Saved at",
   },
 } as const;
 
