@@ -206,7 +206,7 @@ export function HomeMainPanel({
         <div className="mb-3 border-b border-border/40 px-1 pb-3">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold tracking-tight">{t.builderTitle}</span>
+              <span className="text-sm font-semibold tracking-tight"></span>
               <span className="rounded-full border border-border/70 bg-background px-2 py-0.5 text-[11px] text-muted-foreground">
                 {totalTokens} {t.tokenSuffix}
               </span>
