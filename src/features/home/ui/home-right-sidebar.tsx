@@ -193,7 +193,10 @@ export function HomeRightSidebar({
         </div>
       </div>
 
-      <div className={cn("space-y-3 overflow-auto p-3 pt-0", drawerMode ? "flex-1" : "h-[calc(100vh-6.75rem)]")}>
+      <div
+        className={cn("space-y-3 overflow-auto p-3 pt-0", drawerMode ? "flex-1" : "h-[calc(100vh-6.75rem)]")}
+        style={{ scrollbarGutter: "stable" } as React.CSSProperties}
+      >
         <details className="group rounded-xl bg-muted/25 p-2.5" open>
           <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] font-semibold">
             {t.sysCommands}
@@ -410,7 +413,10 @@ export function HomeRightSidebar({
           )}
 
           {items.length > 0 && (
-            <div className={cn("max-h-60 overflow-auto", viewMode === "cards" ? "space-y-1.5" : "space-y-1")}>
+            <div
+              className={cn("max-h-60 overflow-auto", viewMode === "cards" ? "space-y-1.5" : "space-y-1")}
+              style={{ scrollbarGutter: "stable" } as React.CSSProperties}
+            >
               {visibleItems.map((item) => {
                 const isSelected = selectedItemIds.includes(item.id);
 
