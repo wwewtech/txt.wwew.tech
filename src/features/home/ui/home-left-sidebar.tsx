@@ -137,19 +137,21 @@ export function HomeLeftSidebar({
       )}
       style={sidebarTextStyle}
     >
-      <div className="mb-3 border-b border-border/50 pb-3">
-        <div className="flex items-center justify-between gap-2 px-1.5">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold tracking-tight">txt.wwew.tech</p>
-            <p className="truncate text-xs text-muted-foreground">{t.localCockpit}</p>
+      <div className="mb-3 -mx-3 border-b border-border/50 pb-3">
+        <div className="px-3">
+          <div className="flex items-center justify-between gap-2 px-1.5">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold tracking-tight">txt.wwew.tech</p>
+              <p className="truncate text-xs text-muted-foreground">{t.localCockpit}</p>
+            </div>
+            <button
+              type="button"
+              onClick={onCollapseLeft}
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={onCollapseLeft}
-            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <PanelLeftClose className="h-4 w-4" />
-          </button>
         </div>
       </div>
 
@@ -267,35 +269,39 @@ export function HomeLeftSidebar({
         </div>
       </div>
 
-      <div className="mt-3 border-t border-border/50 pt-3">
-        <div className="space-y-2">
-          <div className="rounded-lg bg-muted/20 px-2.5 py-2.5">
-            <div className="flex items-center justify-between gap-3">
-              <span className={footerLabelClass}>{t.theme}</span>
-              <DragSegmented
-                value={resolvedThemeValue}
-                onValueChange={(next) => setTheme(next)}
-                options={themeOptions}
-                className="rounded-md border-0 bg-background/60 p-0.5"
-                trackClassName="gap-0"
-                buttonClassName="h-6 w-7 rounded-sm px-0 text-muted-foreground transition-colors hover:text-foreground"
-                activeButtonClassName="text-white"
-                indicatorClassName="bg-neutral-900"
-              />
-            </div>
+      <div className="mt-3 -mx-3 border-t border-border/50 pt-3">
+        <div className="px-3">
+          <div className="space-y-2">
+            <div className="rounded-lg bg-muted/20 px-2.5 py-2.5">
+              <div className="flex items-center justify-between gap-3">
+                <span className={footerLabelClass}>{t.theme}</span>
+                <DragSegmented
+                  value={resolvedThemeValue}
+                  onValueChange={(next) => setTheme(next)}
+                  options={themeOptions}
+                  className="rounded-md border-0 bg-background/60 p-0.5"
+                  trackClassName="gap-0"
+                  buttonClassName="h-6 w-7 rounded-sm px-0 text-muted-foreground transition-colors hover:text-foreground"
+                  activeButtonClassName="text-white"
+                  indicatorClassName="bg-neutral-900"
+                />
+              </div>
 
-            <div className="mt-2 flex items-center justify-between gap-3 border-t border-border/30 pt-2">
-              <span className={footerLabelClass}>{t.language}</span>
-              <DragSegmented
-                value={language}
-                onValueChange={onLanguageChange}
-                options={languageOptions}
-                className="rounded-md border-0 bg-background/60 p-0.5"
-                trackClassName="gap-0"
-                buttonClassName="h-6 rounded-sm px-2 text-muted-foreground transition-colors hover:text-foreground"
-                activeButtonClassName="text-white"
-                indicatorClassName="bg-neutral-900"
-              />
+              <div className="mt-2 -mx-2.5 border-t border-border/30 pt-2">
+                <div className="px-2.5 flex items-center justify-between gap-3">
+                  <span className={footerLabelClass}>{t.language}</span>
+                  <DragSegmented
+                    value={language}
+                    onValueChange={onLanguageChange}
+                    options={languageOptions}
+                    className="rounded-md border-0 bg-background/60 p-0.5"
+                    trackClassName="gap-0"
+                    buttonClassName="h-6 rounded-sm px-2 text-muted-foreground transition-colors hover:text-foreground"
+                    activeButtonClassName="text-white"
+                    indicatorClassName="bg-neutral-900"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

@@ -179,20 +179,22 @@ export function HomeRightSidebar({
       style={asideStyle}
     >
       <div className="p-3 pb-0">
-        <div className="mb-3 border-b border-border/40 pb-3">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <p className="text-sm font-semibold tracking-tight">{t.settings}</p>
-              <p className="text-xs text-muted-foreground">{t.settingsSubtitle}</p>
+        <div className="mb-3 -mx-3 border-b border-border/40 pb-3">
+          <div className="px-3">
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <p className="text-sm font-semibold tracking-tight">{t.settings}</p>
+                <p className="text-xs text-muted-foreground">{t.settingsSubtitle}</p>
+              </div>
+              <button
+                type="button"
+                onClick={onCloseRight}
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                title={t.closeRight}
+              >
+                <PanelRightClose className="h-4 w-4" />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={onCloseRight}
-              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              title={t.closeRight}
-            >
-              <PanelRightClose className="h-4 w-4" />
-            </button>
           </div>
         </div>
       </div>
