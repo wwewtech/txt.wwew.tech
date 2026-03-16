@@ -10,9 +10,9 @@ import {
   Languages,
   Monitor,
   Moon,
+  Plus,
   Link as LinkIcon,
   Link2,
-  MessageSquarePlus,
   MoreHorizontal,
   PanelLeftClose,
   Pencil,
@@ -158,7 +158,7 @@ export function HomeLeftSidebar({
         onClick={onStartNewChat}
         className="mb-3 inline-flex h-10 w-full items-center gap-2 rounded-lg bg-muted/35 px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted/55"
       >
-        <MessageSquarePlus className="h-4 w-4" />
+        <Plus className="h-3.5 w-3.5" />
         <span>{t.newChat}</span>
       </button>
 
@@ -177,7 +177,7 @@ export function HomeLeftSidebar({
                 currentChatId === entry.id && "bg-muted/65"
               )}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between gap-2">
                 <button
                   type="button"
                   onClick={() => onSelectHistory(entry)}
