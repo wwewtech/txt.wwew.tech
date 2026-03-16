@@ -1,9 +1,11 @@
 {
   "name": "txt.wwew.tech",
   "version": "0.1.0",
-  "private": true,
   "description": "Client-side tool to convert files into LLM-ready .txt output",
   "homepage": "https://txt.wwew.tech/",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/wwewtech/txt.wwew.tech.git"
