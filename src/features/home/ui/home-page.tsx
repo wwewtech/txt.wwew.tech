@@ -204,6 +204,8 @@ export default function Home() {
           onAddSystemCommand={actions.addSystemCommand}
           onRemoveSystemCommand={actions.removeSystemCommand}
           onUpdateSystemCommand={actions.updateSystemCommand}
+          onQuickBuild={actions.quickBuild}
+          onCopyDraft={actions.copyDraft}
           onToggleSelectItem={actions.toggleSelectItem}
           onScrollToItem={scrollToItem}
           onToggleAutoSave={() => setAutoSaveEnabled((value) => !value)}
@@ -212,6 +214,7 @@ export default function Home() {
           onSetExcludedExtensions={actions.setExcludedExtensions}
           onSetIncludePromptInResult={setIncludePromptInResult}
           onSetShowSkippedFiles={setShowSkippedFiles}
+          onBytesToText={bytesToText}
           uiScale={uiScale}
           compactMode={compactMode}
           fontSizeOffset={fontSizeOffset}
