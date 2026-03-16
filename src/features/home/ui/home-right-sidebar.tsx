@@ -151,6 +151,7 @@ export function HomeRightSidebar({
   const [draftCompactMode, setDraftCompactMode] = React.useState(compactMode);
   const [draftFontSizeOffset, setDraftFontSizeOffset] = React.useState(fontSizeOffset);
   const [draftFontSizeScope, setDraftFontSizeScope] = React.useState<FontSizeScope>(fontSizeScope);
+  const [activityOpen, setActivityOpen] = React.useState(false);
 
   React.useEffect(() => {
     setDraftUiScale(uiScale);
@@ -716,7 +717,26 @@ export function HomeRightSidebar({
           </div>
         </details>
 
-        <details className="group rounded-xl bg-muted/25 p-2.5 text-[10px]">
+        <div className="flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => setActivityOpen((prev) => !prev)}
+            className="inline-flex items-center gap-2 rounded-lg border border-border/60 bg-background/70 px-3 py-2 text-sm font-semibold transition-colors hover:bg-muted"
+          >
+            {t.activity}
+            <ChevronDown
+              className={cn(
+                "h-3.5 w-3.5 text-muted-foreground transition-transform",
+                activityOpen && "rotate-180"
+              )}
+            />
+          </button>
+        </div>
+        <details
+          className="group rounded-xl bg-muted/25 p-2.5 text-[10px]"
+          open={activityOpen}
+          onToggle={(e) => setActivityOpen((e.target as HTMLDetailsElement).open)}
+        >
           <summary className="flex cursor-pointer list-none items-center justify-between font-semibold">
             {t.activity}
             <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-open:rotate-180" />

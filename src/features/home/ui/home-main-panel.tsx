@@ -176,6 +176,7 @@ export function HomeMainPanel({
           onClick={onOpenRight}
           className="fixed right-4 top-4 z-40 hidden h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-background transition-colors hover:bg-muted md:right-6 md:top-6 xl:inline-flex"
           title={t.openRight}
+          aria-label={t.activity}
         >
           <PanelRightOpen className="h-4 w-4" />
         </button>
