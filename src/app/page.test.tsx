@@ -2,8 +2,6 @@ import { act, render, screen, fireEvent, waitFor, within } from "@testing-librar
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useUIStore } from "@/features/home/store/use-ui-store";
-
 async function flushEffects() {
   await act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
