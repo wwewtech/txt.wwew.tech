@@ -161,7 +161,6 @@ export function useHomeRuntimeEffects({ composerRef, prompt }: UseHomeRuntimeEff
     document.documentElement.style.setProperty("--font-size-offset", String(fontSizeOffset));
     if (process.env.NODE_ENV !== "production") {
       // Debug: verify offset is actually applied at runtime
-      // eslint-disable-next-line no-console
       console.debug("[ui] fontSizeOffset applied", {
         fontSizeOffset,
         fontSizeScope,

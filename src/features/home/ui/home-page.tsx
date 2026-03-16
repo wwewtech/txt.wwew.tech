@@ -78,7 +78,6 @@ export default function Home() {
   const viewMode = useFilesStore((state) => state.viewMode);
   const setViewMode = useFilesStore((state) => state.setViewMode);
   const selectedItemIds = useFilesStore((state) => state.selectedItemIds);
-  const favoriteItemIds = useFilesStore((state) => state.favoriteItemIds);
   const showSkippedFiles = useFilesStore((state) => state.showSkippedFiles);
   const setShowSkippedFiles = useFilesStore((state) => state.setShowSkippedFiles);
 
@@ -205,8 +204,6 @@ export default function Home() {
           onAddSystemCommand={actions.addSystemCommand}
           onRemoveSystemCommand={actions.removeSystemCommand}
           onUpdateSystemCommand={actions.updateSystemCommand}
-          onQuickBuild={actions.quickBuild}
-          onCopyDraft={actions.copyDraft}
           onToggleSelectItem={actions.toggleSelectItem}
           onScrollToItem={scrollToItem}
           onToggleAutoSave={() => setAutoSaveEnabled((value) => !value)}
@@ -215,7 +212,6 @@ export default function Home() {
           onSetExcludedExtensions={actions.setExcludedExtensions}
           onSetIncludePromptInResult={setIncludePromptInResult}
           onSetShowSkippedFiles={setShowSkippedFiles}
-          onBytesToText={bytesToText}
           uiScale={uiScale}
           compactMode={compactMode}
           fontSizeOffset={fontSizeOffset}

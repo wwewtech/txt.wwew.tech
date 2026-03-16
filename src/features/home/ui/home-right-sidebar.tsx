@@ -66,8 +66,6 @@ type HomeRightSidebarProps = {
   onAddSystemCommand: (value: string) => void;
   onRemoveSystemCommand: (index: number) => void;
   onUpdateSystemCommand: (index: number, text: string) => void;
-  onQuickBuild: () => Promise<void>;
-  onCopyDraft: () => Promise<void>;
   onToggleSelectItem: (id: string) => void;
   onScrollToItem: (itemId: string) => void;
   onToggleAutoSave: () => void;
@@ -126,8 +124,6 @@ export function HomeRightSidebar({
   onAddSystemCommand,
   onRemoveSystemCommand,
   onUpdateSystemCommand,
-  onQuickBuild,
-  onCopyDraft,
   onToggleSelectItem,
   onScrollToItem,
   onToggleAutoSave,
@@ -223,7 +219,6 @@ export function HomeRightSidebar({
           {isAddingCommand && (
             <div className="mb-2">
               <textarea
-                // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
                 value={newCommandText}
                 onChange={(e) => setNewCommandText(e.target.value)}
@@ -267,7 +262,6 @@ export function HomeRightSidebar({
                   {editingIndex === index ? (
                     <div className="p-1.5">
                       <textarea
-                        // eslint-disable-next-line jsx-a11y/no-autofocus
                         autoFocus
                         value={editingText}
                         onChange={(e) => setEditingText(e.target.value)}
@@ -393,6 +387,12 @@ export function HomeRightSidebar({
                 <span className="rounded-md border border-border/60 bg-background/70 px-1.5 py-0.5">{t.visible}: {visibleItems.length}</span>
                 <span className="rounded-md border border-border/60 bg-background/70 px-1.5 py-0.5">{t.selected}: {selectedItems.length}</span>
                 <span className="rounded-md border border-border/60 bg-background/70 px-1.5 py-0.5">{t.skipped}: {skippedFiles}</span>
+              </div>
+
+              <div className="mb-2 flex flex-wrap items-center gap-1.5 text-[10px]">
+                <span className="rounded-md border border-border/60 bg-background/70 px-1.5 py-0.5">{t.files}: {totalFiles}</span>
+                <span className="rounded-md border border-border/60 bg-background/70 px-1.5 py-0.5">{t.size}: {onBytesToText(totalBytes)}</span>
+                <span className="rounded-md border border-border/60 bg-background/70 px-1.5 py-0.5">{t.tokens}: {totalTokens}</span>
               </div>
 
               <div className="mb-2 flex flex-wrap gap-1.5">
@@ -794,7 +794,7 @@ export function HomeRightSidebar({
 
                     return (
                       <div key={item.id} className="grid grid-cols-[3fr_1fr_1.25fr_2fr] gap-2 px-2 py-2 text-[10px] odd:bg-muted/10">
-                        <div className="break-words">{item.label}</div>
+                        <div className="wrap-break-word">{item.label}</div>
                         <div className="flex items-center justify-center gap-1 text-[10px] font-medium text-muted-foreground">
                           {statusIcon}
                           <span className="capitalize">{statusLabel}</span>
