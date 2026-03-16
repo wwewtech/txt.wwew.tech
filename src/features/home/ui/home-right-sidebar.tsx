@@ -721,21 +721,6 @@ export function HomeRightSidebar({
           </div>
         </details>
 
-        <div className="flex items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={() => setActivityOpen((prev) => !prev)}
-            className="inline-flex items-center gap-2 rounded-lg border border-border/60 bg-background/70 px-3 py-2 text-sm font-semibold transition-colors hover:bg-muted"
-          >
-            {t.activity}
-            <ChevronDown
-              className={cn(
-                "h-3.5 w-3.5 text-muted-foreground transition-transform",
-                activityOpen && "rotate-180"
-              )}
-            />
-          </button>
-        </div>
         <details
           className="group rounded-xl bg-muted/25 p-2.5 text-[10px]"
           open={activityOpen}

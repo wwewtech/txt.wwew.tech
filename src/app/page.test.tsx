@@ -932,7 +932,7 @@ describe("Home central panel UI/UX", () => {
     expect(await screen.findByText(/Добавлено в workspace:\s*0|Added to workspace:\s*0/i)).toBeInTheDocument();
 
     // Expand activity panel and assert error row renders status + error details
-    fireEvent.click(await screen.findByRole("button", { name: /Activity|Активность/i }));
+    fireEvent.click(await screen.findByText(/Activity|Активность/i));
     const errorRow = (await screen.findByText(/Parse failed: 1/i)).closest("div[class*='grid-cols']");
     expect(errorRow).toBeTruthy();
     expect(within(errorRow as HTMLElement).getByText(/Error|Ошибка/i)).toBeInTheDocument();
@@ -952,7 +952,7 @@ describe("Home central panel UI/UX", () => {
     await renderHome();
 
     // Open activity panel
-    fireEvent.click(await screen.findByRole("button", { name: /Activity|Активность/i }));
+    fireEvent.click(await screen.findByText(/Activity|Активность/i));
 
     const assertRow = (label: string, status: RegExp, errorText?: RegExp) => {
       const row = screen.getByText(label).closest("div[class*='grid-cols']");
