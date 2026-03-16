@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Ignore vendor / compiled assets that are not intended to be linted.
+    "public/pdf.worker.min.mjs",
   ]),
 ]);
 
