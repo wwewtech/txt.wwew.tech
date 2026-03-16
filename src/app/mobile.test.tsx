@@ -13,6 +13,19 @@ import { render, screen, fireEvent, waitFor, act } from "@testing-library/react"
 import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { useUIStore } from "@/features/home/store/use-ui-store";
+
+async function flushEffects() {
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+}
+
+async function renderHome() {
+  render(<Home />);
+  await flushEffects();
+}
+
 vi.mock("@/lib", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib")>();
   return {
@@ -73,22 +86,22 @@ beforeEach(() => {
 
 describe("Mobile header", () => {
   it("renders hamburger (Open navigation) button", async () => {
-    render(<Home />);
+    await renderHome();
     expect(await screen.findByRole("button", { name: /open navigation/i })).toBeInTheDocument();
   });
 
   it("renders settings (Open settings) button", async () => {
-    render(<Home />);
+    await renderHome();
     expect(await screen.findByRole("button", { name: /open settings/i })).toBeInTheDocument();
   });
 
   it("renders txt.wwew.tech brand label in mobile header", async () => {
-    render(<Home />);
+    await renderHome();
     expect((await screen.findAllByText("txt.wwew.tech")).length).toBeGreaterThan(0);
   });
 
   it("clicking hamburger opens left mobile drawer (overlay appears)", async () => {
-    render(<Home />);
+    await renderHome();
     await screen.findByRole("button", { name: /open navigation/i });
 
     fireEvent.click(screen.getByRole("button", { name: /open navigation/i }));
@@ -99,7 +112,7 @@ describe("Mobile header", () => {
   });
 
   it("clicking settings button opens right mobile drawer (overlay appears)", async () => {
-    render(<Home />);
+    await renderHome();
     await screen.findByRole("button", { name: /open settings/i });
 
     fireEvent.click(screen.getByRole("button", { name: /open settings/i }));
@@ -110,7 +123,7 @@ describe("Mobile header", () => {
   });
 
   it("right drawer surfaces settings summaries when opened", async () => {
-    render(<Home />);
+    await renderHome();
     await screen.findByRole("button", { name: /open settings/i });
 
     fireEvent.click(screen.getByRole("button", { name: /open settings/i }));
@@ -127,19 +140,19 @@ describe("Mobile header", () => {
 
 describe("Display section", () => {
   it("Display section is found in sidebar", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
     expect(document.querySelector("details[open]")).toBeInTheDocument();
   });
 
   it("UI Scale shows 100% by default", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
     await waitFor(() => expect(screen.getByText("100%")).toBeInTheDocument());
   });
 
   it("Compact preset sets scale to 90%", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     fireEvent.click(await screen.findByRole("button", { name: /^compact$|^компакт$/i }));
@@ -147,7 +160,7 @@ describe("Display section", () => {
   });
 
   it("Default preset restores scale to 100%", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     fireEvent.click(await screen.findByRole("button", { name: /^compact$|^компакт$/i }));
@@ -156,7 +169,7 @@ describe("Display section", () => {
   });
 
   it("Large preset sets scale to 115%", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     fireEvent.click(await screen.findByRole("button", { name: /^large$|^крупный$/i }));
@@ -164,7 +177,7 @@ describe("Display section", () => {
   });
 
   it("--ui-scale CSS var on <html> tracks uiScale / 100", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     fireEvent.click(await screen.findByRole("button", { name: /^large$|^крупный$/i }));
@@ -175,14 +188,14 @@ describe("Display section", () => {
   });
 
   it("--ui-scale CSS var is 1 at default", async () => {
-    render(<Home />);
+    await renderHome();
     await waitFor(() => {
       expect(document.documentElement.style.getPropertyValue("--ui-scale")).toBe("1");
     });
   });
 
   it("Compact Mode button is aria-pressed=false by default", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     const toggle = await screen.findByRole("button", { name: /compact mode|компактный режим/i });
@@ -190,7 +203,7 @@ describe("Display section", () => {
   });
 
   it("Compact Mode toggled ON → aria-pressed=true", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     const toggle = await screen.findByRole("button", { name: /compact mode|компактный режим/i });
@@ -199,7 +212,7 @@ describe("Display section", () => {
   });
 
   it("Compact Mode adds .compact class to <html>", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     const toggle = await screen.findByRole("button", { name: /compact mode|компактный режим/i });
@@ -209,7 +222,7 @@ describe("Display section", () => {
   });
 
   it("Compact Mode toggled OFF removes .compact class from <html>", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     const toggle = await screen.findByRole("button", { name: /compact mode|компактный режим/i });
@@ -219,7 +232,7 @@ describe("Display section", () => {
   });
 
   it("Font size + increments offset from 0 to +1", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     const baseEl = await screen.findByText("Base");
@@ -232,7 +245,7 @@ describe("Display section", () => {
   });
 
   it("Font size − decrements offset from 0 to −1", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     const baseEl = await screen.findByText("Base");
@@ -244,7 +257,7 @@ describe("Display section", () => {
   });
 
   it("Font size offset clamped at +4", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     const baseEl = await screen.findByText("Base");
@@ -256,7 +269,7 @@ describe("Display section", () => {
   });
 
   it("Font size offset clamped at −2", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     const baseEl = await screen.findByText("Base");
@@ -274,7 +287,7 @@ describe("Display section", () => {
 
 describe("localStorage persistence", () => {
   it("writes viewMode=cards on initial render", async () => {
-    render(<Home />);
+    await renderHome();
     await waitFor(() => {
       const s = JSON.parse(window.localStorage.getItem(UI_PREFS_KEY) ?? "null");
       expect(s?.viewMode).toBe("cards");
@@ -282,7 +295,7 @@ describe("localStorage persistence", () => {
   });
 
   it("writes sortMode=latest on initial render", async () => {
-    render(<Home />);
+    await renderHome();
     await waitFor(() => {
       const s = JSON.parse(window.localStorage.getItem(UI_PREFS_KEY) ?? "null");
       expect(s?.sortMode).toBe("latest");
@@ -290,7 +303,7 @@ describe("localStorage persistence", () => {
   });
 
   it("writes settings.ignoredDirectories with node_modules", async () => {
-    render(<Home />);
+    await renderHome();
     await waitFor(() => {
       const s = JSON.parse(window.localStorage.getItem(UI_PREFS_KEY) ?? "null");
       expect(s?.settings?.ignoredDirectories).toContain("node_modules");
@@ -298,7 +311,7 @@ describe("localStorage persistence", () => {
   });
 
   it("writes settings.excludedExtensions with lock", async () => {
-    render(<Home />);
+    await renderHome();
     await waitFor(() => {
       const s = JSON.parse(window.localStorage.getItem(UI_PREFS_KEY) ?? "null");
       expect(s?.settings?.excludedExtensions).toContain("lock");
@@ -306,7 +319,7 @@ describe("localStorage persistence", () => {
   });
 
   it("persists uiScale=115 after Large preset click", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
     fireEvent.click(await screen.findByRole("button", { name: /^large$|^крупный$/i }));
     await applyDisplayChanges();
@@ -318,7 +331,7 @@ describe("localStorage persistence", () => {
   });
 
   it("persists compactMode=true after toggle", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
     fireEvent.click(await screen.findByRole("button", { name: /compact mode|компактный режим/i }));
     await applyDisplayChanges();
@@ -330,7 +343,7 @@ describe("localStorage persistence", () => {
   });
 
   it("persists fontSizeOffset=1 after + click", async () => {
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
 
     const baseEl = await screen.findByText("Base");
@@ -348,14 +361,14 @@ describe("localStorage persistence", () => {
 
   it("restores uiScale=90 from localStorage on mount", async () => {
     window.localStorage.setItem(UI_PREFS_KEY, JSON.stringify({ uiScale: 90 }));
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
     await waitFor(() => expect(screen.getByText("90%")).toBeInTheDocument());
   });
 
   it("restores compactMode=true on mount", async () => {
     window.localStorage.setItem(UI_PREFS_KEY, JSON.stringify({ compactMode: true }));
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /compact mode|компактный режим/i }))
@@ -365,7 +378,7 @@ describe("localStorage persistence", () => {
 
   it("restores sortMode=name on mount", async () => {
     window.localStorage.setItem(UI_PREFS_KEY, JSON.stringify({ sortMode: "name" }));
-    render(<Home />);
+    await renderHome();
     await waitFor(() => {
       const s = JSON.parse(window.localStorage.getItem(UI_PREFS_KEY) ?? "null");
       expect(s?.sortMode).toBe("name");
@@ -374,14 +387,14 @@ describe("localStorage persistence", () => {
 
   it("clamps uiScale at 150 on out-of-range restore", async () => {
     window.localStorage.setItem(UI_PREFS_KEY, JSON.stringify({ uiScale: 999 }));
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
     await waitFor(() => expect(screen.getByText("150%")).toBeInTheDocument());
   });
 
   it("clamps uiScale at 75 on too-low restore", async () => {
     window.localStorage.setItem(UI_PREFS_KEY, JSON.stringify({ uiScale: 10 }));
-    render(<Home />);
+    await renderHome();
     await openDisplaySection();
     await waitFor(() => expect(screen.getByText("75%")).toBeInTheDocument());
   });

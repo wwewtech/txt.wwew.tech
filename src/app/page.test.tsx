@@ -2,6 +2,19 @@ import { act, render, screen, fireEvent, waitFor, within } from "@testing-librar
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { useUIStore } from "@/features/home/store/use-ui-store";
+
+async function flushEffects() {
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+}
+
+async function renderHome() {
+  render(<Home />);
+  await flushEffects();
+}
+
 vi.mock("@/lib", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib")>();
 
@@ -72,14 +85,14 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("renders chat composer and top controls", async () => {
-    render(<Home />);
+    await renderHome();
 
     expect(await screen.findByPlaceholderText("Type something…")).toBeInTheDocument();
     expect(screen.getByTitle(/Download \.txt|Скачать \.txt/i)).toBeInTheDocument();
   });
 
   it("switches markdown toggle to raw mode", async () => {
-    render(<Home />);
+    await renderHome();
 
     expect(useUIStore.getState().markdownEnabled).toBe(true);
 
@@ -91,7 +104,7 @@ describe("Home central panel UI/UX", () => {
 
   it("sends prompt and appends user bubble", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "Сделай summary контекста");
@@ -102,7 +115,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("uploads file through hidden input and shows context card", async () => {
-    render(<Home />);
+    await renderHome();
 
     const hiddenInputs = document.querySelectorAll('input[type="file"]');
     const fileInput = hiddenInputs[0] as HTMLInputElement;
@@ -121,7 +134,7 @@ describe("Home central panel UI/UX", () => {
 
   it("sends prompt by Enter and keeps Shift+Enter as multiline", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
 
@@ -137,7 +150,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("groups uploaded files by folder root into one context card", async () => {
-    render(<Home />);
+    await renderHome();
 
     const hiddenInputs = document.querySelectorAll('input[type="file"]');
     const fileInput = hiddenInputs[0] as HTMLInputElement;
@@ -155,7 +168,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("renders per-file actions for each item inside grouped context", async () => {
-    render(<Home />);
+    await renderHome();
 
     const hiddenInputs = document.querySelectorAll('input[type="file"]');
     const fileInput = hiddenInputs[0] as HTMLInputElement;
@@ -175,7 +188,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("opens preview modal and deletes context from modal action", async () => {
-    render(<Home />);
+    await renderHome();
 
     const hiddenInputs = document.querySelectorAll('input[type="file"]');
     const fileInput = hiddenInputs[0] as HTMLInputElement;
@@ -199,7 +212,7 @@ describe("Home central panel UI/UX", () => {
   it("copies aggregated context text from card action", async () => {
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const hiddenInputs = document.querySelectorAll('input[type="file"]');
     const fileInput = hiddenInputs[0] as HTMLInputElement;
@@ -218,7 +231,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("edits context from card action", async () => {
-    render(<Home />);
+    await renderHome();
 
     const hiddenInputs = document.querySelectorAll('input[type="file"]');
     const fileInput = hiddenInputs[0] as HTMLInputElement;
@@ -237,7 +250,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("cancel in edit dialog keeps original context", async () => {
-    render(<Home />);
+    await renderHome();
 
     const hiddenInputs = document.querySelectorAll('input[type="file"]');
     const fileInput = hiddenInputs[0] as HTMLInputElement;
@@ -257,7 +270,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("starts new chat and resets workspace state", async () => {
-    render(<Home />);
+    await renderHome();
 
     const hiddenInputs = document.querySelectorAll('input[type="file"]');
     const fileInput = hiddenInputs[0] as HTMLInputElement;
@@ -276,7 +289,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("restores closed chat from history with its messages", async () => {
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     fireEvent.change(composer, { target: { value: "История восстановление" } });
@@ -296,7 +309,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("does not create history entry when closing an empty draft", async () => {
-    render(<Home />);
+    await renderHome();
 
     clickNewChat();
 
@@ -304,7 +317,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("keeps chats isolated when switching from history", async () => {
-    render(<Home />);
+    await renderHome();
     const timeline = document.querySelector(".mx-auto.flex.w-full.max-w-3xl.flex-col.gap-3") as HTMLElement;
 
     const fileInputs = document.querySelectorAll('input[type="file"]');
@@ -326,7 +339,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("deleting active chat from history resets center to draft", async () => {
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     fireEvent.change(composer, { target: { value: "Удаляем активный" } });
@@ -343,7 +356,7 @@ describe("Home central panel UI/UX", () => {
 
   it("left New chat keeps history entries but clears current center state", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "Левый new chat");
@@ -357,7 +370,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("starting new chat while preview is open closes modal too", async () => {
-    render(<Home />);
+    await renderHome();
 
     const fileInputs = document.querySelectorAll('input[type="file"]');
     const fileInput = fileInputs[0] as HTMLInputElement;
@@ -373,7 +386,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("does not send anything when composer is empty", async () => {
-    render(<Home />);
+    await renderHome();
 
     fireEvent.click(screen.getByTitle("Send"));
 
@@ -383,7 +396,7 @@ describe("Home central panel UI/UX", () => {
 
   it("uses first user message as history title when prompt became empty", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "Заголовок из сообщения");
@@ -394,7 +407,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("deleting non-active history item keeps active chat unchanged", async () => {
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     fireEvent.change(composer, { target: { value: "Чат один" } });
@@ -416,7 +429,7 @@ describe("Home central panel UI/UX", () => {
 
   it("does not auto-save when autosave is off", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     fireEvent.click(screen.getByRole("switch", { name: /Autosave|Автосейв/i }));
 
@@ -430,7 +443,7 @@ describe("Home central panel UI/UX", () => {
 
   it("saves current chat manually when autosave is off", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     fireEvent.click(screen.getByRole("switch", { name: /Autosave|Автосейв/i }));
 
@@ -445,7 +458,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("restores file context cards after reopening saved chat", async () => {
-    render(<Home />);
+    await renderHome();
 
     const fileInputs = document.querySelectorAll('input[type="file"]');
     const fileInput = fileInputs[0] as HTMLInputElement;
@@ -459,8 +472,8 @@ describe("Home central panel UI/UX", () => {
     expect(screen.getByRole("button", { name: /Preview|Предпросмотр/i })).toBeInTheDocument();
   });
 
-  it("[extra 01] renders initial drop hint", () => {
-    render(<Home />);
+  it("[extra 01] renders initial drop hint", async () => {
+    await renderHome();
     expect(
       screen.getByText(/Перетащи файлы, архивы или папки сюда|Drop files, archives, or folders here|Add files to see final context/i)
     ).toBeInTheDocument();
@@ -468,7 +481,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 02] renders markdown table in chat bubble", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "| a | b |\n| - | - |\n| 1 | 2 |");
@@ -479,7 +492,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 03] renders inline math with katex", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "Инлайн: $a^2+b^2=c^2$");
@@ -491,7 +504,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 04] renders block math with katex-display", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "$$\n\\int_0^1 x^2 dx\n$$");
@@ -503,7 +516,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 05] raw mode keeps markdown as plain text", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const actionsButton = await screen.findByRole("button", { name: /Actions|Действия/i });
     fireEvent.click(actionsButton);
@@ -520,7 +533,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 06] markdown code fence renders code panel", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "```ts\nconst x = 1\n```");
@@ -531,7 +544,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 06.1] keeps chronological order between context card and later prompt", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const timeline = document.querySelector(".mx-auto.flex.w-full.max-w-3xl.flex-col.gap-3") as HTMLElement;
 
@@ -551,14 +564,14 @@ describe("Home central panel UI/UX", () => {
   }, 20000);
 
   it("[extra 07] hides right sidebar", async () => {
-    render(<Home />);
+    await renderHome();
 
     fireEvent.click(screen.getByTitle(/Hide right sidebar|Скрыть правую панель/));
     expect(screen.getByTitle(/Open right sidebar|Открыть правую панель/)).toBeInTheDocument();
   });
 
   it("[extra 08] reopens right sidebar", async () => {
-    render(<Home />);
+    await renderHome();
 
     fireEvent.click(screen.getByTitle(/Hide right sidebar|Скрыть правую панель/));
     fireEvent.click(screen.getByTitle(/Open right sidebar|Открыть правую панель/));
@@ -566,7 +579,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("[extra 11] selects all visible files", async () => {
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, {
@@ -584,7 +597,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("[extra 12] removes selected files", async () => {
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, {
@@ -604,7 +617,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("[extra 13] filter input narrows visible count", async () => {
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, {
@@ -623,7 +636,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 15] anonymous mode prevents history records", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     fireEvent.click(screen.getByRole("switch", { name: /Anonymous chat|Анонимный чат/i }));
     const composer = await screen.findByPlaceholderText("Type something…");
@@ -638,7 +651,7 @@ describe("Home central panel UI/UX", () => {
     const createSpy = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:fake");
     const revokeSpy = vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
-    render(<Home />);
+    await renderHome();
 
     fireEvent.click(screen.getByTitle(/Download \.txt|Скачать \.txt/i));
 
@@ -650,7 +663,7 @@ describe("Home central panel UI/UX", () => {
   it("[extra 17] share action copies encoded url", async () => {
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "share me");
@@ -671,7 +684,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 18] duplicate action creates copy entry", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "dup source");
@@ -688,7 +701,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 19] rename action updates history title", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "rename source");
@@ -709,7 +722,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 19.1] closing rename dialog keeps original title", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "keep old title");
@@ -732,7 +745,7 @@ describe("Home central panel UI/UX", () => {
   it("[extra 20] copy prompt action writes prompt text", async () => {
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "copy prompt content");
@@ -753,7 +766,7 @@ describe("Home central panel UI/UX", () => {
   it("[extra 21] copy final action writes final context", async () => {
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "final.txt", { type: "text/plain" })] } });
@@ -774,7 +787,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 22] outside click closes history menu", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "outside menu");
@@ -793,7 +806,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("[extra 23] preview down button scrolls to bottom", async () => {
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "scroll.txt", { type: "text/plain" })] } });
@@ -807,8 +820,8 @@ describe("Home central panel UI/UX", () => {
     expect(container.scrollTop).toBe(777);
   });
 
-  it("[extra 24] resizing separator changes sidebar width variable", () => {
-    render(<Home />);
+  it("[extra 24] resizing separator changes sidebar width variable", async () => {
+    await renderHome();
 
     const separator = screen.getByRole("separator");
     fireEvent.mouseDown(separator);
@@ -822,7 +835,7 @@ describe("Home central panel UI/UX", () => {
   it("[extra 25] build selected copies only selected context", async () => {
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, {
@@ -851,7 +864,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("[extra 26] deleting single file from list removes item", async () => {
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "single-del.txt", { type: "text/plain" })] } });
@@ -865,7 +878,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("[extra 27] close button hides preview modal", async () => {
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "modal-close.txt", { type: "text/plain" })] } });
@@ -878,7 +891,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("[extra 28] markdown toggle can be switched back and forth", async () => {
-    render(<Home />);
+    await renderHome();
 
     expect(useUIStore.getState().markdownEnabled).toBe(true);
 
@@ -894,7 +907,7 @@ describe("Home central panel UI/UX", () => {
   });
 
   it("[extra 29] activity log records file upload", async () => {
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "activity-file.txt", { type: "text/plain" })] } });
@@ -912,7 +925,7 @@ describe("Home central panel UI/UX", () => {
       })
     );
 
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "broken.pdf", { type: "application/pdf" })] } });
@@ -938,7 +951,7 @@ describe("Home central panel UI/UX", () => {
       ]);
     });
 
-    render(<Home />);
+    await renderHome();
 
     // Open activity panel
     fireEvent.click(await screen.findByRole("button", { name: /Activity|Активность/i }));
@@ -970,7 +983,7 @@ describe("Home central panel UI/UX", () => {
         })
       );
 
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, {
@@ -998,7 +1011,7 @@ describe("Home central panel UI/UX", () => {
       })
     );
 
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["x"], "skip.lock", { type: "text/plain" })] } });
@@ -1015,7 +1028,7 @@ describe("Home central panel UI/UX", () => {
       ])
     );
 
-    render(<Home />);
+    await renderHome();
 
     const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [new File(["zip"], "workspace.zip", { type: "application/zip" })] } });
@@ -1026,7 +1039,7 @@ describe("Home central panel UI/UX", () => {
 
   it("[extra 30] activity log records prompt send", async () => {
     const user = userEvent.setup();
-    render(<Home />);
+    await renderHome();
 
     const composer = await screen.findByPlaceholderText("Type something…");
     await user.type(composer, "activity prompt");
