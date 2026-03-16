@@ -2,6 +2,16 @@
   "name": "txt.wwew.tech",
   "version": "0.1.0",
   "private": true,
+  "description": "Client-side tool to convert files into LLM-ready .txt output",
+  "homepage": "https://txt.wwew.tech/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wwewtech/txt.wwew.tech.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wwewtech/txt.wwew.tech/issues"
+  },
+  "keywords": ["nextjs", "llm", "markdown", "pdf", "docx", "local-first"],
   "scripts": {
     "predev": "node scripts/copy-pdf-worker.mjs",
     "dev": "next dev",
