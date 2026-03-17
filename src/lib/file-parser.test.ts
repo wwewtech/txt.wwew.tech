@@ -354,6 +354,25 @@ describe("file-parser business logic", () => {
     expect(result.text).not.toContain("работает ,");
   });
 
+  it("inserts newline when text is split into wide columns", async () => {
+    mockPdfPages([
+      [
+        { str: "ColA", transform: [1, 0, 0, 1, 10, 700], height: 12, width: 40 },
+        { str: "data1", transform: [1, 0, 0, 1, 60, 700], height: 12, width: 40 },
+        { str: "ColB", transform: [1, 0, 0, 1, 400, 700], height: 12, width: 40 },
+        { str: "data2", transform: [1, 0, 0, 1, 460, 700], height: 12, width: 40 },
+      ],
+    ]);
+
+    const file = new File([toBlobPart([37, 80, 68, 70])], "columns.pdf", {
+      type: "application/pdf",
+    });
+    const result = await parseFileWithPath(file, "docs/columns.pdf", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("ColA data1\nColB data2");
+  });
+
   it("removes standalone page numbers and preserves page order across multiple pages", async () => {
     mockPdfPages([
       [

@@ -195,7 +195,18 @@ function formatPdfPageText(items: PdfTextItemLike[]) {
         previousXEnd = null;
       } else {
         const gap = x !== null && previousXEnd !== null ? x - previousXEnd : 0;
-        if (
+
+        // If the gap is very wide (multi-column layout), treat it as a column break
+        // and insert a newline instead of a space.
+        const significantGap = Math.max(
+          itemHeight * 5,
+          (previousHeight ?? itemHeight) * 5,
+          itemWidth * 4
+        );
+        if (gap > significantGap && !pageText.endsWith("\n")) {
+          pageText += "\n";
+          previousXEnd = null;
+        } else if (
           shouldInsertSpaceBetweenPdfItems(
             previousToken,
             token,

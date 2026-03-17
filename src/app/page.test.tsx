@@ -8,6 +8,8 @@ async function flushEffects() {
   });
 }
 
+let lastParseSettings: unknown;
+
 async function renderHome() {
   render(<Home />);
   await flushEffects();
@@ -18,16 +20,19 @@ vi.mock("@/lib", async (importOriginal) => {
 
   return {
     ...actual,
-    parseFileWithPath: vi.fn(async (_file: File, path: string) => ({
-      id: `id-${path}`,
-      name: path.split("/").pop() ?? path,
-      path,
-      size: 10,
-      kind: "file" as const,
-      text: `### FILE: ${path}\n\nhello`,
-      tokenEstimate: 10,
-      sourceType: "txt",
-    })),
+    parseFileWithPath: vi.fn(async (_file: File, path: string, settings: unknown) => {
+      lastParseSettings = settings;
+      return {
+        id: `id-${path}`,
+        name: path.split("/").pop() ?? path,
+        path,
+        size: 10,
+        kind: "file" as const,
+        text: `### FILE: ${path}\n\nhello`,
+        tokenEstimate: 10,
+        sourceType: "txt",
+      };
+    }),
   };
 });
 
@@ -78,8 +83,12 @@ describe("Home central panel UI/UX", () => {
   beforeEach(() => {
     window.localStorage.clear();
     resetUIStore();
+    lastParseSettings = undefined;
     vi.clearAllMocks();
-    parseFileWithPathMock.mockImplementation(async (_file: File, path: string) => makeParsedItem(path));
+    parseFileWithPathMock.mockImplementation(async (_file: File, path: string, settings: unknown) => {
+      lastParseSettings = settings;
+      return makeParsedItem(path);
+    });
   });
 
   it("renders chat composer and top controls", async () => {
@@ -128,6 +137,42 @@ describe("Home central panel UI/UX", () => {
 
     expect((await screen.findAllByText(/\d+ tokens|\d+ токенов/)).length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: /Preview|Предпросмотр/i })).toBeInTheDocument();
+  });
+
+  it("passes updated ignore settings to parser when uploading files", async () => {
+    await renderHome();
+
+    const ignoredDirsTextarea = screen.getByDisplayValue(/node_modules/);
+    fireEvent.change(ignoredDirsTextarea, { target: { value: "src" } });
+
+    const hiddenInputs = document.querySelectorAll('input[type="file"]');
+    const fileInput = hiddenInputs[0] as HTMLInputElement;
+
+    const file = new File(["x"], "a.txt", { type: "text/plain" });
+    Object.defineProperty(file, "webkitRelativePath", { value: "src/a.txt" });
+
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    await waitFor(() => {
+      expect(lastParseSettings).toEqual(expect.objectContaining({ ignoredDirectories: ["src"] }));
+    });
+  });
+
+  it("uploads files via drag and drop using webkitRelativePath", async () => {
+    await renderHome();
+
+    const dropHint = await screen.findByText(/Перетащи файлы|Drop files/i);
+    const dropContainer = dropHint.closest("div") as HTMLElement;
+
+    const file = new File(["drag"], "drag.txt", { type: "text/plain" });
+    Object.defineProperty(file, "webkitRelativePath", { value: "folder/drag.txt" });
+
+    const dataTransfer = { files: [file] } as unknown as DataTransfer;
+    fireEvent.drop(dropContainer, { dataTransfer });
+
+    await waitFor(() => {
+      expect(parseFileWithPathMock).toHaveBeenCalledWith(expect.any(File), "folder/drag.txt", expect.anything());
+    });
   });
 
   it("sends prompt by Enter and keeps Shift+Enter as multiline", async () => {
