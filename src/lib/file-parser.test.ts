@@ -260,6 +260,18 @@ describe("file-parser business logic", () => {
     expect(result.tokenEstimate).toBeGreaterThan(0);
   });
 
+  it("surfaces parse errors when mammoth fails", async () => {
+    vi.mocked(mammoth.convertToHtml).mockRejectedValueOnce(new Error("mammoth crash"));
+
+    const file = new File([toBlobPart([1, 2, 3])], "broken.docx", {
+      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
+    const result = await parseFileWithPath(file, "docs/broken.docx", settings);
+
+    expect(result.error).toBe("mammoth crash");
+    expect(result.tokenEstimate).toBe(0);
+  });
+
   it("normalizes extracted pdf text into readable prose", async () => {
     pdfMocks.getTextContent.mockResolvedValue({
       items: [
@@ -308,6 +320,61 @@ describe("file-parser business logic", () => {
     expect((await import("pdfjs-dist/legacy/build/pdf.mjs")).GlobalWorkerOptions.workerSrc).toBe(
       "/pdf.worker.min.mjs"
     );
+  });
+
+  it("returns parse error when pdfjs fails to open the document", async () => {
+    pdfMocks.getDocument.mockReturnValue({
+      promise: Promise.reject(new Error("pdf open error")),
+    });
+
+    const file = new File([toBlobPart([37, 80, 68, 70])], "broken.pdf", {
+      type: "application/pdf",
+    });
+    const result = await parseFileWithPath(file, "broken.pdf", settings);
+
+    expect(result.error).toBe("pdf open error");
+  });
+
+  it("formats table-like pdf text with row spacing and inline cells", async () => {
+    mockPdfPages([
+      [
+        { str: "Name", transform: [1, 0, 0, 1, 10, 700], height: 12, width: 40 },
+        { str: "Age", transform: [1, 0, 0, 1, 80, 700], height: 12, width: 28 },
+        { str: "City", transform: [1, 0, 0, 1, 120, 700], height: 12, width: 36 },
+        { str: "Alice", transform: [1, 0, 0, 1, 10, 680], height: 12, width: 40 },
+        { str: "30", transform: [1, 0, 0, 1, 80, 680], height: 12, width: 14 },
+        { str: "Moscow", transform: [1, 0, 0, 1, 120, 680], height: 12, width: 56 },
+      ],
+    ]);
+
+    const file = new File([toBlobPart([37, 80, 68, 70])], "table.pdf", {
+      type: "application/pdf",
+    });
+    const result = await parseFileWithPath(file, "docs/table.pdf", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("Name Age City");
+    expect(result.text).toContain("Alice 30 Moscow");
+  });
+
+  it("does not collapse spaced words when they are not mostly single letters", async () => {
+    mockPdfPages([
+      [
+        { str: "Ab", transform: [1, 0, 0, 1, 10, 700], height: 12, width: 20 },
+        { str: "Cd", transform: [1, 0, 0, 1, 40, 700], height: 12, width: 20 },
+        { str: "Ef", transform: [1, 0, 0, 1, 70, 700], height: 12, width: 20 },
+        { str: "Gh", transform: [1, 0, 0, 1, 100, 700], height: 12, width: 20 },
+      ],
+    ]);
+
+    const file = new File([toBlobPart([37, 80, 68, 70])], "no-collapse.pdf", {
+      type: "application/pdf",
+    });
+    const result = await parseFileWithPath(file, "docs/no-collapse.pdf", settings);
+
+    expect(result.error).toBeUndefined();
+    expect(result.text).toContain("Ab Cd Ef Gh");
+    expect(result.text).not.toContain("AbCdEfGh");
   });
 
   it("preserves line breaks and paragraph breaks from vertical offsets", async () => {

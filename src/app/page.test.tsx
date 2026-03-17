@@ -158,6 +158,23 @@ describe("Home central panel UI/UX", () => {
     });
   });
 
+  it("passes updated excluded extensions to parser when uploading files", async () => {
+    await renderHome();
+
+    const excludedTextArea = screen.getByDisplayValue(/lock/);
+    fireEvent.change(excludedTextArea, { target: { value: "bad" } });
+
+    const hiddenInputs = document.querySelectorAll('input[type="file"]');
+    const fileInput = hiddenInputs[0] as HTMLInputElement;
+
+    const file = new File(["x"], "ignore.bad", { type: "text/plain" });
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    await waitFor(() => {
+      expect(lastParseSettings).toEqual(expect.objectContaining({ excludedExtensions: ["bad"] }));
+    });
+  });
+
   it("uploads files via drag and drop using webkitRelativePath", async () => {
     await renderHome();
 
@@ -208,6 +225,22 @@ describe("Home central panel UI/UX", () => {
     expect(projectNodes.length).toBeGreaterThan(0);
     expect(screen.getAllByText(/2\s*files|2\s*файлов/i).length).toBeGreaterThan(0);
     expect(screen.queryByText(/1\s*files|1\s*файлов/i)).not.toBeInTheDocument();
+  });
+
+  it("creates separate groups for multiple root folders", async () => {
+    await renderHome();
+
+    const hiddenInputs = document.querySelectorAll('input[type="file"]');
+    const fileInput = hiddenInputs[0] as HTMLInputElement;
+    const fileA = new File(["a"], "a.txt", { type: "text/plain" });
+    const fileB = new File(["b"], "b.txt", { type: "text/plain" });
+    Object.defineProperty(fileA, "webkitRelativePath", { value: "groupA/a.txt" });
+    Object.defineProperty(fileB, "webkitRelativePath", { value: "groupB/b.txt" });
+
+    fireEvent.change(fileInput, { target: { files: [fileA, fileB] } });
+
+    expect(await screen.findByText("groupA")).toBeInTheDocument();
+    expect(await screen.findByText("groupB")).toBeInTheDocument();
   });
 
   it("renders per-file actions for each item inside grouped context", async () => {
@@ -1061,6 +1094,34 @@ describe("Home central panel UI/UX", () => {
 
     expect(await screen.findByText(/Добавлено в workspace:\s*1|Added to workspace:\s*1/i)).toBeInTheDocument();
     expect(await screen.findAllByText("skip.lock")).not.toHaveLength(0);
+  });
+
+  it("toggles visibility of skipped files", async () => {
+    parseFileWithPathMock.mockResolvedValueOnce(
+      makeParsedItem("skip.lock", {
+        text: "",
+        tokenEstimate: 0,
+        sourceType: "lock",
+        error: "Skipped by filters",
+      })
+    );
+
+    await renderHome();
+
+    const fileInput = document.querySelectorAll('input[type="file"]')[0] as HTMLInputElement;
+    fireEvent.change(fileInput, { target: { files: [new File(["x"], "skip.lock", { type: "text/plain" })] } });
+
+    expect(await screen.findAllByText("skip.lock")).not.toHaveLength(0);
+
+    // Verify that the sidebar reflects visible count before toggling
+    expect(screen.getByText(/visible:\s*1|видимые:\s*1/i)).toBeInTheDocument();
+
+    const showSkippedBtn = await screen.findByRole("switch", { name: /Show skipped|Показывать пропущенные/i });
+    fireEvent.click(showSkippedBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/visible:\s*0|видимые:\s*0/i)).toBeInTheDocument();
+    });
   });
 
   it("[extra 29.4] archive results render archive card and child summary", async () => {
