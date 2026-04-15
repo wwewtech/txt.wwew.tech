@@ -56,3 +56,6 @@ page-test.log
 
 .out
 vitest.out
+
+.agents
+skills-lock.json

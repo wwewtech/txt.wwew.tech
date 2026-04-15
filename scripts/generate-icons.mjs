@@ -3,8 +3,8 @@ import path from "node:path";
 import sharp from "sharp";
 
 const root = process.cwd();
-const iconPath = path.join(root, "src", "app", "icon.svg");
 const publicDir = path.join(root, "public");
+const iconPath = path.join(publicDir, "logo.svg");
 
 const outputs = [
   { file: "favicon-16x16.png", size: 16 },
