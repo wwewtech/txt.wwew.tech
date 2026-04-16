@@ -61,6 +61,8 @@ type HomeRightSidebarProps = {
   onSetViewMode: (value: ViewMode) => void;
   onSelectAllVisible: () => void;
   onBuildSelected: () => Promise<void>;
+  onQuickBuild: () => Promise<void>;
+  onCopyDraft: () => void;
   onRemoveSelected: () => void;
   onApplyCommand: (value: string) => void;
   onAddSystemCommand: (value: string) => void;
@@ -119,6 +121,8 @@ export function HomeRightSidebar({
   onSetViewMode,
   onSelectAllVisible,
   onBuildSelected,
+  onQuickBuild,
+  onCopyDraft,
   onRemoveSelected,
   onApplyCommand,
   onAddSystemCommand,
@@ -430,6 +434,14 @@ export function HomeRightSidebar({
               </div>
 
               <div className="mb-2 flex flex-wrap gap-1.5">
+                <button
+                  type="button"
+                  onClick={onQuickBuild}
+                  disabled={!items.length || processing}
+                  className="ds-control inline-flex h-7 items-center gap-1 rounded-md border border-border/60 bg-background/80 px-2 text-[10px] disabled:opacity-40"
+                >
+                  <ArrowRight className="h-3 w-3" /> {t.quickBuild}
+                </button>
                 <button
                   type="button"
                   onClick={onBuildSelected}
