@@ -205,7 +205,6 @@ export default function Home() {
           onRemoveSystemCommand={actions.removeSystemCommand}
           onUpdateSystemCommand={actions.updateSystemCommand}
           onQuickBuild={actions.quickBuild}
-          onCopyDraft={actions.copyDraft}
           onToggleSelectItem={actions.toggleSelectItem}
           onScrollToItem={scrollToItem}
           onToggleAutoSave={() => setAutoSaveEnabled((value) => !value)}
@@ -367,7 +366,6 @@ export default function Home() {
               onRemoveSystemCommand={actions.removeSystemCommand}
               onUpdateSystemCommand={actions.updateSystemCommand}
               onQuickBuild={actions.quickBuild}
-              onCopyDraft={actions.copyDraft}
               onToggleSelectItem={actions.toggleSelectItem}
               onScrollToItem={scrollToItem}
               onToggleAutoSave={() => setAutoSaveEnabled((value) => !value)}

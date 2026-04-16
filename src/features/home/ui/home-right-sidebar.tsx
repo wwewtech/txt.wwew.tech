@@ -62,7 +62,6 @@ type HomeRightSidebarProps = {
   onSelectAllVisible: () => void;
   onBuildSelected: () => Promise<void>;
   onQuickBuild: () => Promise<void>;
-  onCopyDraft: () => void;
   onRemoveSelected: () => void;
   onApplyCommand: (value: string) => void;
   onAddSystemCommand: (value: string) => void;
@@ -122,7 +121,6 @@ export function HomeRightSidebar({
   onSelectAllVisible,
   onBuildSelected,
   onQuickBuild,
-  onCopyDraft,
   onRemoveSelected,
   onApplyCommand,
   onAddSystemCommand,
