@@ -1,3 +1,12 @@
+<p align="center">
+  <img src="./public/logo.svg" alt="txt.wwew.tech logo" width="120" />
+</p>
+
+<p align="center">
+  <img src="./public/og-image.png" alt="txt.wwew.tech preview" width="35%" />
+  <img src="./public/readme-home.png" alt="Интерфейс txt.wwew.tech" width="58%" />
+</p>
+
 # txt.wwew.tech
 
 <div align="center">
@@ -15,10 +24,6 @@
 [![Vercel](https://img.shields.io/badge/Deploy%20on%20Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/wwews-projects/txt.wwew.tech)
 
 </div>
-
-<p align="center">
-	<img src="./public/readme-home.png" alt="Интерфейс txt.wwew.tech" width="100%" />
-</p>
 
 <p align="center">
 	<a href="./README.en.md">English version</a>
