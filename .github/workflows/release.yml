@@ -13,28 +13,35 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: "npm"
+          registry-url: "https://registry.npmjs.org"
       - name: Install dependencies
         run: npm ci
       - name: Build
         run: npm run build
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
-          body: "Automated release for ${{ github.ref_name }}"
-          draft: false
-          prerelease: ${{ startsWith(github.ref_name, 'v') && contains(github.ref_name, '-')}}
-      - name: Publish to npm
-        if: ${{ env.NPM_TOKEN != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ github.ref_name }}"
+          PRERELEASE_FLAG=""
+
+          if [[ "$TAG" == *-* ]]; then
+            PRERELEASE_FLAG="--prerelease"
+          fi
+
+          gh release view "$TAG" >/dev/null 2>&1 || \
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --generate-notes \
+              $PRERELEASE_FLAG
+      - name: Publish to npm (optional)
+        if: ${{ vars.ENABLE_NPM_PUBLISH == 'true' && secrets.NPM_TOKEN != '' }}
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
