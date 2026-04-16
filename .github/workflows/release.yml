@@ -41,7 +41,13 @@ jobs:
               --generate-notes \
               $PRERELEASE_FLAG
       - name: Publish to npm (optional)
-        if: ${{ vars.ENABLE_NPM_PUBLISH == 'true' && secrets.NPM_TOKEN != '' }}
-        run: npm publish
+        if: ${{ vars.ENABLE_NPM_PUBLISH == 'true' }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "NPM_TOKEN is not configured; skipping npm publish."
+            exit 0
+          fi
+
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
