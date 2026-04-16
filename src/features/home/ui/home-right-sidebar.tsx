@@ -66,8 +66,6 @@ type HomeRightSidebarProps = {
   onAddSystemCommand: (value: string) => void;
   onRemoveSystemCommand: (index: number) => void;
   onUpdateSystemCommand: (index: number, text: string) => void;
-  onQuickBuild: () => void;
-  onCopyDraft: () => void;
   onToggleSelectItem: (id: string) => void;
   onScrollToItem: (itemId: string) => void;
   onToggleAutoSave: () => void;
@@ -121,8 +119,6 @@ export function HomeRightSidebar({
   onSetViewMode,
   onSelectAllVisible,
   onBuildSelected,
-  onQuickBuild,
-  onCopyDraft,
   onRemoveSelected,
   onApplyCommand,
   onAddSystemCommand,

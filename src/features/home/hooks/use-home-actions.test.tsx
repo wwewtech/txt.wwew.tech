@@ -9,6 +9,14 @@ import { parseFileWithPath } from "@/lib";
 
 import { useHomeActions } from "./use-home-actions";
 
+type UseHomeUiSelectorsMock = {
+  pushActivity: ReturnType<typeof vi.fn>;
+};
+
+type DocumentWithExecCommand = Document & {
+  execCommand?: (commandId: string, showUI?: boolean, value?: string) => boolean;
+};
+
 vi.mock("./use-home-ui-selectors", () => {
   const pushActivity = vi.fn();
   return {
@@ -73,7 +81,7 @@ vi.mock("../store/history-storage", () => ({
 describe("useHomeActions", () => {
   beforeEach(async () => {
     resetHomeStores();
-    const selectors = (await import("./use-home-ui-selectors")) as any;
+    const selectors = (await import("./use-home-ui-selectors")) as UseHomeUiSelectorsMock;
     pushActivity = selectors.pushActivity;
     pushActivity.mockClear();
     saveHistoryStorageMock.mockClear();
@@ -127,9 +135,10 @@ describe("useHomeActions", () => {
   it("onCopy falls back to execCommand when clipboard.writeText throws", async () => {
     const clipboardSpy = vi.spyOn(navigator.clipboard, "writeText").mockRejectedValueOnce(new Error("nope"));
 
-    const originalExec = document.execCommand;
+    const documentWithExec = document as DocumentWithExecCommand;
+    const originalExec = documentWithExec.execCommand;
     // jsdom may not implement execCommand; ensure it exists for the test
-    (document as any).execCommand = vi.fn(() => true);
+    documentWithExec.execCommand = vi.fn(() => true);
 
     const { result } = renderHook(() => useHomeActions());
 
@@ -139,7 +148,7 @@ describe("useHomeActions", () => {
     });
 
     clipboardSpy.mockRestore();
-    (document as any).execCommand = originalExec;
+    documentWithExec.execCommand = originalExec;
   });
 
   it("handleFiles adds parsed items and reports errors", async () => {

@@ -13,8 +13,6 @@ import { render, screen, fireEvent, waitFor, act } from "@testing-library/react"
 import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useUIStore } from "@/features/home/store/use-ui-store";
-
 async function flushEffects() {
   await act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
