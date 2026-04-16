@@ -159,7 +159,7 @@ export function HomeMainPanel({
   }, [onSendPrompt, scrollOnSend]);
 
   return (
-    <main className="flex h-screen min-h-screen flex-col overflow-hidden">
+    <main className="ds-app-shell flex h-screen min-h-screen flex-col overflow-hidden">
       {/* Desktop expand buttons */}
       {leftCollapsed && (
         <button
@@ -183,7 +183,7 @@ export function HomeMainPanel({
       )}
 
       {/* Mobile header — only visible on < xl */}
-      <header className="flex items-center justify-between border-b border-border/40 bg-background/95 px-4 py-2 xl:hidden">
+      <header className="ds-surface-panel flex items-center justify-between border-b border-border/40 bg-background/95 px-4 py-2 xl:hidden">
         <button
           type="button"
           onClick={onOpenMobileLeft}
@@ -239,7 +239,7 @@ export function HomeMainPanel({
                 {menuOpen && (
                   <div
                     ref={menuRef}
-                    className="absolute right-0 top-full z-50 mt-2 w-64 rounded-lg border border-border/70 bg-background shadow-lg"
+                    className="ds-surface-floating absolute right-0 top-full z-50 mt-2 w-64 rounded-lg border border-border/70 bg-background shadow-lg"
                   >
                     <div className="border-b border-border/50 px-3 py-2 text-xs font-semibold text-muted-foreground">
                       {t.actions}
@@ -321,13 +321,13 @@ export function HomeMainPanel({
         <div
           onDrop={onDrop}
           onDragOver={(event) => event.preventDefault()}
-          className="min-h-0 flex-1 overflow-hidden rounded-2xl bg-muted/15"
+          className="ds-surface-subtle min-h-0 flex-1 overflow-hidden rounded-2xl bg-muted/15"
         >
           <div className="flex h-full flex-col">
             <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto p-4">
               <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
                 {timelineEntries.length === 0 && (
-                  <div className="rounded-2xl border border-dashed border-border/60 bg-background/70 px-4 py-6 text-center text-sm text-muted-foreground">
+                  <div className="ds-surface-subtle rounded-2xl border border-dashed border-border/60 bg-background/70 px-4 py-6 text-center text-sm text-muted-foreground">
                     {t.dropHint}
                   </div>
                 )}
@@ -339,7 +339,7 @@ export function HomeMainPanel({
                       <div
                         key={entry.id}
                         className={cn(
-                          "group relative w-full rounded-2xl border px-4 py-3",
+                          "ds-surface-card group relative w-full rounded-2xl border px-4 py-3",
                           message.role === "user"
                             ? "ml-auto border-border/70 bg-background"
                             : "mr-auto border-primary/20 bg-primary/5"
@@ -382,7 +382,7 @@ export function HomeMainPanel({
                   const joinedText = group.items.map((item) => item.text).filter(Boolean).join("\n\n");
 
                   return (
-                    <div key={entry.id} id={entry.id} className="group/card rounded-2xl border border-border/50 bg-background/85 p-3">
+                    <div key={entry.id} id={entry.id} className="ds-surface-card group/card rounded-2xl border border-border/50 bg-background/85 p-3">
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex min-w-0 items-center gap-2">
                           <div className="shrink-0 text-muted-foreground">
@@ -484,7 +484,7 @@ export function HomeMainPanel({
                   className="hidden"
                   {...({ webkitdirectory: "", directory: "" } as React.InputHTMLAttributes<HTMLInputElement>)}
                 />
-                <div className="rounded-xl border border-border bg-card ring-0">
+                <div className="ds-surface-panel rounded-xl border border-border bg-card ring-0">
                   <textarea
                     ref={composerRef}
                     value={prompt}

@@ -55,7 +55,7 @@ function HighlightedCode({ code, lang }: { code: string; lang: string }) {
 
   if (!html) {
     return (
-      <pre className="overflow-x-auto bg-muted/40 p-4 font-mono text-[13px] leading-relaxed" style={contentFont.code}>
+      <pre className="ds-surface-subtle overflow-x-auto bg-muted/40 p-4 font-mono text-[13px] leading-relaxed" style={contentFont.code}>
         <code>{code}</code>
       </pre>
     );
@@ -121,13 +121,13 @@ export function CollapsibleMarkdownPre({ children }: { children: React.ReactNode
       };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border/60">
-      <div className="flex items-center justify-between border-b border-border/50 bg-muted/60 px-3 py-2">
+    <div className="ds-surface-subtle overflow-hidden rounded-xl border border-border/60">
+      <div className="ds-table-head flex items-center justify-between border-b border-border/50 bg-muted/60 px-3 py-2">
         <span className="font-mono text-[11px] font-medium text-muted-foreground">{lang}</span>
         <button
           type="button"
           onClick={() => setCollapsed((value) => !value)}
-          className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-muted-foreground transition-colors hover:bg-background/70 hover:text-foreground"
+          className="ds-control inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
           style={contentFont.codeUi}
           aria-label={preT.toggle}
         >
@@ -136,7 +136,7 @@ export function CollapsibleMarkdownPre({ children }: { children: React.ReactNode
         </button>
       </div>
       {collapsed ? (
-        <div className="bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground" style={contentFont.codeUi}>{preT.hidden} • {lineCount} {preT.lines}</div>
+        <div className="ds-surface-subtle bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground" style={contentFont.codeUi}>{preT.hidden} • {lineCount} {preT.lines}</div>
       ) : (
         <HighlightedCode code={textContent} lang={lang} />
       )}
@@ -155,12 +155,12 @@ export const markdownComponents = {
   ol: ({ children }: { children?: React.ReactNode }) => <ol className="list-decimal space-y-1 pl-5 text-sm" style={contentFont.body}>{children}</ol>,
   li: ({ children }: { children?: React.ReactNode }) => <li>{children}</li>,
   table: ({ children }: { children?: React.ReactNode }) => (
-    <div className="overflow-x-auto rounded-xl border border-border/60 bg-background">
+    <div className="ds-table-shell overflow-x-auto rounded-xl border border-border/60 bg-background">
       <table className="w-full border-collapse text-xs" style={contentFont.table}>{children}</table>
     </div>
   ),
   th: ({ children }: { children?: React.ReactNode }) => (
-    <th className="border-b border-border/60 bg-muted/40 px-2 py-1.5 text-left font-medium">{children}</th>
+    <th className="ds-table-head border-b border-border/60 bg-muted/40 px-2 py-1.5 text-left font-medium">{children}</th>
   ),
   td: ({ children }: { children?: React.ReactNode }) => <td className="border-b border-border/40 px-2 py-1.5 align-top">{children}</td>,
   pre: ({ children }: { children?: React.ReactNode }) => {
@@ -170,6 +170,6 @@ export const markdownComponents = {
     // Block code is handled entirely by CollapsibleMarkdownPre via Shiki.
     // This component is only ever visible for inline code (inside paragraphs).
     if (className?.includes("language-")) return <code className={className}>{children}</code>;
-    return <code className="rounded border border-border/60 bg-muted/40 px-1 py-0.5 font-mono text-[11px]" style={contentFont.inlineCode}>{children}</code>;
+    return <code className="ds-chip rounded border border-border/60 bg-muted/40 px-1 py-0.5 font-mono text-[11px]" style={contentFont.inlineCode}>{children}</code>;
   },
 };

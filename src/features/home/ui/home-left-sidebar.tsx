@@ -130,7 +130,7 @@ export function HomeLeftSidebar({
   return (
     <aside
       className={cn(
-        "border-r border-border/60 bg-background/95 px-3 py-3",
+        "ds-sidebar border-r border-border/60 bg-background/95 px-3 py-3",
         drawerMode
           ? "flex h-full flex-col"
           : "hidden h-screen xl:sticky xl:top-0 xl:flex xl:flex-col"
@@ -158,7 +158,7 @@ export function HomeLeftSidebar({
       <button
         type="button"
         onClick={onStartNewChat}
-        className="mb-3 inline-flex h-10 w-full items-center gap-2 rounded-lg bg-muted/35 px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted/55"
+        className="ds-surface-subtle mb-3 inline-flex h-10 w-full items-center gap-2 rounded-lg bg-muted/35 px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted/55"
       >
         <Plus className="h-3.5 w-3.5" />
         <span>{t.newChat}</span>
@@ -207,7 +207,7 @@ export function HomeLeftSidebar({
               </div>
 
               {openHistoryMenuId === entry.id && (
-                <div className="absolute right-1 top-9 z-20 w-44 rounded-md border border-border/70 bg-background p-1 shadow-xl">
+                <div className="ds-surface-floating absolute right-1 top-9 z-20 w-44 rounded-md border border-border/70 bg-background p-1 shadow-xl">
                   <button
                     type="button"
                     onClick={() => onDuplicateHistoryItem(entry.id)}
@@ -272,7 +272,7 @@ export function HomeLeftSidebar({
       <div className="mt-3 -mx-3 border-t border-border/50 pt-3">
         <div className="px-3">
           <div className="space-y-2">
-            <div className="rounded-lg bg-muted/20 px-2.5 py-2.5">
+            <div className="ds-surface-subtle rounded-lg bg-muted/20 px-2.5 py-2.5">
               <div className="flex items-center justify-between gap-3">
                 <span className={footerLabelClass}>{t.theme}</span>
                 <DragSegmented

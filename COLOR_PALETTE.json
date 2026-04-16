@@ -1,0 +1,258 @@
+{
+  "colorSystem": {
+    "name": "Vercel Design System - Unified Color Palette",
+    "version": "1.0.0",
+    "description": "10-level HSL-based color scale with automatic light/dark theme switching",
+    
+    "lightTheme": {
+      "gray": {
+        "100": "#F2F2F2",
+        "200": "#EBEBEB", 
+        "300": "#E6E6E6",
+        "400": "#EBEBEB",
+        "500": "#CACACA",
+        "600": "#A8A8A8",
+        "700": "#8F8F8F",
+        "800": "#616161",
+        "900": "#4D4D4D",
+        "1000": "#171717"
+      },
+      "blue": {
+        "100": "#E0F2FE",
+        "200": "#B3E5FC",
+        "300": "#81D4FA",
+        "400": "#4FC3F7",
+        "500": "#29B6F6",
+        "600": "#0EA5E9",
+        "700": "#0284C7",
+        "800": "#0369A1",
+        "900": "#0070F3",
+        "1000": "#003DA5"
+      },
+      "red": {
+        "100": "#FFE0E0",
+        "200": "#FFCCCC",
+        "300": "#FF9999",
+        "400": "#FF6666",
+        "500": "#FF3333",
+        "600": "#F87171",
+        "700": "#EF4444",
+        "800": "#DC2626",
+        "900": "#E11D48",
+        "1000": "#5A0A15"
+      },
+      "green": {
+        "100": "#D1FAE5",
+        "200": "#A7F3D0",
+        "300": "#6EE7B7",
+        "400": "#34D399",
+        "500": "#10B981",
+        "600": "#059669",
+        "700": "#047857",
+        "800": "#065F46",
+        "900": "#2D6A4F",
+        "1000": "#1B4332"
+      },
+      "amber": {
+        "100": "#FEF3C7",
+        "200": "#FDE68A",
+        "300": "#FCD34D",
+        "400": "#FBBF24",
+        "500": "#FBBF24",
+        "600": "#D97706",
+        "700": "#B45309",
+        "800": "#92400E",
+        "900": "#B86400",
+        "1000": "#522006"
+      },
+      "purple": {
+        "100": "#F3E8FF",
+        "200": "#E9D5FF",
+        "300": "#D8B4FE",
+        "400": "#C084FC",
+        "500": "#A855F7",
+        "600": "#9333EA",
+        "700": "#7E22CE",
+        "800": "#6B21A8",
+        "900": "#7C3AED",
+        "1000": "#3F0061"
+      },
+      "pink": {
+        "100": "#FCE7F3",
+        "200": "#FBCFE8",
+        "300": "#F8B4E6",
+        "400": "#F472B6",
+        "500": "#EC4899",
+        "600": "#DB2777",
+        "700": "#BE185D",
+        "800": "#9D174D",
+        "900": "#D946A6",
+        "1000": "#50003F"
+      },
+      "teal": {
+        "100": "#CCFBF1",
+        "200": "#99F6F0",
+        "300": "#5EEAD4",
+        "400": "#2DD4BF",
+        "500": "#14B8A6",
+        "600": "#0D9488",
+        "700": "#0F766E",
+        "800": "#134E4A",
+        "900": "#0F4C3D",
+        "1000": "#0A251F"
+      },
+      "semantic": {
+        "background": "#fafafa",
+        "foreground": "#171717",
+        "muted": "#ffffff",
+        "muted-foreground": "#8F8F8F",
+        "border": "#EBEBEB",
+        "primary": "#171717",
+        "primary-foreground": "#ffffff",
+        "success": "#2D6A4F",
+        "warning": "#B86400",
+        "error": "#E11D48",
+        "info": "#0070F3"
+      }
+    },
+
+    "darkTheme": {
+      "gray": {
+        "100": "#1A1A1A",
+        "200": "#1F1F1F",
+        "300": "#292929",
+        "400": "#2E2E2E",
+        "500": "#454545",
+        "600": "#878787",
+        "700": "#8F8F8F",
+        "800": "#9E9E9E",
+        "900": "#A0A0A0",
+        "1000": "#EDEDED"
+      },
+      "blue": {
+        "100": "#001a33",
+        "200": "#001f4d",
+        "300": "#002966",
+        "400": "#003380",
+        "600": "#1a5c99",
+        "700": "#3385b3",
+        "800": "#4db3cc",
+        "900": "#66ccff",
+        "1000": "#b3e5fc"
+      },
+      "red": {
+        "100": "#330000",
+        "200": "#4d0000",
+        "300": "#660000",
+        "400": "#800000",
+        "600": "#f24444",
+        "700": "#ff6666",
+        "800": "#ff8888",
+        "900": "#ff99aa",
+        "1000": "#ffccdd"
+      },
+      "green": {
+        "100": "#001a1a",
+        "200": "#002626",
+        "300": "#003333",
+        "400": "#004d47",
+        "600": "#2db386",
+        "700": "#4dd999",
+        "800": "#66ffaa",
+        "900": "#99ffcc",
+        "1000": "#d1fae5"
+      },
+      "amber": {
+        "100": "#330000",
+        "200": "#4d2400",
+        "300": "#663300",
+        "400": "#804000",
+        "600": "#ff9900",
+        "700": "#ffb333",
+        "800": "#ffcc66",
+        "900": "#ffdd88",
+        "1000": "#fffacd"
+      },
+      "purple": {
+        "100": "#1a0033",
+        "200": "#2d004d",
+        "300": "#400066",
+        "400": "#53007f",
+        "600": "#9933ff",
+        "700": "#b366ff",
+        "800": "#cc99ff",
+        "900": "#dd99ff",
+        "1000": "#f3e8ff"
+      },
+      "pink": {
+        "100": "#330011",
+        "200": "#4d0022",
+        "300": "#660033",
+        "400": "#800044",
+        "600": "#ff3366",
+        "700": "#ff6699",
+        "800": "#ff88aa",
+        "900": "#ffbbdd",
+        "1000": "#ffe6f2"
+      },
+      "teal": {
+        "100": "#001a1a",
+        "200": "#002626",
+        "300": "#003333",
+        "400": "#004d4d",
+        "600": "#009999",
+        "700": "#00cccc",
+        "800": "#00ffff",
+        "900": "#66ffff",
+        "1000": "#ccfbf1"
+      },
+      "semantic": {
+        "background": "#000000",
+        "foreground": "#EDEDED",
+        "muted": "#1A1A1A",
+        "muted-foreground": "#878787",
+        "border": "#2E2E2E",
+        "primary": "#EDEDED",
+        "primary-foreground": "#000000",
+        "success": "#66ccff",
+        "warning": "#ffb333",
+        "error": "#ff6666",
+        "info": "#3291ff"
+      }
+    },
+
+    "shadows": {
+      "small": "0px 2px 2px rgba(0,0,0,0.04)",
+      "medium": "0px 2px 2px rgba(0,0,0,0.04), 0px 8px 8px rgba(0,0,0,0.04)",
+      "large": "0px 2px 2px rgba(0,0,0,0.04), 0px 8px 16px rgba(0,0,0,0.04)",
+      "tooltip": "0 0 0 1px rgba(0,0,0,0.05), 0px 4px 8px rgba(0,0,0,0.06)",
+      "menu": "0 0 0 1px rgba(0,0,0,0.05), 0px 4px 8px rgba(0,0,0,0.06), 0px 16px 24px rgba(0,0,0,0.06)",
+      "modal": "0 0 0 1px var(--ds-gray-400), 0px 8px 16px rgba(0,0,0,0.04), 0px 24px 32px rgba(0,0,0,0.04)"
+    },
+
+    "usage": {
+      "button-primary": "bg-blue-900 text-blue-100 hover:bg-blue-800",
+      "button-secondary": "bg-gray-200 text-gray-900 hover:bg-gray-300",
+      "button-destructive": "bg-red-900 text-red-100 hover:bg-red-800",
+      "card": "bg-background border border-border rounded-lg p-4",
+      "badge-success": "bg-green-100 text-green-900 px-2 py-1 rounded",
+      "badge-warning": "bg-amber-100 text-amber-900 px-2 py-1 rounded",
+      "badge-error": "bg-red-100 text-red-900 px-2 py-1 rounded",
+      "link": "text-blue-900 hover:text-blue-800 underline",
+      "disabled": "bg-gray-200 text-gray-600 cursor-not-allowed"
+    },
+
+    "colorLevels": {
+      "100": "Lightest - Light backgrounds, very light highlights",
+      "200": "Light - Light backgrounds, inactive elements",
+      "300": "Light-medium - Light interactive elements",
+      "400": "Medium-light - Borders, separators, placeholders",
+      "500": "Medium - Standard interactive states",
+      "600": "Medium-dark - Secondary interactive states",
+      "700": "Dark - Strong interactive elements",
+      "800": "Dark-strong - Very strong interactive elements",
+      "900": "Strong - Primary text, active elements",
+      "1000": "Darkest - Text on light backgrounds, accents"
+    }
+  }
+}

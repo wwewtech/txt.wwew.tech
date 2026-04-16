@@ -54,9 +54,9 @@ const highlights = [
 
 export default function TermsPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
+    <main className="ds-app-shell relative min-h-screen overflow-hidden bg-background text-foreground">
       <div className="absolute inset-0 -z-20 bg-[linear-gradient(to_bottom,var(--background),color-mix(in_oklab,var(--background)_95%,var(--muted)))]" />
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,color-mix(in_oklab,var(--border)_55%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_oklab,var(--border)_55%,transparent)_1px,transparent_1px)] bg-size-[40px_40px] opacity-30" />
+      <div className="ds-grid-backdrop absolute inset-0 -z-10 bg-[linear-gradient(to_right,color-mix(in_oklab,var(--border)_55%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_oklab,var(--border)_55%,transparent)_1px,transparent_1px)] bg-size-[40px_40px] opacity-30" />
 
       <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-10 sm:px-8 lg:px-10">
         <div className="mb-10 flex items-center justify-between gap-4">
@@ -71,7 +71,7 @@ export default function TermsPage() {
           </span>
         </div>
 
-        <section className="rounded-2xl border border-border/70 bg-background/90 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-8">
+        <section className="ds-surface-panel rounded-2xl border border-border/70 bg-background/90 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-8">
           <div className="grid gap-8 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-12">
             <aside className="border-b border-border/60 pb-6 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
               <dl className="mt-6 space-y-5 text-sm">
@@ -108,7 +108,7 @@ export default function TermsPage() {
                 {highlights.map((item) => (
                   <article
                     key={item.title}
-                    className="rounded-xl border border-border/70 bg-muted/15 p-4"
+                    className="ds-surface-subtle rounded-xl border border-border/70 bg-muted/15 p-4"
                   >
                     <h2 className="text-sm font-medium leading-5 text-foreground/90">{item.title}</h2>
                     <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.body}</p>
@@ -123,7 +123,7 @@ export default function TermsPage() {
           {sections.map((section) => (
             <article
               key={section.title}
-              className="rounded-2xl border border-border/70 bg-background/92 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
+              className="ds-surface-card rounded-2xl border border-border/70 bg-background/92 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
             >
               <h2 className="text-lg font-semibold tracking-tight sm:text-xl">{section.title}</h2>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground sm:text-[15px]">

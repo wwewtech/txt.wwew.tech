@@ -1,26 +1,149 @@
 @import "tailwindcss";
 
-:root {
-  --ds-gray-100: #F2F2F2;
-  --ds-gray-200: #EBEBEB;
-  --ds-gray-300: #E6E6E6;
-  --ds-gray-400: #EBEBEB;
-  --ds-gray-500: #CACACA;
-  --ds-gray-600: #A8A8A8;
-  --ds-gray-700: #8F8F8F;
-  --ds-gray-900: #4D4D4D;
-  --ds-gray-1000: #171717;
+/**
+ * VERCEL DESIGN SYSTEM - Unified Color Palette
+ * 10-level HSL-based color scale with automatic light/dark theme switching
+ * Applies across Gray, Blue, Red, Green, Amber, Purple, Pink, Teal
+ */
 
-  --ds-background-100: #ffffff;
-  --ds-background-200: #fafafa;
-  --ds-focus-color: #0070f3;
+:root {
+  /* ─────────────────────────────────────────────────────────────────
+     GRAY - Neutral foundation (100-1000 scale) - Light Theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-gray-100: hsl(0, 0%, 95%);     /* #F2F2F2 - Lightest surface */
+  --ds-gray-200: hsl(0, 0%, 92%);     /* #EBEBEB - Light card background */
+  --ds-gray-300: hsl(0, 0%, 90%);     /* #E6E6E6 - Subtle separators */
+  --ds-gray-400: hsl(0, 0%, 92%);     /* #EBEBEB - Borders, disabled states */
+  --ds-gray-500: hsl(0, 0%, 79%);     /* #CACACA - Medium placeholder */
+  --ds-gray-600: hsl(0, 0%, 66%);     /* #A8A8A8 - Secondary text placeholder */
+  --ds-gray-700: hsl(0, 0%, 56%);     /* #8F8F8F - Secondary labels */
+  --ds-gray-800: hsl(0, 0%, 38%);     /* #616161 - Strong text (added) */
+  --ds-gray-900: hsl(0, 0%, 30%);     /* #4D4D4D - Strong text */
+  --ds-gray-1000: hsl(0, 0%, 9%);     /* #171717 - Darkest text/background */
+
+  /* ─────────────────────────────────────────────────────────────────
+     BLUE - Interactive elements, links, focus - Light Theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-blue-100: hsl(212, 100%, 97%);  /* #E0F2FE - Very light blue */
+  --ds-blue-200: hsl(212, 100%, 95%);  /* #B3E5FC - Light blue */
+  --ds-blue-300: hsl(212, 100%, 92%);  /* #81D4FA - Light blue interactive */
+  --ds-blue-400: hsl(212, 100%, 88%);  /* #4FC3F7 - Medium-light blue */
+  --ds-blue-500: hsl(212, 96%, 78%);   /* #29B6F6 - Medium blue */
+  --ds-blue-600: hsl(212, 97%, 71%);   /* #0EA5E9 - Link blue */
+  --ds-blue-700: hsl(212, 97%, 55%);   /* #0284C7 - Strong blue */
+  --ds-blue-800: hsl(211, 98%, 48%);   /* #0369A1 - Very strong blue */
+  --ds-blue-900: hsl(211, 100%, 42%);  /* #0070F3 - Primary blue (focus) */
+  --ds-blue-1000: hsl(211, 100%, 15%); /* #003DA5 - Darkest blue */
+
+  /* ─────────────────────────────────────────────────────────────────
+     RED - Errors, deletions, destructive actions - Light Theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-red-100: hsl(0, 100%, 97%);     /* #FFE0E0 - Very light red */
+  --ds-red-200: hsl(0, 100%, 94%);     /* #FFCCCC - Light red */
+  --ds-red-300: hsl(0, 100%, 90%);     /* #FF9999 - Light red interactive */
+  --ds-red-400: hsl(0, 100%, 85%);     /* #FF6666 - Medium-light red */
+  --ds-red-500: hsl(0, 100%, 75%);     /* #FF3333 - Medium red */
+  --ds-red-600: hsl(355, 87%, 60%);    /* #F87171 - Red */
+  --ds-red-700: hsl(355, 85%, 52%);    /* #EF4444 - Strong red */
+  --ds-red-800: hsl(355, 84%, 43%);    /* #DC2626 - Very strong red */
+  --ds-red-900: hsl(358, 66%, 48%);    /* #E11D48 - Crimson red */
+  --ds-red-1000: hsl(355, 49%, 15%);   /* #5A0A15 - Darkest red */
+
+  /* ─────────────────────────────────────────────────────────────────
+     GREEN - Success, additions, completion - Light Theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-green-100: hsl(120, 60%, 96%);  /* #D1FAE5 - Very light green */
+  --ds-green-200: hsl(120, 66%, 92%);  /* #A7F3D0 - Light green */
+  --ds-green-300: hsl(120, 71%, 85%);  /* #6EE7B7 - Light green interactive */
+  --ds-green-400: hsl(120, 69%, 76%);  /* #34D399 - Medium-light green */
+  --ds-green-500: hsl(120, 73%, 62%);  /* #10B981 - Medium green */
+  --ds-green-600: hsl(133, 80%, 55%);  /* #059669 - Green */
+  --ds-green-700: hsl(133, 84%, 43%);  /* #047857 - Strong green */
+  --ds-green-800: hsl(133, 86%, 35%);  /* #065F46 - Very strong green */
+  --ds-green-900: hsl(133, 50%, 32%);  /* #2D6A4F - Forest green */
+  --ds-green-1000: hsl(128, 29%, 15%); /* #1B4332 - Darkest green */
+
+  /* ─────────────────────────────────────────────────────────────────
+     AMBER - Warnings, cache, beta badges - Light Theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-amber-100: hsl(39, 100%, 95%);  /* #FEF3C7 - Very light amber */
+  --ds-amber-200: hsl(39, 100%, 90%);  /* #FDE68A - Light amber */
+  --ds-amber-300: hsl(39, 99%, 80%);   /* #FCD34D - Light amber interactive */
+  --ds-amber-400: hsl(39, 99%, 68%);   /* #FBBF24 - Medium-light amber */
+  --ds-amber-500: hsl(35, 100%, 55%);  /* #FBBF24 - Medium amber */
+  --ds-amber-600: hsl(32, 95%, 44%);   /* #D97706 - Amber */
+  --ds-amber-700: hsl(30, 97%, 44%);   /* #B45309 - Strong amber */
+  --ds-amber-800: hsl(28, 100%, 38%);  /* #92400E - Very strong amber */
+  --ds-amber-900: hsl(30, 100%, 32%);  /* #B86400 - Orange amber */
+  --ds-amber-1000: hsl(20, 79%, 17%);  /* #522006 - Darkest amber */
+
+  /* ─────────────────────────────────────────────────────────────────
+     PURPLE - Functions, code highlighting, features - Light Theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-purple-100: hsl(276, 100%, 97%);/* #F3E8FF - Very light purple */
+  --ds-purple-200: hsl(276, 100%, 93%);/* #E9D5FF - Light purple */
+  --ds-purple-300: hsl(276, 100%, 88%);/* #D8B4FE - Light purple interactive */
+  --ds-purple-400: hsl(276, 95%, 80%); /* #C084FC - Medium-light purple */
+  --ds-purple-500: hsl(276, 91%, 66%); /* #A855F7 - Medium purple */
+  --ds-purple-600: hsl(276, 92%, 55%); /* #9333EA - Purple */
+  --ds-purple-700: hsl(276, 91%, 45%); /* #7E22CE - Strong purple */
+  --ds-purple-800: hsl(276, 92%, 36%); /* #6B21A8 - Very strong purple */
+  --ds-purple-900: hsl(274, 71%, 43%); /* #7C3AED - Violet purple */
+  --ds-purple-1000: hsl(276, 100%, 15%);/* #3F0061 - Darkest purple */
+
+  /* ─────────────────────────────────────────────────────────────────
+     PINK - Keywords, code, preview environment - Light Theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-pink-100: hsl(330, 100%, 96%);  /* #FCE7F3 - Very light pink */
+  --ds-pink-200: hsl(330, 100%, 92%);  /* #FBCFE8 - Light pink */
+  --ds-pink-300: hsl(330, 100%, 87%);  /* #F8B4E6 - Light pink interactive */
+  --ds-pink-400: hsl(330, 100%, 80%);  /* #F472B6 - Medium-light pink */
+  --ds-pink-500: hsl(330, 100%, 71%);  /* #EC4899 - Medium pink */
+  --ds-pink-600: hsl(333, 86%, 59%);   /* #DB2777 - Pink */
+  --ds-pink-700: hsl(333, 92%, 50%);   /* #BE185D - Strong pink */
+  --ds-pink-800: hsl(333, 94%, 40%);   /* #9D174D - Very strong pink */
+  --ds-pink-900: hsl(336, 65%, 45%);   /* #D946A6 - Hot pink */
+  --ds-pink-1000: hsl(333, 74%, 15%);  /* #50003F - Darkest pink */
+
+  /* ─────────────────────────────────────────────────────────────────
+     TEAL - Secondary success indicators, secondary actions - Light Theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-teal-100: hsl(169, 70%, 96%);   /* #CCFBF1 - Very light teal */
+  --ds-teal-200: hsl(169, 79%, 90%);   /* #99F6F0 - Light teal */
+  --ds-teal-300: hsl(170, 94%, 82%);   /* #5EEAD4 - Light teal interactive */
+  --ds-teal-400: hsl(171, 100%, 67%);  /* #2DD4BF - Medium-light teal */
+  --ds-teal-500: hsl(172, 100%, 55%);  /* #14B8A6 - Medium teal */
+  --ds-teal-600: hsl(173, 100%, 41%);  /* #0D9488 - Teal */
+  --ds-teal-700: hsl(174, 96%, 32%);   /* #0F766E - Strong teal */
+  --ds-teal-800: hsl(174, 92%, 23%);   /* #134E4A - Very strong teal */
+  --ds-teal-900: hsl(174, 91%, 25%);   /* #0F4C3D - Dark teal */
+  --ds-teal-1000: hsl(171, 80%, 13%);  /* #0A251F - Darkest teal */
+
+  /* ─────────────────────────────────────────────────────────────────
+     BACKGROUND - 2-level system for layering
+     ───────────────────────────────────────────────────────────────── */
+  --ds-background-100: #ffffff;        /* Card/modal surface */
+  --ds-background-200: #fafafa;        /* Page/second layer background */
+
+  /* ─────────────────────────────────────────────────────────────────
+     FOCUS & INTERACTION
+     ───────────────────────────────────────────────────────────────── */
+  --ds-focus-color: #0070f3;           /* Primary focus blue */
   --ds-focus-ring: 0 0 0 2px var(--ds-background-100), 0 0 0 4px var(--ds-focus-color);
 
+  /* ─────────────────────────────────────────────────────────────────
+     SHADOWS - Semantic by layer depth
+     ───────────────────────────────────────────────────────────────── */
   --ds-shadow-small: 0px 2px 2px rgba(0,0,0,0.04);
   --ds-shadow-medium: 0px 2px 2px rgba(0,0,0,0.04), 0px 8px 8px rgba(0,0,0,0.04);
   --ds-shadow-large: 0px 2px 2px rgba(0,0,0,0.04), 0px 8px 16px rgba(0,0,0,0.04);
+  --ds-shadow-tooltip: 0 0 0 1px rgba(0,0,0,0.05), 0px 4px 8px rgba(0,0,0,0.06);
+  --ds-shadow-menu: 0 0 0 1px rgba(0,0,0,0.05), 0px 4px 8px rgba(0,0,0,0.06), 0px 16px 24px rgba(0,0,0,0.06);
   --ds-shadow-modal: 0 0 0 1px var(--ds-gray-400), 0px 8px 16px rgba(0,0,0,0.04), 0px 24px 32px rgba(0,0,0,0.04);
 
+  /* ─────────────────────────────────────────────────────────────────
+     SEMANTIC TOKENS - Map to component usage
+     ───────────────────────────────────────────────────────────────── */
   --background: var(--ds-background-200);
   --foreground: var(--ds-gray-1000);
   --muted: var(--ds-background-100);
@@ -28,6 +151,15 @@
   --border: var(--ds-gray-400);
   --primary: var(--ds-gray-1000);
   --primary-foreground: var(--ds-background-100);
+  --success: var(--ds-green-900);
+  --warning: var(--ds-amber-900);
+  --error: var(--ds-red-900);
+  --info: var(--ds-blue-900);
+
+   /* Unified interactive states */
+   --ds-interactive-hover-bg: color-mix(in oklab, var(--muted) 68%, var(--background));
+   --ds-interactive-active-bg: color-mix(in oklab, var(--muted) 82%, var(--background));
+   --ds-interactive-hover-border: color-mix(in oklab, var(--border) 88%, transparent);
 
   --ui-scale: 1;
   --font-size-offset: 0;
@@ -50,30 +182,251 @@ html {
   --color-border: var(--border);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  
+  /* Semantic color tokens */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
+
+  /* Gray scale - 10 levels */
+  --color-gray-100: var(--ds-gray-100);
+  --color-gray-200: var(--ds-gray-200);
+  --color-gray-300: var(--ds-gray-300);
+  --color-gray-400: var(--ds-gray-400);
+  --color-gray-500: var(--ds-gray-500);
+  --color-gray-600: var(--ds-gray-600);
+  --color-gray-700: var(--ds-gray-700);
+  --color-gray-800: var(--ds-gray-800);
+  --color-gray-900: var(--ds-gray-900);
+  --color-gray-1000: var(--ds-gray-1000);
+
+  /* Blue scale - interactive elements */
+  --color-blue-100: var(--ds-blue-100);
+  --color-blue-200: var(--ds-blue-200);
+  --color-blue-300: var(--ds-blue-300);
+  --color-blue-400: var(--ds-blue-400);
+  --color-blue-500: var(--ds-blue-500);
+  --color-blue-600: var(--ds-blue-600);
+  --color-blue-700: var(--ds-blue-700);
+  --color-blue-800: var(--ds-blue-800);
+  --color-blue-900: var(--ds-blue-900);
+  --color-blue-1000: var(--ds-blue-1000);
+
+  /* Red scale - errors and destructive */
+  --color-red-100: var(--ds-red-100);
+  --color-red-200: var(--ds-red-200);
+  --color-red-300: var(--ds-red-300);
+  --color-red-400: var(--ds-red-400);
+  --color-red-500: var(--ds-red-500);
+  --color-red-600: var(--ds-red-600);
+  --color-red-700: var(--ds-red-700);
+  --color-red-800: var(--ds-red-800);
+  --color-red-900: var(--ds-red-900);
+  --color-red-1000: var(--ds-red-1000);
+
+  /* Green scale - success */
+  --color-green-100: var(--ds-green-100);
+  --color-green-200: var(--ds-green-200);
+  --color-green-300: var(--ds-green-300);
+  --color-green-400: var(--ds-green-400);
+  --color-green-500: var(--ds-green-500);
+  --color-green-600: var(--ds-green-600);
+  --color-green-700: var(--ds-green-700);
+  --color-green-800: var(--ds-green-800);
+  --color-green-900: var(--ds-green-900);
+  --color-green-1000: var(--ds-green-1000);
+
+  /* Amber scale - warnings */
+  --color-amber-100: var(--ds-amber-100);
+  --color-amber-200: var(--ds-amber-200);
+  --color-amber-300: var(--ds-amber-300);
+  --color-amber-400: var(--ds-amber-400);
+  --color-amber-500: var(--ds-amber-500);
+  --color-amber-600: var(--ds-amber-600);
+  --color-amber-700: var(--ds-amber-700);
+  --color-amber-800: var(--ds-amber-800);
+  --color-amber-900: var(--ds-amber-900);
+  --color-amber-1000: var(--ds-amber-1000);
+
+  /* Purple scale - functions */
+  --color-purple-100: var(--ds-purple-100);
+  --color-purple-200: var(--ds-purple-200);
+  --color-purple-300: var(--ds-purple-300);
+  --color-purple-400: var(--ds-purple-400);
+  --color-purple-500: var(--ds-purple-500);
+  --color-purple-600: var(--ds-purple-600);
+  --color-purple-700: var(--ds-purple-700);
+  --color-purple-800: var(--ds-purple-800);
+  --color-purple-900: var(--ds-purple-900);
+  --color-purple-1000: var(--ds-purple-1000);
+
+  /* Pink scale - keywords */
+  --color-pink-100: var(--ds-pink-100);
+  --color-pink-200: var(--ds-pink-200);
+  --color-pink-300: var(--ds-pink-300);
+  --color-pink-400: var(--ds-pink-400);
+  --color-pink-500: var(--ds-pink-500);
+  --color-pink-600: var(--ds-pink-600);
+  --color-pink-700: var(--ds-pink-700);
+  --color-pink-800: var(--ds-pink-800);
+  --color-pink-900: var(--ds-pink-900);
+  --color-pink-1000: var(--ds-pink-1000);
+
+  /* Teal scale - secondary success */
+  --color-teal-100: var(--ds-teal-100);
+  --color-teal-200: var(--ds-teal-200);
+  --color-teal-300: var(--ds-teal-300);
+  --color-teal-400: var(--ds-teal-400);
+  --color-teal-500: var(--ds-teal-500);
+  --color-teal-600: var(--ds-teal-600);
+  --color-teal-700: var(--ds-teal-700);
+  --color-teal-800: var(--ds-teal-800);
+  --color-teal-900: var(--ds-teal-900);
+  --color-teal-1000: var(--ds-teal-1000);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 .dark {
-  --ds-gray-100: #1A1A1A;
-  --ds-gray-200: #1F1F1F;
-  --ds-gray-300: #292929;
-  --ds-gray-400: #2E2E2E;
-  --ds-gray-500: #454545;
-  --ds-gray-600: #878787;
-  --ds-gray-700: #8F8F8F;
-  --ds-gray-900: #A0A0A0;
-  --ds-gray-1000: #EDEDED;
+  /* ─────────────────────────────────────────────────────────────────
+     GRAY - Neutral foundation inverted for dark theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-gray-100: hsl(0, 0%, 10%);      /* #1A1A1A - Darkest → Light card bg */
+  --ds-gray-200: hsl(0, 0%, 12%);      /* #1F1F1F - Very dark → Page bg */
+  --ds-gray-300: hsl(0, 0%, 16%);      /* #292929 - Dark separators */
+  --ds-gray-400: hsl(0, 0%, 18%);      /* #2E2E2E - Dark borders */
+  --ds-gray-500: hsl(0, 0%, 27%);      /* #454545 - Medium dark placeholder */
+  --ds-gray-600: hsl(0, 0%, 53%);      /* #878787 - Secondary text */
+  --ds-gray-700: hsl(0, 0%, 56%);      /* #8F8F8F - Secondary labels (same as light) */
+  --ds-gray-800: hsl(0, 0%, 62%);      /* #9E9E9E - Strong text (added) */
+  --ds-gray-900: hsl(0, 0%, 63%);      /* #A0A0A0 - Strong text */
+  --ds-gray-1000: hsl(0, 0%, 93%);     /* #EDEDED - Lightest → Dark text */
 
-  --ds-background-100: #0A0A0A;
-  --ds-background-200: #000000;
-  --ds-focus-color: #3291ff;
+  /* ─────────────────────────────────────────────────────────────────
+     BLUE - Interactive elements inverted for dark theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-blue-100: hsl(212, 100%, 9%);   /* Very dark blue */
+  --ds-blue-200: hsl(212, 100%, 12%);  /* Dark blue */
+  --ds-blue-300: hsl(212, 100%, 16%);  /* Dark blue interactive */
+  --ds-blue-400: hsl(212, 100%, 20%);  /* Medium-dark blue */
+  --ds-blue-500: hsl(212, 96%, 28%);   /* Medium blue dark */
+  --ds-blue-600: hsl(212, 97%, 35%);   /* Link blue dark */
+  --ds-blue-700: hsl(212, 97%, 45%);   /* Strong blue dark */
+  --ds-blue-800: hsl(211, 98%, 52%);   /* Very strong blue dark */
+  --ds-blue-900: hsl(211, 100%, 58%);  /* Primary blue light (inverted) */
+  --ds-blue-1000: hsl(211, 100%, 85%); /* Lightest blue → Dark text */
 
+  /* ─────────────────────────────────────────────────────────────────
+     RED - Errors inverted for dark theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-red-100: hsl(0, 100%, 9%);      /* Very dark red */
+  --ds-red-200: hsl(0, 100%, 12%);     /* Dark red */
+  --ds-red-300: hsl(0, 100%, 16%);     /* Dark red interactive */
+  --ds-red-400: hsl(0, 100%, 20%);     /* Medium-dark red */
+  --ds-red-500: hsl(0, 100%, 28%);     /* Medium red dark */
+  --ds-red-600: hsl(355, 87%, 40%);    /* Red dark */
+  --ds-red-700: hsl(355, 85%, 48%);    /* Strong red dark */
+  --ds-red-800: hsl(355, 84%, 57%);    /* Very strong red dark */
+  --ds-red-900: hsl(358, 66%, 52%);    /* Crimson red light */
+  --ds-red-1000: hsl(355, 49%, 85%);   /* Lightest red → Dark text */
+
+  /* ─────────────────────────────────────────────────────────────────
+     GREEN - Success inverted for dark theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-green-100: hsl(120, 60%, 9%);   /* Very dark green */
+  --ds-green-200: hsl(120, 66%, 12%);  /* Dark green */
+  --ds-green-300: hsl(120, 71%, 16%);  /* Dark green interactive */
+  --ds-green-400: hsl(120, 69%, 22%);  /* Medium-dark green */
+  --ds-green-500: hsl(120, 73%, 35%);  /* Medium green dark */
+  --ds-green-600: hsl(133, 80%, 45%);  /* Green dark */
+  --ds-green-700: hsl(133, 84%, 57%);  /* Strong green dark */
+  --ds-green-800: hsl(133, 86%, 65%);  /* Very strong green dark */
+  --ds-green-900: hsl(133, 50%, 68%);  /* Forest green light */
+  --ds-green-1000: hsl(128, 29%, 85%); /* Lightest green → Dark text */
+
+  /* ─────────────────────────────────────────────────────────────────
+     AMBER - Warnings inverted for dark theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-amber-100: hsl(39, 100%, 9%);   /* Very dark amber */
+  --ds-amber-200: hsl(39, 100%, 12%);  /* Dark amber */
+  --ds-amber-300: hsl(39, 99%, 18%);   /* Dark amber interactive */
+  --ds-amber-400: hsl(39, 99%, 28%);   /* Medium-dark amber */
+  --ds-amber-500: hsl(35, 100%, 40%);  /* Medium amber dark */
+  --ds-amber-600: hsl(32, 95%, 56%);   /* Amber dark */
+  --ds-amber-700: hsl(30, 97%, 56%);   /* Strong amber dark */
+  --ds-amber-800: hsl(28, 100%, 62%);  /* Very strong amber dark */
+  --ds-amber-900: hsl(30, 100%, 68%);  /* Orange amber light */
+  --ds-amber-1000: hsl(20, 79%, 83%);  /* Lightest amber → Dark text */
+
+  /* ─────────────────────────────────────────────────────────────────
+     PURPLE - Functions inverted for dark theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-purple-100: hsl(276, 100%, 9%); /* Very dark purple */
+  --ds-purple-200: hsl(276, 100%, 12%);/* Dark purple */
+  --ds-purple-300: hsl(276, 100%, 18%);/* Dark purple interactive */
+  --ds-purple-400: hsl(276, 95%, 26%); /* Medium-dark purple */
+  --ds-purple-500: hsl(276, 91%, 40%); /* Medium purple dark */
+  --ds-purple-600: hsl(276, 92%, 45%); /* Purple dark */
+  --ds-purple-700: hsl(276, 91%, 55%); /* Strong purple dark */
+  --ds-purple-800: hsl(276, 92%, 64%); /* Very strong purple dark */
+  --ds-purple-900: hsl(274, 71%, 57%); /* Violet purple light */
+  --ds-purple-1000: hsl(276, 100%, 85%);/* Lightest purple → Dark text */
+
+  /* ─────────────────────────────────────────────────────────────────
+     PINK - Keywords inverted for dark theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-pink-100: hsl(330, 100%, 9%);   /* Very dark pink */
+  --ds-pink-200: hsl(330, 100%, 12%);  /* Dark pink */
+  --ds-pink-300: hsl(330, 100%, 18%);  /* Dark pink interactive */
+  --ds-pink-400: hsl(330, 100%, 26%);  /* Medium-dark pink */
+  --ds-pink-500: hsl(330, 100%, 38%);  /* Medium pink dark */
+  --ds-pink-600: hsl(333, 86%, 41%);   /* Pink dark */
+  --ds-pink-700: hsl(333, 92%, 50%);   /* Strong pink dark */
+  --ds-pink-800: hsl(333, 94%, 60%);   /* Very strong pink dark */
+  --ds-pink-900: hsl(336, 65%, 55%);   /* Hot pink light */
+  --ds-pink-1000: hsl(333, 74%, 85%);  /* Lightest pink → Dark text */
+
+  /* ─────────────────────────────────────────────────────────────────
+     TEAL - Secondary success inverted for dark theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-teal-100: hsl(169, 70%, 9%);    /* Very dark teal */
+  --ds-teal-200: hsl(169, 79%, 12%);   /* Dark teal */
+  --ds-teal-300: hsl(170, 94%, 16%);   /* Dark teal interactive */
+  --ds-teal-400: hsl(171, 100%, 26%);  /* Medium-dark teal */
+  --ds-teal-500: hsl(172, 100%, 38%);  /* Medium teal dark */
+  --ds-teal-600: hsl(173, 100%, 59%);  /* Teal dark */
+  --ds-teal-700: hsl(174, 96%, 68%);   /* Strong teal dark */
+  --ds-teal-800: hsl(174, 92%, 77%);   /* Very strong teal dark */
+  --ds-teal-900: hsl(174, 91%, 75%);   /* Dark teal light */
+  --ds-teal-1000: hsl(171, 80%, 87%);  /* Lightest teal → Dark text */
+
+  /* ─────────────────────────────────────────────────────────────────
+     BACKGROUND - Inverted for dark theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-background-100: #0a0a0a;        /* Card/modal surface - dark */
+  --ds-background-200: #000000;        /* Page/second layer - darkest */
+
+  /* ─────────────────────────────────────────────────────────────────
+     FOCUS - Lighter for dark theme
+     ───────────────────────────────────────────────────────────────── */
+  --ds-focus-color: #3291ff;           /* Brighter focus blue for dark mode */
+  --ds-focus-ring: 0 0 0 2px var(--ds-background-100), 0 0 0 4px var(--ds-focus-color);
+
+  /* ─────────────────────────────────────────────────────────────────
+     SHADOWS - Stronger for dark theme (more contrast needed)
+     ───────────────────────────────────────────────────────────────── */
   --ds-shadow-small: 0px 2px 2px rgba(0,0,0,0.1);
   --ds-shadow-medium: 0px 2px 2px rgba(0,0,0,0.1), 0px 8px 8px rgba(0,0,0,0.1);
   --ds-shadow-large: 0px 2px 2px rgba(0,0,0,0.1), 0px 8px 16px rgba(0,0,0,0.1);
-  --ds-shadow-modal: 0 0 0 1px var(--ds-gray-400), 0px 8px 16px rgba(0,0,0,0.1), 0px 24px 32px rgba(0,0,0,0.1);
+  --ds-shadow-tooltip: 0 0 0 1px rgba(255,255,255,0.1), 0px 4px 8px rgba(0,0,0,0.2);
+  --ds-shadow-menu: 0 0 0 1px rgba(255,255,255,0.1), 0px 4px 8px rgba(0,0,0,0.2), 0px 16px 24px rgba(0,0,0,0.2);
+  --ds-shadow-modal: 0 0 0 1px rgba(255,255,255,0.1), 0px 8px 16px rgba(0,0,0,0.2), 0px 24px 32px rgba(0,0,0,0.2);
 
+  /* ─────────────────────────────────────────────────────────────────
+     SEMANTIC TOKENS - Dark theme variants
+     ───────────────────────────────────────────────────────────────── */
   --background: var(--ds-background-200);
   --foreground: var(--ds-gray-1000);
   --muted: var(--ds-gray-100);
@@ -81,6 +434,15 @@ html {
   --border: var(--ds-gray-400);
   --primary: var(--ds-gray-1000);
   --primary-foreground: #000000;
+  --success: var(--ds-green-500);
+  --warning: var(--ds-amber-500);
+  --error: var(--ds-red-500);
+  --info: var(--ds-blue-500);
+
+   /* Unified interactive states (dark) */
+   --ds-interactive-hover-bg: color-mix(in oklab, var(--muted) 54%, var(--background));
+   --ds-interactive-active-bg: color-mix(in oklab, var(--muted) 66%, var(--background));
+   --ds-interactive-hover-border: color-mix(in oklab, var(--border) 92%, transparent);
 }
 
 body {
@@ -179,4 +541,105 @@ html {
 
 textarea:focus-visible {
   box-shadow: none;
+}
+
+/* Unified Vercel-like surface system */
+.ds-app-shell {
+   background:
+      linear-gradient(
+         to bottom,
+         var(--background),
+         color-mix(in oklab, var(--background) 94%, var(--muted))
+      );
+}
+
+.ds-grid-backdrop {
+   background-image:
+      linear-gradient(
+         to right,
+         color-mix(in oklab, var(--border) 55%, transparent) 1px,
+         transparent 1px
+      ),
+      linear-gradient(
+         to bottom,
+         color-mix(in oklab, var(--border) 55%, transparent) 1px,
+         transparent 1px
+      );
+   background-size: 40px 40px;
+   opacity: 0.32;
+}
+
+.ds-sidebar {
+   background: color-mix(in oklab, var(--background) 94%, var(--muted));
+   border-color: color-mix(in oklab, var(--border) 82%, transparent);
+   backdrop-filter: blur(10px);
+}
+
+.ds-surface-subtle {
+   border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+   background: color-mix(in oklab, var(--background) 88%, var(--muted));
+}
+
+.ds-surface-panel {
+   border: 1px solid color-mix(in oklab, var(--border) 74%, transparent);
+   background: color-mix(in oklab, var(--background) 92%, var(--muted));
+   box-shadow: var(--ds-shadow-medium);
+}
+
+.ds-surface-card {
+   border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+   background: color-mix(in oklab, var(--background) 90%, var(--muted));
+   box-shadow: var(--ds-shadow-small);
+}
+
+.ds-surface-floating {
+   border: 1px solid color-mix(in oklab, var(--border) 78%, transparent);
+   background: color-mix(in oklab, var(--background) 96%, var(--muted));
+   box-shadow: var(--ds-shadow-menu);
+}
+
+.ds-control {
+   border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+   background: color-mix(in oklab, var(--background) 90%, var(--muted));
+   transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.ds-control:hover {
+   background: var(--ds-interactive-hover-bg);
+   border-color: var(--ds-interactive-hover-border);
+}
+
+.ds-control:active {
+   background: var(--ds-interactive-active-bg);
+   border-color: var(--ds-interactive-hover-border);
+}
+
+.ds-chip {
+   border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+   background: color-mix(in oklab, var(--background) 86%, var(--muted));
+}
+
+.ds-chip:hover {
+   background: var(--ds-interactive-hover-bg);
+   border-color: var(--ds-interactive-hover-border);
+}
+
+.ds-chip:active {
+   background: var(--ds-interactive-active-bg);
+   border-color: var(--ds-interactive-hover-border);
+}
+
+.ds-table-shell {
+   border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+   background: color-mix(in oklab, var(--background) 90%, var(--muted));
+}
+
+.ds-table-head {
+   border-bottom: 1px solid color-mix(in oklab, var(--border) 64%, transparent);
+   background: color-mix(in oklab, var(--muted) 40%, var(--background));
+}
+
+.ds-overlay {
+   background: color-mix(in oklab, var(--ds-gray-1000) 62%, transparent);
+   backdrop-filter: blur(6px);
 }

@@ -30,8 +30,8 @@ export function HomePreviewModal({
   const previewText = stripSyntheticFileHeader(activePreview.text || "");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="flex h-[80vh] w-full max-w-4xl flex-col rounded-2xl border border-border bg-background">
+    <div className="ds-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+      <div className="ds-surface-panel flex h-[80vh] w-full max-w-4xl flex-col rounded-2xl border border-border bg-background">
         <div className="flex items-center justify-between border-b border-border/70 px-4 py-3">
           <div>
             <p className="text-sm font-semibold">{activePreview.name}</p>

@@ -27,11 +27,11 @@ export function MobileDrawer({
     >
       <Drawer.Portal>
         <Drawer.Overlay
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm xl:hidden"
+          className="ds-overlay fixed inset-0 z-40 bg-black/50 backdrop-blur-sm xl:hidden"
         />
         <Drawer.Content
           className={cn(
-            "fixed z-50 flex flex-col bg-background xl:hidden",
+            "ds-surface-panel fixed z-50 flex flex-col bg-background xl:hidden",
             direction === "left" && "bottom-0 left-0 top-0 w-[85vw] max-w-sm border-r border-border/50",
             direction === "right" && "bottom-0 right-0 top-0 w-[85vw] max-w-sm border-l border-border/50",
             direction === "bottom" && "bottom-0 left-0 right-0 max-h-[90vh] border-t border-border/50 rounded-t-2xl",

@@ -16,11 +16,11 @@ type HomeEditDialogProps = {
 export function HomeEditDialog({ editDialog, t, onClose, onChange, onSubmit }: HomeEditDialogProps) {
   return (
     <div
-      className="fixed inset-0 z-60 flex items-center justify-center bg-black/60 p-4"
+      className="ds-overlay fixed inset-0 z-60 flex items-center justify-center bg-black/60 p-4"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl rounded-2xl border border-border bg-background"
+        className="ds-surface-panel w-full max-w-2xl rounded-2xl border border-border bg-background"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-border/70 px-4 py-3">
